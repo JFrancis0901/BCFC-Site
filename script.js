@@ -1,17 +1,63 @@
-// script.js = small interactive behavior. Right now it only runs the mobile menu.
+// script.js = runs on EVERY page. It builds the menu/footer, the mobile button, and random photos.
 
-// Find the menu button and the menu links on the page
-const button = document.querySelector('.menu-toggle');
+// ---------- 1. YOUR PHOTOS: list the file names inside the Photos folder ----------
+// Browsers cannot read a folder by themselves, so type the names here (see the PowerShell tip).
+// Names must match EXACTLY, including capital letters and .jpg/.png.
+const PHOTOS = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg'];
+
+// ---------- 2. THE MENU: edit once, it changes on every page ----------
+// Format: { label, href (page opened when clicking the title), items: [[text, page], ...] }
+const MENU = [
+  { label: 'About Us', href: 'about.html', items: [['Our mission', 'about.html#mission'], ['Our history', 'about.html#history'], ['What we believe', 'about.html#beliefs'], ['Our leadership', 'about.html#leadership']] },
+  { label: 'Get Involved', href: 'get-involved.html', items: [['Find your place', 'get-involved.html'], ['Become a minister', 'minister.html'], ['Plant a church', 'plant-church.html']] },
+  { label: 'Support', href: 'support.html', items: [['Leader support', 'support.html#leader'], ['Pastoral care', 'support.html#care'], ['Leader development', 'support.html#growth']] },
+  { label: 'Mission + Ministry', href: 'ministries.html', items: [['Missions', 'ministries.html#missions'], ['Disaster relief', 'ministries.html#relief'], ['Chaplains', 'ministries.html#chaplains']] },
+  { label: 'Events + Training', href: 'events.html', items: [['Upcoming events', 'events.html#events'], ['Training', 'events.html#training']] }
+];
+
+// ---------- 3. BUILD THE HEADER ----------
+const navHtml = MENU.map(m =>
+  `<div class="dropdown"><a href="${m.href}">${m.label}</a><div class="dropdown-menu">` +
+  m.items.map(i => `<a href="${i[1]}">${i[0]}</a>`).join('') + `</div></div>`).join('');
+
+document.getElementById('site-header').innerHTML = `
+  <div class="topbar"><a href="find-church.html">Find a church</a><a href="contact.html">Contact</a></div>
+  <header class="site-header">
+    <a href="index.html" class="logo">BCFC</a> <!-- EDIT: your church name -->
+    <button class="menu-toggle" aria-expanded="false">Menu</button>
+    <nav class="site-nav" id="nav">${navHtml}</nav>
+  </header>`;
+
+// ---------- 4. BUILD THE FOOTER ----------
+document.getElementById('site-footer').innerHTML = `
+  <footer class="site-footer">
+    <div class="footer-cols">${MENU.map(m => `<div><h4>${m.label}</h4>` +
+      m.items.map(i => `<a href="${i[1]}">${i[0]}</a>`).join('') + `</div>`).join('')}</div>
+    <p class="copyright">&copy; 2026 BCFC</p> <!-- EDIT: year and name -->
+  </footer>`;
+
+// ---------- 5. MOBILE MENU BUTTON ----------
+const btn = document.querySelector('.menu-toggle');
 const nav = document.getElementById('nav');
-
-// When the button is tapped, show/hide the menu
-button.addEventListener('click', () => {
-  const isOpen = nav.classList.toggle('open');      // adds or removes the "open" class
-  button.setAttribute('aria-expanded', isOpen);     // tells screen readers if the menu is open
+btn.addEventListener('click', () => {
+  btn.setAttribute('aria-expanded', nav.classList.toggle('open'));
 });
 
-// When a menu link is tapped, close the menu again
-nav.addEventListener('click', () => {
-  nav.classList.remove('open');
-  button.setAttribute('aria-expanded', false);
-});
+// ---------- 6. RANDOM PHOTOS ----------
+// Shuffles the list so photos don't repeat until all have been used.
+let pool = [];
+function nextPhoto() {
+  if (!pool.length) pool = [...PHOTOS].sort(() => Math.random() - 0.5);
+  return 'Photos/' + encodeURI(pool.pop());
+}
+if (PHOTOS.length) {
+  // <img data-random> gets a random photo
+  document.querySelectorAll('img[data-random]').forEach(img => {
+    img.src = nextPhoto();
+    img.onerror = () => img.classList.add('missing'); // hides broken image, colorful box shows instead
+  });
+  // Any element with data-random-bg gets a random photo as its background, under a color tint
+  document.querySelectorAll('[data-random-bg]').forEach(el => {
+    el.style.backgroundImage = `linear-gradient(135deg, rgba(58,28,113,.82), rgba(255,94,91,.55)), url("${nextPhoto()}")`;
+  });
+}
