@@ -1,9 +1,4 @@
-// script.js = runs on EVERY page. It builds the menu/footer, the mobile button, and random photos.
-
-// ---------- 1. YOUR PHOTOS: list the file names inside the Photos folder ----------
-// Browsers cannot read a folder by themselves, so type the names here (see the PowerShell tip).
-// Names must match EXACTLY, including capital letters and .jpg/.png.
-const PHOTOS = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg'];
+// script.js = runs on EVERY page (photo list is in photos.js). It builds the menu/footer, the mobile button, and random photos.
 
 // ---------- 2. THE MENU: edit once, it changes on every page ----------
 // Format: { label, href (page opened when clicking the title), items: [[text, page], ...] }
@@ -56,8 +51,9 @@ if (PHOTOS.length) {
     img.src = nextPhoto();
     img.onerror = () => img.classList.add('missing'); // hides broken image, colorful box shows instead
   });
-  // Any element with data-random-bg gets a random photo as its background, under a color tint
+  // Any element with data-random-bg gets a random photo (style.css adds the color tint)
   document.querySelectorAll('[data-random-bg]').forEach(el => {
-    el.style.backgroundImage = `linear-gradient(135deg, rgba(58,28,113,.82), rgba(255,94,91,.55)), url("${nextPhoto()}")`;
+    el.classList.add('has-photo');
+    el.style.setProperty('--photo', `url("${nextPhoto()}")`);
   });
 }

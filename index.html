@@ -1,53 +1,52 @@
 <!DOCTYPE html>
 <!-- index.html = one page. Menu + footer come from script.js. Edit the text inside <main>. -->
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home | BCFC</title><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
-<body>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script></head>
+<!-- t-purple / t-blue / t-scarlet / t-navy = this page main color -->
+<body class="t-purple">
 <div id="site-header"></div>
 <main>
-<!-- HERO: random photo background (data-random-bg). EDIT the words and button links -->
+<!-- HERO: random photo behind a purple tint. EDIT the words and links -->
 <section class="hero" data-random-bg>
   <p class="script">You belong here</p>
   <h1>Welcome to <em>BCFC</em></h1>
   <a class="btn" href="find-church.html">Find a Church</a>
-  <a class="btn btn-light" href="contact.html">Contact Us</a>
+  <a class="btn btn-outline" href="contact.html">Contact Us</a>
 </section>
 
-<!-- NEW HERE? photo is random (data-random). Button opens another page -->
+<!-- NEW HERE? (arch photo) -->
 <section class="band b-white split">
-  <div><h2>New here? We're <em>ready</em> to help!</h2>
+  <div><h2>New here? We're <em>ready</em> to help.</h2>
     <p>EDIT: Introduce your church family and how newcomers can find their place.</p>
-    <a class="btn btn-teal" href="get-involved.html">Get Involved</a></div>
-  <div class="photo"><img data-random alt="Church family"></div>
+    <a class="btn btn-dark" href="get-involved.html">Get Involved</a></div>
+  <div class="photo arch"><img data-random alt="Church family"></div>
 </section>
 
-<!-- LEADERS -->
-<section class="band b-teal split flip">
-  <div class="photo"><img data-random alt="Church leaders"></div>
+<!-- LEADERS (blue band, framed photo) -->
+<section class="band b-blue split flip">
+  <div class="photo frame"><img data-random alt="Church leaders"></div>
   <div><h2>Are you a <em>leader?</em> Find what you need.</h2>
     <p>EDIT: Explain the support available to pastors and church leaders.</p>
     <a class="btn" href="support.html">Get Leader Support</a>
-    <a class="btn btn-light" href="ministries.html">Our Ministries</a></div>
+    <a class="btn btn-outline" href="ministries.html">Our Ministries</a></div>
 </section>
 
-<!-- QUICK LINKS: each card opens its own page -->
-<section class="band b-sun">
-  <h2 class="center">Take your next step</h2>
+<!-- NEXT STEPS: 3 solid tiles, each opens its own page -->
+<section class="band b-ivory">
+  <h2>Take your next step</h2>
   <div class="grid">
-    <article class="card"><h3>Become a Minister</h3><p>Start your journey into ministry.</p><a href="minister.html">Open page</a></article>
-    <article class="card"><h3>Plant a Church</h3><p>Start something new in your city.</p><a href="plant-church.html">Open page</a></article>
-    <article class="card"><h3>Find a Church</h3><p>Find a service near you.</p><a href="find-church.html">Open page</a></article>
+    <a class="tile s" href="minister.html"><h3>Become a Minister</h3><p>Start your journey into ministry.</p><span>Open page</span></a>
+    <a class="tile b" href="plant-church.html"><h3>Plant a Church</h3><p>Start something new in your city.</p><span>Open page</span></a>
+    <a class="tile p" href="find-church.html"><h3>Find a Church</h3><p>Find a service near you.</p><span>Open page</span></a>
   </div>
 </section>
 
-<!-- EVENTS PREVIEW: copy an <li> to add one. Full list is on events.html -->
+<!-- EVENTS PREVIEW: copy a <div class="evt"> to add one -->
 <section class="band b-white">
   <h2>Upcoming <em>events</em></h2>
-  <ul class="events">
-    <li><strong>Oct 9, 2026</strong> Event name, City</li>
-    <li><strong>Oct 22, 2026</strong> Event name, City</li>
-    <li><strong>Oct 23, 2026</strong> Event name, City</li>
-  </ul>
-  <a class="btn btn-teal" href="events.html">Find More Events</a>
+  <div class="evt"><div class="date"><b>9</b>Oct</div><div><h3>Event name</h3><p>City, time</p></div></div>
+  <div class="evt"><div class="date"><b>22</b>Oct</div><div><h3>Event name</h3><p>City, time</p></div></div>
+  <div class="evt"><div class="date"><b>23</b>Oct</div><div><h3>Event name</h3><p>City, time</p></div></div>
+  <p><a class="btn btn-dark" href="events.html">Find More Events</a></p>
 </section>
 
 <!-- CALLING BANNER -->
@@ -56,11 +55,11 @@
   <h2>Follow your calling</h2>
   <p>EDIT: Invite people to become a minister or plant a church.</p>
   <a class="btn" href="minister.html">Become a Minister</a>
-  <a class="btn btn-light" href="plant-church.html">Plant a Church</a>
+  <a class="btn btn-outline" href="plant-church.html">Plant a Church</a>
 </section>
 
 <!-- MINISTRIES -->
-<section class="band b-white">
+<section class="band b-ivory">
   <h2>Beyond the <em>walls</em> of the church</h2>
   <div class="grid">
     <article class="card"><h3>Missions</h3><p>EDIT: describe this ministry.</p><a href="ministries.html#missions">Learn more</a></article>
@@ -69,11 +68,11 @@
   </div>
 </section>
 
-<!-- CONTACT STRIP -->
-<section class="band b-coral center">
+<!-- CONTACT STRIP (gold band, dark button) -->
+<section class="band b-gold center">
   <h2>Reach out to us</h2>
   <p>EDIT: address and phone</p>
-  <a class="btn btn-light" href="contact.html">Contact Us</a>
+  <a class="btn btn-dark" href="contact.html">Contact Us</a>
 </section>
 </main>
 <div id="site-footer"></div>
