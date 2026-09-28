@@ -1,0 +1,65 @@
+/* style.css = how the page LOOKS. Edit colors, fonts, spacing here. */
+
+/* ---------- 1. THEME SETTINGS: change these first ---------- */
+:root {
+  --color-main: #1d3557;      /* dark blue: header, footer, buttons */
+  --color-accent: #e9b44c;    /* gold: button highlight and links */
+  --color-bg: #ffffff;        /* page background */
+  --color-bg-alt: #eef2f7;    /* background of alternating sections */
+  --color-text: #1b1b1b;      /* body text */
+  --font: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; /* font family */
+  --max-width: 1000px;        /* how wide content can get on big screens */
+}
+
+/* ---------- 2. BASICS ---------- */
+* { box-sizing: border-box; }               /* makes width/padding math simpler */
+html { scroll-behavior: smooth; }           /* smooth scrolling when clicking menu links */
+body { margin: 0; font-family: var(--font); color: var(--color-text); background: var(--color-bg); line-height: 1.6; }
+a { color: var(--color-main); }
+h1, h2, h3 { line-height: 1.2; }
+
+/* ---------- 3. HEADER + MENU ---------- */
+.site-header {
+  position: sticky; top: 0;                 /* keeps header visible while scrolling */
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 1.5rem; background: var(--color-main);
+}
+.logo { color: #fff; font-weight: 700; font-size: 1.2rem; text-decoration: none; }
+.site-nav a { color: #fff; margin-left: 1.5rem; text-decoration: none; }
+.site-nav a:hover { color: var(--color-accent); }
+.menu-toggle { display: none; }             /* hidden on desktop */
+
+/* ---------- 4. HERO ---------- */
+.hero { padding: 6rem 1.5rem; text-align: center; background: var(--color-main); color: #fff; }
+.hero h1 { font-size: clamp(2rem, 6vw, 3.5rem); margin: 0 0 1rem; }  /* clamp = scales with screen size */
+.hero p { max-width: 600px; margin: 0 auto 2rem; font-size: 1.15rem; }
+
+/* ---------- 5. BUTTONS ---------- */
+.btn { display: inline-block; padding: .8rem 1.6rem; background: var(--color-accent); color: var(--color-main);
+       font-weight: 700; border-radius: 6px; text-decoration: none; margin: .3rem; }
+.btn-outline { background: transparent; color: #fff; border: 2px solid #fff; }
+
+/* ---------- 6. SECTIONS ---------- */
+.section { padding: 4rem 1.5rem; max-width: none; }
+.section > * { max-width: var(--max-width); margin-left: auto; margin-right: auto; }
+.section.alt { background: var(--color-bg-alt); }   /* the tinted sections */
+.narrow { max-width: 650px; }
+
+/* Cards: auto-fit makes 3 columns on desktop, 1 on phones */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+.card { background: #fff; padding: 1.5rem; border-radius: 8px; border: 1px solid #d5dbe3; }
+
+.events { list-style: none; padding: 0; }
+.events li { padding: .8rem 0; border-bottom: 1px solid #d5dbe3; }
+.events strong { display: inline-block; min-width: 130px; }
+
+/* ---------- 7. FOOTER ---------- */
+.site-footer { background: var(--color-main); color: #fff; text-align: center; padding: 1.5rem; }
+
+/* ---------- 8. MOBILE (screens narrower than 700px) ---------- */
+@media (max-width: 700px) {
+  .menu-toggle { display: block; background: none; color: #fff; border: 1px solid #fff; padding: .4rem .8rem; border-radius: 4px; }
+  .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-main); flex-direction: column; }
+  .site-nav.open { display: flex; }          /* script.js adds "open" when the button is tapped */
+  .site-nav a { margin: 0; padding: 1rem 1.5rem; }
+}

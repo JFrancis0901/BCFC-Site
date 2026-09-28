@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!-- index.html = the STRUCTURE and TEXT of your page. Edit words here. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- EDIT: the title shown on the browser tab and in Google results -->
+  <title>Your Organization Name</title>
+  <!-- EDIT: short description shown in Google results -->
+  <meta name="description" content="A short sentence about your organization.">
+  <!-- Links the design file (colors, fonts, layout) -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Runs the mobile menu. "defer" = load after the page is ready -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- ========== HEADER / NAVIGATION ========== -->
+  <header class="site-header">
+    <!-- EDIT: your name or logo. To use an image: <img src="logo.png" alt="Logo"> -->
+    <a href="#top" class="logo">Your Name</a>
+
+    <!-- Hamburger button, only visible on phones (see script.js) -->
+    <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">Menu</button>
+
+    <!-- EDIT: each <a> is a menu item. href="#id" jumps to the section with that id below -->
+    <nav class="site-nav" id="nav">
+      <a href="#about">About</a>
+      <a href="#involved">Get involved</a>
+      <a href="#events">Events</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- ========== HERO (the first big section people see) ========== -->
+    <section class="hero">
+      <h1>Welcome to Your Organization</h1>
+      <p>One or two sentences that explain who you are and who you help.</p>
+      <!-- EDIT: button text and where it goes -->
+      <div class="hero-buttons">
+        <a class="btn" href="#involved">Get involved</a>
+        <a class="btn btn-outline" href="#contact">Contact us</a>
+      </div>
+    </section>
+
+    <!-- ========== ABOUT ========== -->
+    <section id="about" class="section">
+      <h2>About us</h2>
+      <p class="narrow">Write your mission or story here. Keep it short and clear.</p>
+    </section>
+
+    <!-- ========== GET INVOLVED (cards) ========== -->
+    <!-- To add a card: copy one <article class="card">...</article> block and paste below it -->
+    <section id="involved" class="section alt">
+      <h2>Get involved</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Join us</h3>
+          <p>Describe the first way people can take part.</p>
+          <a href="#contact">Learn more</a>
+        </article>
+        <article class="card">
+          <h3>Volunteer</h3>
+          <p>Describe the second way people can take part.</p>
+          <a href="#contact">Learn more</a>
+        </article>
+        <article class="card">
+          <h3>Support</h3>
+          <p>Describe the third way people can take part.</p>
+          <a href="#contact">Learn more</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== EVENTS ========== -->
+    <!-- To add an event: copy one <li> and paste it below -->
+    <section id="events" class="section">
+      <h2>Upcoming events</h2>
+      <ul class="events">
+        <li><strong>Oct 9, 2026</strong> Event name, City</li>
+        <li><strong>Oct 22, 2026</strong> Event name, City</li>
+        <li><strong>Oct 23, 2026</strong> Event name, City</li>
+      </ul>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact" class="section alt">
+      <h2>Contact</h2>
+      <!-- EDIT: your real email and phone -->
+      <p>Email: <a href="mailto:hello@example.com">hello@example.com</a></p>
+      <p>Phone: 000-000-0000</p>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <!-- EDIT: year and name -->
+    <p>&copy; 2026 Your Organization Name</p>
+  </footer>
+
+</body>
+</html>
