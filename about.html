@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <!-- about.html = one page. Menu + footer come from script.js. Edit the text inside <main>. -->
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>About Us | BCFC</title><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
-<body>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>About Us | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script></head>
+<!-- t-purple / t-blue / t-scarlet / t-navy = this page main color -->
+<body class="t-blue">
 <div id="site-header"></div>
 <main>
-<section class="page-hero" data-random-bg><p class="script">Who we are</p><h1>About Us</h1></section>
-<!-- Each section has an id so menu links like about.html#history jump here -->
-<section id="mission" class="band b-white split"><div><h2>Our <em>mission</em></h2><p>EDIT: your mission.</p></div><div class="photo"><img data-random alt=""></div></section>
-<section id="history" class="band b-sun"><h2>Our history</h2><p>EDIT: your story.</p></section>
-<section id="beliefs" class="band b-teal"><h2>What we <em>believe</em></h2><p>EDIT: your beliefs.</p></section>
+<section class="hero-left" data-random-bg><p class="script">Who we are</p><h1>About <em>Us</em></h1></section>
+<section id="mission" class="band b-white split"><div><h2>Our <em>mission</em></h2><p>EDIT: your mission.</p></div><div class="photo frame"><img data-random alt=""></div></section>
+<!-- HISTORY as a timeline. Copy an <h3>+<p> pair to add a year -->
+<section id="history" class="band b-ivory"><h2>Our history</h2>
+  <div class="tl"><h3>Year</h3><p>EDIT: what happened.</p><h3>Year</h3><p>EDIT: what happened.</p><h3>Year</h3><p>EDIT: what happened.</p></div></section>
+<section id="beliefs" class="band b-navy"><h2>What we <em>believe</em></h2>
+  <ul class="checks"><li>EDIT: belief one</li><li>EDIT: belief two</li><li>EDIT: belief three</li></ul></section>
 <section id="leadership" class="band b-white"><h2>Our leadership</h2>
-  <div class="grid"><article class="card"><h3>Leader name</h3><p>Title</p></article><article class="card"><h3>Leader name</h3><p>Title</p></article><article class="card"><h3>Leader name</h3><p>Title</p></article></div></section>
+  <div class="people"><div><div class="avatar">AB</div><h3>Leader name</h3><p>Title</p></div><div><div class="avatar">CD</div><h3>Leader name</h3><p>Title</p></div><div><div class="avatar">EF</div><h3>Leader name</h3><p>Title</p></div></div></section>
 </main>
 <div id="site-footer"></div>
 </body></html>
