@@ -1,181 +1,80 @@
 <!DOCTYPE html>
-<!-- index.html = STRUCTURE and TEXT of the page. Edit words here. -->
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- EDIT: browser tab title and Google description -->
-  <title>BCFC</title>
-  <meta name="description" content="Welcome to BCFC. Find a church, get involved, and get support.">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
+<!-- index.html = one page. Menu + footer come from script.js. Edit the text inside <main>. -->
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home | BCFC</title><link rel="stylesheet" href="style.css"><script src="script.js" defer></script></head>
 <body>
+<div id="site-header"></div>
+<main>
+<!-- HERO: random photo background (data-random-bg). EDIT the words and button links -->
+<section class="hero" data-random-bg>
+  <p class="script">You belong here</p>
+  <h1>Welcome to <em>BCFC</em></h1>
+  <a class="btn" href="find-church.html">Find a Church</a>
+  <a class="btn btn-light" href="contact.html">Contact Us</a>
+</section>
 
-<!-- ===== TOP BAR: small quick links above the menu. EDIT the links/text ===== -->
-<div class="topbar">
-  <a href="#find">Find a church</a>
-  <a href="#contact">Contact</a>
-</div>
+<!-- NEW HERE? photo is random (data-random). Button opens another page -->
+<section class="band b-white split">
+  <div><h2>New here? We're <em>ready</em> to help!</h2>
+    <p>EDIT: Introduce your church family and how newcomers can find their place.</p>
+    <a class="btn btn-teal" href="get-involved.html">Get Involved</a></div>
+  <div class="photo"><img data-random alt="Church family"></div>
+</section>
 
-<!-- ===== HEADER + MENU ===== -->
-<!-- Each menu group = one <div class="dropdown">. The links inside show on hover (desktop) -->
-<header class="site-header">
-  <a href="#top" class="logo">BCFC</a> <!-- EDIT: name or <img src="logo.png" alt="BCFC"> -->
-  <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">Menu</button>
+<!-- LEADERS -->
+<section class="band b-teal split flip">
+  <div class="photo"><img data-random alt="Church leaders"></div>
+  <div><h2>Are you a <em>leader?</em> Find what you need.</h2>
+    <p>EDIT: Explain the support available to pastors and church leaders.</p>
+    <a class="btn" href="support.html">Get Leader Support</a>
+    <a class="btn btn-light" href="ministries.html">Our Ministries</a></div>
+</section>
 
-  <nav class="site-nav" id="nav">
-    <div class="dropdown">
-      <a href="#about">About Us</a>
-      <div class="dropdown-menu">
-        <a href="#about">Our mission</a>
-        <a href="#about">Our history</a>
-        <a href="#about">What we believe</a>
-        <a href="#about">Our leadership</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#involved">Get Involved</a>
-      <div class="dropdown-menu">
-        <a href="#involved">Find your place</a>
-        <a href="#calling">Become a minister</a>
-        <a href="#calling">Plant a church</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#leaders">Support</a>
-      <div class="dropdown-menu">
-        <a href="#leaders">Leader support</a>
-        <a href="#leaders">Pastoral care</a>
-        <a href="#leaders">Leader development</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#ministries">Mission + Ministry</a>
-      <div class="dropdown-menu">
-        <a href="#ministries">Missions</a>
-        <a href="#ministries">Disaster relief</a>
-        <a href="#ministries">Chaplains</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <a href="#events">Events + Training</a>
-      <div class="dropdown-menu">
-        <a href="#events">Upcoming events</a>
-        <a href="#events">Training</a>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<main id="top">
-
-  <!-- ===== HERO: big welcome + 2 buttons ===== -->
-  <section class="hero">
-    <h1>Welcome to BCFC</h1>
-    <div class="hero-buttons">
-      <a class="btn" href="#find">Find a Church</a>
-      <a class="btn btn-outline" href="#contact">Contact Us</a>
-    </div>
-  </section>
-
-  <!-- ===== NEW HERE? (text left, image right) ===== -->
-  <section id="about" class="section split">
-    <div>
-      <h2>New here? We're ready to help.</h2>
-      <p>EDIT: Introduce your church family and explain how a newcomer can find their place.</p>
-      <a class="btn btn-dark" href="#involved">Get Involved</a>
-    </div>
-    <div class="img-box">Photo here</div>
-  </section>
-
-  <!-- ===== LEADERS ===== -->
-  <section id="leaders" class="section split reverse alt">
-    <div class="img-box">Photo here</div>
-    <div>
-      <h2>Are you a leader? Find what you need.</h2>
-      <p>EDIT: Explain the support available to pastors and church leaders.</p>
-      <a class="btn btn-dark" href="#leaders">Get Leader Support</a>
-      <a class="btn btn-outline-dark" href="#ministries">Our Ministries</a>
-    </div>
-  </section>
-
-  <!-- ===== GET INVOLVED: 3 cards. Copy an <article> block to add more ===== -->
-  <section id="involved" class="section">
-    <h2>Get involved</h2>
-    <div class="grid">
-      <article class="card"><h3>Join a church</h3><p>EDIT: describe this option.</p><a href="#find">Learn more</a></article>
-      <article class="card"><h3>Serve</h3><p>EDIT: describe this option.</p><a href="#contact">Learn more</a></article>
-      <article class="card"><h3>Give</h3><p>EDIT: describe this option.</p><a href="#contact">Learn more</a></article>
-    </div>
-  </section>
-
-  <!-- ===== FIND A CHURCH ===== -->
-  <section id="find" class="section center alt">
-    <h2>Find your church home</h2>
-    <p>EDIT: Invite visitors to find a service near them.</p>
-    <a class="btn btn-dark" href="#contact">Find a Church</a>
-  </section>
-
-  <!-- ===== EVENTS: copy an <li> to add an event ===== -->
-  <section id="events" class="section">
-    <h2>Upcoming events</h2>
-    <ul class="events">
-      <li><strong>Oct 9, 2026</strong> Event name, City <a href="#">Learn more</a></li>
-      <li><strong>Oct 22, 2026</strong> Event name, City <a href="#">Learn more</a></li>
-      <li><strong>Oct 23, 2026</strong> Event name, City <a href="#">Learn more</a></li>
-    </ul>
-    <a class="btn btn-dark" href="#events">Find More Events</a>
-  </section>
-
-  <!-- ===== FOLLOW YOUR CALLING (dark banner) ===== -->
-  <section id="calling" class="section banner">
-    <h2>Follow your calling</h2>
-    <p>EDIT: Invite people to become a minister or plant a church.</p>
-    <a class="btn" href="#calling">Become a Minister</a>
-    <a class="btn btn-outline" href="#calling">Plant a Church</a>
-  </section>
-
-  <!-- ===== MINISTRIES: 3 columns ===== -->
-  <section id="ministries" class="section">
-    <h2>Beyond the walls of the church</h2>
-    <div class="grid">
-      <article class="card"><h3>Missions</h3><p>EDIT: describe this ministry.</p><a href="#">Learn more</a></article>
-      <article class="card"><h3>Disaster Relief</h3><p>EDIT: describe this ministry.</p><a href="#">Learn more</a></article>
-      <article class="card"><h3>Chaplains</h3><p>EDIT: describe this ministry.</p><a href="#">Learn more</a></article>
-    </div>
-  </section>
-
-  <!-- ===== LATEST NEWS ===== -->
-  <section class="section alt">
-    <h2>The latest news</h2>
-    <div class="grid">
-      <article class="card"><h3>News title one</h3><a href="#">Read more</a></article>
-      <article class="card"><h3>News title two</h3><a href="#">Read more</a></article>
-      <article class="card"><h3>News title three</h3><a href="#">Read more</a></article>
-    </div>
-  </section>
-
-  <!-- ===== CONTACT ===== -->
-  <section id="contact" class="section">
-    <h2>Reach out to us</h2>
-    <!-- EDIT: real address, phone, email -->
-    <p>Address: Your street, City, Country</p>
-    <p>Phone: 000-000-0000</p>
-    <p>Email: <a href="mailto:JFrancis0901@gmail.com">JFrancis0901@gmail.com</a></p>
-  </section>
-</main>
-
-<!-- ===== FOOTER: 4 link columns. Edit the lists ===== -->
-<footer class="site-footer">
-  <div class="footer-cols">
-    <div><h4>About Us</h4><a href="#about">Mission</a><a href="#about">Beliefs</a><a href="#about">Leadership</a></div>
-    <div><h4>Get Involved</h4><a href="#involved">Find your place</a><a href="#calling">Become a minister</a><a href="#calling">Plant a church</a></div>
-    <div><h4>Support</h4><a href="#leaders">Leader support</a><a href="#leaders">Pastoral care</a></div>
-    <div><h4>Events</h4><a href="#events">Upcoming events</a><a href="#events">Training</a></div>
+<!-- QUICK LINKS: each card opens its own page -->
+<section class="band b-sun">
+  <h2 class="center">Take your next step</h2>
+  <div class="grid">
+    <article class="card"><h3>Become a Minister</h3><p>Start your journey into ministry.</p><a href="minister.html">Open page</a></article>
+    <article class="card"><h3>Plant a Church</h3><p>Start something new in your city.</p><a href="plant-church.html">Open page</a></article>
+    <article class="card"><h3>Find a Church</h3><p>Find a service near you.</p><a href="find-church.html">Open page</a></article>
   </div>
-  <p class="copyright">&copy; 2026 BCFC</p> <!-- EDIT: year and name -->
-</footer>
+</section>
 
-</body>
-</html>
+<!-- EVENTS PREVIEW: copy an <li> to add one. Full list is on events.html -->
+<section class="band b-white">
+  <h2>Upcoming <em>events</em></h2>
+  <ul class="events">
+    <li><strong>Oct 9, 2026</strong> Event name, City</li>
+    <li><strong>Oct 22, 2026</strong> Event name, City</li>
+    <li><strong>Oct 23, 2026</strong> Event name, City</li>
+  </ul>
+  <a class="btn btn-teal" href="events.html">Find More Events</a>
+</section>
+
+<!-- CALLING BANNER -->
+<section class="band b-purple center">
+  <p class="script">Called to more?</p>
+  <h2>Follow your calling</h2>
+  <p>EDIT: Invite people to become a minister or plant a church.</p>
+  <a class="btn" href="minister.html">Become a Minister</a>
+  <a class="btn btn-light" href="plant-church.html">Plant a Church</a>
+</section>
+
+<!-- MINISTRIES -->
+<section class="band b-white">
+  <h2>Beyond the <em>walls</em> of the church</h2>
+  <div class="grid">
+    <article class="card"><h3>Missions</h3><p>EDIT: describe this ministry.</p><a href="ministries.html#missions">Learn more</a></article>
+    <article class="card"><h3>Disaster Relief</h3><p>EDIT: describe this ministry.</p><a href="ministries.html#relief">Learn more</a></article>
+    <article class="card"><h3>Chaplains</h3><p>EDIT: describe this ministry.</p><a href="ministries.html#chaplains">Learn more</a></article>
+  </div>
+</section>
+
+<!-- CONTACT STRIP -->
+<section class="band b-coral center">
+  <h2>Reach out to us</h2>
+  <p>EDIT: address and phone</p>
+  <a class="btn btn-light" href="contact.html">Contact Us</a>
+</section>
+</main>
+<div id="site-footer"></div>
+</body></html>
