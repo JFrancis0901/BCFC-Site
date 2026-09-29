@@ -3,344 +3,597 @@
 
 <head>
 
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1">
 
-  <title>Chat | BCFC Workers</title>
+<title>Chat | BCFC Workers</title>
 
-  <link rel="stylesheet" href="portal.css">
-  <link rel="stylesheet" href="board.css">
+<link
+  rel="stylesheet"
+  href="portal.css">
 
-  <style>
+<link
+  rel="stylesheet"
+  href="board.css">
 
-    .chat-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
 
-    .chat-tabs {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
+<style>
 
-    .chat-tabs button {
-      border: 1px solid #ddd;
-      background: white;
-      padding: 8px 13px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
+/* ==========================================================
+   CHAT TABS
+   ========================================================== */
 
-    .chat-tabs button.on {
-      background: #101a3d;
-      color: white;
-    }
+.chat-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  margin-bottom:1rem;
+}
 
-    .clear-chat-btn {
-      background: #b3122a;
-      color: white;
-      border: 0;
-      border-radius: 7px;
-      padding: 9px 13px;
-      cursor: pointer;
-      font-weight: 600;
-    }
 
-    .clear-chat-btn:hover {
-      opacity: .9;
-    }
+.chat-tabs button{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  padding:.45rem .7rem;
+  border-radius:6px;
+  cursor:pointer;
+  font:600 .8rem var(--body);
+}
 
-    .chat-box {
-      min-height: 420px;
-      max-height: 560px;
-      overflow-y: auto;
-      padding: 15px;
-      background: white;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-    }
 
-    .msg {
-      position: relative;
-      margin-bottom: 12px;
-      padding: 10px 12px;
-      background: #f4f4f7;
-      border-radius: 10px;
-      max-width: 85%;
-    }
+.chat-tabs button:hover{
+  border-color:var(--gold);
+}
 
-    .msg.mine {
-      margin-left: auto;
-      background: #e8edf9;
-    }
 
-    .msg-name {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      color: #555;
-      margin-bottom: 4px;
-    }
+.chat-tabs button.on{
+  background:var(--navy);
+  color:#fff;
+  border-color:var(--navy);
+}
 
-    .message-text {
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 14px;
-    }
 
-    .mention {
-      color: #1c3f94;
-      font-weight: 700;
-    }
+/* ==========================================================
+   ADMIN CHAT CONTROLS
+   ========================================================== */
 
-    .edited-label {
-      font-size: 10px;
-      color: #888;
-      margin-left: 5px;
-    }
+.chat-admin-tools{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:1rem;
+}
 
-    .message-actions {
-      display: flex;
-      gap: 5px;
-      margin-top: 7px;
-    }
 
-    .message-actions button {
-      border: 0;
-      background: transparent;
-      color: #555;
-      font-size: 11px;
-      cursor: pointer;
-      padding: 3px 5px;
-    }
+.btn-clear-chat{
+  border:0;
+  border-radius:6px;
+  padding:.6rem .9rem;
+  background:var(--scarlet);
+  color:#fff;
+  font:600 .85rem var(--body);
+  cursor:pointer;
+}
 
-    .message-actions button:hover {
-      color: #101a3d;
-      text-decoration: underline;
-    }
 
-    .chat-form {
-      position: relative;
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
+.btn-clear-chat:hover{
+  background:#8f0e21;
+}
 
-    .chat-form input {
-      flex: 1;
-    }
 
-    .chat-form button {
-      border: 0;
-      background: #101a3d;
-      color: white;
-      border-radius: 7px;
-      padding: 0 18px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+.btn-clear-chat:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
 
-    .mention-box {
-      position: absolute;
-      left: 0;
-      right: 75px;
-      bottom: 52px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.15);
-      max-height: 180px;
-      overflow-y: auto;
-      z-index: 20;
-    }
 
-    .mention-item {
-      padding: 9px 12px;
-      cursor: pointer;
-      border-bottom: 1px solid #eee;
-    }
+/* ==========================================================
+   CHAT BOX
+   ========================================================== */
 
-    .mention-item:hover {
-      background: #f4f5f8;
-    }
+.chat-box{
+  min-height:420px;
+  max-height:65vh;
+  overflow-y:auto;
 
-    .mention-item strong {
-      display: block;
-      font-size: 13px;
-    }
+  display:flex;
+  flex-direction:column;
+  gap:.7rem;
 
-    .mention-item small {
-      color: #888;
-    }
+  padding:1rem;
 
-    .edit-area {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:8px;
+}
 
-    .edit-area input {
-      flex: 1;
-    }
 
-    .edit-area button {
-      border: 0;
-      border-radius: 6px;
-      padding: 7px 10px;
-      cursor: pointer;
-    }
+/* ==========================================================
+   MESSAGE
+   ========================================================== */
 
-    .save-edit {
-      background: #101a3d;
-      color: white;
-    }
+.msg{
+  align-self:flex-start;
+  max-width:80%;
 
-    .cancel-edit {
-      background: #eee;
-    }
+  background:#f1eff6;
 
-  </style>
+  border-radius:8px;
+
+  padding:.65rem .8rem;
+
+  position:relative;
+}
+
+
+.msg.mine{
+  align-self:flex-end;
+  background:#e8edf9;
+}
+
+
+.msg small{
+  display:block;
+
+  font-size:.72rem;
+  font-weight:600;
+
+  color:#6c6880;
+
+  margin-bottom:.2rem;
+}
+
+
+.msg span{
+  display:block;
+
+  word-break:break-word;
+
+  white-space:pre-wrap;
+}
+
+
+/* ==========================================================
+   MESSAGE ACTIONS
+   ========================================================== */
+
+.msg-actions{
+  display:flex;
+
+  gap:.4rem;
+
+  margin-top:.45rem;
+}
+
+
+.msg-actions button{
+  border:0;
+  background:none;
+
+  padding:.15rem .3rem;
+
+  cursor:pointer;
+
+  font:600 .72rem var(--body);
+
+  color:#6c6880;
+}
+
+
+.msg-actions button:hover{
+  color:var(--navy);
+}
+
+
+.msg-actions .msg-delete:hover{
+  color:var(--scarlet);
+}
+
+
+.msg-actions .msg-edit:hover{
+  color:var(--blue);
+}
+
+
+/* ==========================================================
+   EDIT MESSAGE
+   ========================================================== */
+
+.msg-edit-box{
+  width:100%;
+
+  margin-top:.4rem;
+
+  padding:.5rem .6rem;
+
+  border:2px solid var(--gold);
+
+  border-radius:6px;
+
+  font:inherit;
+
+  resize:vertical;
+
+  min-height:70px;
+}
+
+
+.msg-edit-actions{
+  display:flex;
+
+  gap:.4rem;
+
+  margin-top:.4rem;
+}
+
+
+.msg-edit-actions button{
+  border:0;
+
+  border-radius:5px;
+
+  padding:.35rem .6rem;
+
+  cursor:pointer;
+
+  font:600 .72rem var(--body);
+}
+
+
+.msg-save{
+  background:var(--navy);
+  color:#fff;
+}
+
+
+.msg-cancel{
+  background:#fff;
+  border:1px solid var(--line)!important;
+  color:var(--ink);
+}
+
+
+/* ==========================================================
+   SEND MESSAGE
+   ========================================================== */
+
+.chat-form{
+  display:flex;
+
+  gap:.6rem;
+
+  margin-top:1rem;
+}
+
+
+.chat-form input{
+  flex:1;
+
+  min-width:0;
+
+  padding:.75rem .9rem;
+
+  border:2px solid var(--line);
+
+  border-radius:6px;
+
+  font:inherit;
+}
+
+
+.chat-form input:focus{
+  outline:none;
+
+  border-color:var(--gold);
+}
+
+
+.chat-form button{
+  padding:.75rem 1.2rem;
+
+  border:0;
+
+  border-radius:6px;
+
+  background:var(--navy);
+
+  color:#fff;
+
+  font:600 .9rem var(--body);
+
+  cursor:pointer;
+}
+
+
+.chat-form button:hover{
+  background:var(--purple);
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width:600px){
+
+  .chat-form{
+    flex-direction:column;
+  }
+
+  .chat-form button{
+    width:100%;
+  }
+
+  .msg{
+    max-width:90%;
+  }
+
+}
+
+</style>
 
 </head>
 
+
 <body>
+
 
 <header
   class="portal-header"
-  id="portal-header"
-></header>
+  id="portal-header">
+</header>
 
 
 <main class="board-page">
 
-  <div class="chat-toolbar">
 
-    <div>
+  <h1 id="page-title">
+    Chat
+  </h1>
 
-      <h1 id="page-title">
-        Chat
-      </h1>
 
-      <p
-        id="page-note"
-        class="page-note"
-      >
-        Talk with other BCFC workers.
-      </p>
+  <p
+    id="page-note"
+    class="page-note">
+    Chat with the workers who have access to each channel.
+  </p>
 
-    </div>
+
+  <!-- ======================================================
+       ADMIN CLEAR CHAT
+       ====================================================== -->
+
+  <div
+    id="chat-admin-tools"
+    class="chat-admin-tools"
+    hidden>
 
     <button
-      id="clear-chat"
-      class="clear-chat-btn"
       type="button"
-      hidden
-    >
-      🗑 Clear Current Chat
+      id="clear-chat-btn"
+      class="btn-clear-chat">
+
+      Clear Entire Chat
+
     </button>
 
   </div>
 
 
+  <!-- ======================================================
+       CHANNEL TABS
+       ====================================================== -->
+
   <div
     id="chat-tabs"
-    class="chat-tabs"
-  ></div>
+    class="chat-tabs">
+  </div>
 
+
+  <!-- ======================================================
+       CHAT
+       ====================================================== -->
 
   <div
     id="chat-box"
-    class="chat-box"
-  ></div>
+    class="chat-box">
+  </div>
 
+
+  <!-- ======================================================
+       SEND
+       ====================================================== -->
 
   <form
     id="chat-form"
-    class="chat-form"
-  >
-
-    <div
-      id="mention-box"
-      class="mention-box"
-      hidden
-    ></div>
+    class="chat-form">
 
     <input
       id="chat-input"
       maxlength="500"
-      placeholder="Type a message... Use @ to mention someone"
-      autocomplete="off"
-    >
+      placeholder="Type a message"
+      autocomplete="off">
 
-    <button type="submit">
+    <button
+      type="submit">
       Send
     </button>
 
   </form>
+
 
 </main>
 
 
 <script type="module">
 
+/* ==========================================================
+   IMPORT SHARED PORTAL
+   ========================================================== */
+
 import "./portal.js";
 
+
+/* ==========================================================
+   FIRESTORE
+   ========================================================== */
+
 import {
+
   collection,
+
   addDoc,
+
   updateDoc,
+
   deleteDoc,
-  onSnapshot,
-  query,
-  where,
-  serverTimestamp,
+
+  doc,
+
   getDocs,
+
+  onSnapshot,
+
+  query,
+
+  where,
+
+  serverTimestamp,
+
   writeBatch
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+} from
+  "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+
+/* ==========================================================
+   FIREBASE
+   ========================================================== */
 
 import {
   auth,
   db
 } from "./firebase-config.js";
 
-import {
-  esc
-} from "./board.js";
+
+/* ==========================================================
+   SAFE TEXT
+   ========================================================== */
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(
+      /[&<>\"']/g,
+      char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        "\"":"&quot;",
+        "'":"&#39;"
+      }[char])
+    );
+
+}
 
 
 /* ==========================================================
    CHANNELS
    ========================================================== */
 
-const CHANNELS = {
+const CH = {
 
-  general: "General",
+  general:
+    "General",
 
-  leads: "Department Leads",
+  leads:
+    "Department Leads",
 
-  preaching: "Preaching Team",
+  preaching:
+    "Preaching Team",
 
-  childrens: "Children's Church",
+  childrens:
+    "Children's Church",
 
-  ufy: "UFY",
+  ufy:
+    "UFY",
 
-  ufw: "UFW",
+  ufw:
+    "UFW",
 
-  ufm: "UFM",
+  ufm:
+    "UFM",
 
-  production: "Production",
+  production:
+    "Production",
 
-  creatives: "Creatives"
+  creatives:
+    "Creatives"
+
+};
+
+
+/* ==========================================================
+   CHANNEL ACCESS
+   ========================================================== */
+
+const allowed = role => {
+
+  if(role === "admin"){
+
+    return Object.keys(CH);
+
+  }
+
+
+  return Object.keys(CH).filter(
+    channel =>
+
+      channel === "general"
+
+      ||
+
+      channel ===
+        role?.replace(
+          "-lead",
+          ""
+        )
+
+      ||
+
+      (
+        channel === "leads"
+
+        &&
+
+        (
+          role?.endsWith(
+            "-lead"
+          )
+
+          ||
+
+          role === "pastor"
+        )
+      )
+
+      ||
+
+      (
+        channel === "preaching"
+
+        &&
+
+        [
+          "pastor",
+          "preaching"
+        ].includes(role)
+      )
+
+  );
 
 };
 
@@ -350,280 +603,71 @@ const CHANNELS = {
    ========================================================== */
 
 const tabs =
-  document.getElementById("chat-tabs");
+  document.getElementById(
+    "chat-tabs"
+  );
+
 
 const box =
-  document.getElementById("chat-box");
+  document.getElementById(
+    "chat-box"
+  );
+
 
 const form =
-  document.getElementById("chat-form");
+  document.getElementById(
+    "chat-form"
+  );
+
 
 const input =
-  document.getElementById("chat-input");
-
-const mentionBox =
-  document.getElementById("mention-box");
-
-const clearButton =
-  document.getElementById("clear-chat");
-
-
-/* ==========================================================
-   STATE
-   ========================================================== */
-
-let currentChannel = "general";
-
-let unsubscribe = null;
-
-let members = [];
-
-let editingMessageId = null;
-
-
-/* ==========================================================
-   CURRENT USER
-   ========================================================== */
-
-function currentUid() {
-  return auth.currentUser?.uid || "";
-}
-
-
-/* ==========================================================
-   ALLOWED CHANNELS
-   ========================================================== */
-
-function allowedChannels(role) {
-
-  if (!role) {
-    return ["general"];
-  }
-
-  if (role === "admin") {
-    return Object.keys(CHANNELS);
-  }
-
-  const result = ["general"];
-
-  const department =
-    role.replace("-lead", "");
-
-  if (CHANNELS[department]) {
-    result.push(department);
-  }
-
-  if (
-    role.endsWith("-lead") ||
-    role === "pastor"
-  ) {
-    result.push("leads");
-  }
-
-  if (
-    role === "pastor" ||
-    role === "preaching"
-  ) {
-    result.push("preaching");
-  }
-
-  return [...new Set(result)];
-}
-
-
-/* ==========================================================
-   LOAD MEMBERS
-   ========================================================== */
-
-async function loadMembers() {
-
-  try {
-
-    const snapshot =
-      await getDocs(
-        collection(db, "users")
-      );
-
-    members =
-      snapshot.docs.map(doc => ({
-        uid: doc.id,
-        ...doc.data()
-      }));
-
-  } catch (error) {
-
-    console.error(
-      "Could not load members:",
-      error
-    );
-
-    members = [];
-  }
-}
-
-
-/* ==========================================================
-   MENTION RENDERING
-   ========================================================== */
-
-function renderMessageText(text) {
-
-  const safe =
-    esc(text || "");
-
-  return safe.replace(
-    /@([A-Za-z0-9._-]+)/g,
-    '<span class="mention">@$1</span>'
+  document.getElementById(
+    "chat-input"
   );
-}
+
+
+const clearChatBtn =
+  document.getElementById(
+    "clear-chat-btn"
+  );
+
+
+const adminTools =
+  document.getElementById(
+    "chat-admin-tools"
+  );
+
+
+const me = () =>
+  auth.currentUser?.uid || "";
 
 
 /* ==========================================================
-   CHANNEL TABS
+   CURRENT CHANNEL
    ========================================================== */
 
-function renderTabs() {
-
-  const role =
-    window.currentRole || "guest";
-
-  const channels =
-    allowedChannels(role);
-
-  tabs.innerHTML =
-    channels.map(channel => {
-
-      return `
-        <button
-          type="button"
-          data-channel="${channel}"
-          class="${channel === currentChannel ? "on" : ""}"
-        >
-          ${esc(CHANNELS[channel])}
-        </button>
-      `;
-
-    }).join("");
+let currentChannel =
+  "general";
 
 
-  clearButton.hidden =
-    role !== "admin";
-}
+let unsubscribe =
+  null;
 
 
 /* ==========================================================
-   DISPLAY MESSAGES
+   UPDATE ADMIN CONTROLS
    ========================================================== */
 
-function displayMessages(snapshot) {
+function updateAdminControls(){
 
-  const messages =
-    snapshot.docs
-      .map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      .sort(
-        (a, b) =>
-          (a.createdAt?.seconds || 9999999999) -
-          (b.createdAt?.seconds || 9999999999)
-      );
+  const isAdmin =
+    window.currentRole ===
+    "admin";
 
 
-  if (!messages.length) {
+  adminTools.hidden =
+    !isAdmin;
 
-    box.innerHTML = `
-      <p class="page-note">
-        No messages yet. Say hello!
-      </p>
-    `;
-
-    return;
-  }
-
-
-  box.innerHTML =
-    messages.map(message => {
-
-      const mine =
-        message.uid === currentUid();
-
-      const admin =
-        window.currentRole === "admin";
-
-      const canEdit =
-        mine || admin;
-
-      const canDelete =
-        mine || admin;
-
-
-      return `
-        <div
-          class="msg ${mine ? "mine" : ""}"
-          data-message-id="${message.id}"
-        >
-
-          <span class="msg-name">
-            ${esc(message.name || "Worker")}
-          </span>
-
-          <div class="message-text">
-            ${renderMessageText(message.text)}
-            ${
-              message.edited
-                ? '<span class="edited-label">(edited)</span>'
-                : ""
-            }
-          </div>
-
-
-          ${
-            canEdit || canDelete
-              ? `
-                <div class="message-actions">
-
-                  ${
-                    canEdit
-                      ? `
-                        <button
-                          type="button"
-                          data-action="edit"
-                          data-id="${message.id}"
-                        >
-                          Edit
-                        </button>
-                      `
-                      : ""
-                  }
-
-                  ${
-                    canDelete
-                      ? `
-                        <button
-                          type="button"
-                          data-action="delete"
-                          data-id="${message.id}"
-                        >
-                          Delete
-                        </button>
-                      `
-                      : ""
-                  }
-
-                </div>
-              `
-              : ""
-          }
-
-        </div>
-      `;
-
-    }).join("");
-
-
-  box.scrollTop =
-    box.scrollHeight;
 }
 
 
@@ -631,32 +675,88 @@ function displayMessages(snapshot) {
    OPEN CHANNEL
    ========================================================== */
 
-function openChannel(channel) {
+function openChannel(channel){
 
-  const role =
-    window.currentRole || "guest";
-
-  if (
-    !allowedChannels(role).includes(channel)
-  ) {
-    channel = "general";
-  }
+  currentChannel =
+    channel;
 
 
-  currentChannel = channel;
+  if(unsubscribe){
 
-  renderTabs();
-
-
-  if (unsubscribe) {
     unsubscribe();
-    unsubscribe = null;
+
+    unsubscribe =
+      null;
+
   }
 
 
-  const channelQuery =
+  const channels =
+    allowed(
+      window.currentRole
+    );
+
+
+  if(
+    !channels.includes(
+      currentChannel
+    )
+  ){
+
+    currentChannel =
+      channels.includes(
+        "general"
+      )
+
+      ? "general"
+
+      : channels[0];
+
+  }
+
+
+  tabs.innerHTML =
+    channels
+      .map(
+        key => `
+
+          <button
+            type="button"
+            data-channel="${key}"
+            class="${key === currentChannel ? "on" : ""}">
+
+            ${esc(CH[key])}
+
+          </button>
+
+        `
+      )
+      .join("");
+
+
+  updateAdminControls();
+
+
+  if(!currentChannel){
+
+    box.innerHTML = `
+      <p class="page-note">
+        No chat channels are available.
+      </p>
+    `;
+
+    return;
+
+  }
+
+
+  const chatQuery =
     query(
-      collection(db, "messages"),
+      collection(
+        db,
+        "messages"
+      ),
+
       where(
         "channel",
         "==",
@@ -667,31 +767,214 @@ function openChannel(channel) {
 
   unsubscribe =
     onSnapshot(
-      channelQuery,
+
+      chatQuery,
+
 
       snapshot => {
 
-        displayMessages(snapshot);
+        const messages =
+          snapshot.docs
+
+            .map(
+              messageDoc => ({
+
+                id:
+                  messageDoc.id,
+
+                ...messageDoc.data()
+
+              })
+            )
+
+            .sort(
+              (a,b) =>
+                (
+                  a.createdAt?.seconds
+                  ??
+                  0
+                )
+
+                -
+
+                (
+                  b.createdAt?.seconds
+                  ??
+                  0
+                )
+            );
+
+
+        if(!messages.length){
+
+          box.innerHTML = `
+            <p class="page-note">
+              No messages yet. Say hello!
+            </p>
+          `;
+
+          return;
+
+        }
+
+
+        box.innerHTML =
+          messages
+            .map(
+              message => {
+
+                const isMine =
+                  message.uid ===
+                  me();
+
+
+                const isAdmin =
+                  window.currentRole ===
+                  "admin";
+
+
+                const canEdit =
+                  isMine;
+
+
+                const canDelete =
+                  isMine ||
+                  isAdmin;
+
+
+                return `
+
+                  <div
+                    class="msg${isMine ? " mine" : ""}"
+                    data-message-id="${esc(message.id)}">
+
+                    <small>
+                      ${esc(
+                        message.name ||
+                        "Worker"
+                      )}
+                    </small>
+
+
+                    <span
+                      class="msg-text">
+
+                      ${esc(
+                        message.text ||
+                        ""
+                      )}
+
+                    </span>
+
+
+                    ${
+                      (
+                        canEdit ||
+                        canDelete
+                      )
+
+                      ?
+
+                      `
+                        <div
+                          class="msg-actions">
+
+                          ${
+                            canEdit
+
+                            ?
+
+                            `
+                              <button
+                                type="button"
+                                class="msg-edit"
+                                data-edit="${esc(message.id)}">
+
+                                Edit
+
+                              </button>
+                            `
+
+                            :
+
+                            ""
+                          }
+
+
+                          ${
+                            canDelete
+
+                            ?
+
+                            `
+                              <button
+                                type="button"
+                                class="msg-delete"
+                                data-delete="${esc(message.id)}">
+
+                                Delete
+
+                              </button>
+                            `
+
+                            :
+
+                            ""
+                          }
+
+                        </div>
+                      `
+
+                      :
+
+                      ""
+
+                    }
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join("");
+
+
+        box.scrollTop =
+          box.scrollHeight;
 
       },
 
+
       error => {
 
-        console.error(error);
+        console.error(
+          "Chat load error:",
+          error
+        );
+
 
         box.innerHTML = `
           <p class="page-note">
-            Couldn't load this chat.
-            (${esc(error.code || error.message)})
+
+            Couldn't load this channel
+            (${esc(
+              error.code ||
+              error.message
+            )}).
+
           </p>
         `;
+
       }
+
     );
+
 }
 
 
 /* ==========================================================
-   CHANNEL CLICK
+   CHANNEL BUTTONS
    ========================================================== */
 
 tabs.addEventListener(
@@ -700,14 +983,488 @@ tabs.addEventListener(
 
     const button =
       event.target.closest(
-        "button[data-channel]"
+        "[data-channel]"
       );
 
-    if (!button) return;
+
+    if(!button){
+
+      return;
+
+    }
+
 
     openChannel(
       button.dataset.channel
     );
+
+  }
+);
+
+
+/* ==========================================================
+   DELETE ONE MESSAGE
+   ========================================================== */
+
+box.addEventListener(
+  "click",
+  async event => {
+
+    const button =
+      event.target.closest(
+        "[data-delete]"
+      );
+
+
+    if(!button){
+
+      return;
+
+    }
+
+
+    const messageId =
+      button.dataset.delete;
+
+
+    if(!messageId){
+
+      return;
+
+    }
+
+
+    if(
+      !confirm(
+        "Delete this message?"
+      )
+    ){
+
+      return;
+
+    }
+
+
+    button.disabled =
+      true;
+
+
+    button.textContent =
+      "Deleting...";
+
+
+    try{
+
+      await deleteDoc(
+        doc(
+          db,
+          "messages",
+          messageId
+        )
+      );
+
+
+    }catch(error){
+
+      console.error(
+        "Delete message error:",
+        error
+      );
+
+
+      alert(
+        `Couldn't delete message (${error.code || error.message}).`
+      );
+
+
+      button.disabled =
+        false;
+
+
+      button.textContent =
+        "Delete";
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   CLEAR ENTIRE CHAT
+   ========================================================== */
+
+clearChatBtn.addEventListener(
+  "click",
+  async () => {
+
+    if(
+      window.currentRole !==
+      "admin"
+    ){
+
+      alert(
+        "Only an admin can clear the chat."
+      );
+
+      return;
+
+    }
+
+
+    const confirmed =
+      confirm(
+        "CLEAR ENTIRE CHAT?\n\nThis will permanently delete ALL messages from ALL chat channels.\n\nThis cannot be undone."
+      );
+
+
+    if(!confirmed){
+
+      return;
+
+    }
+
+
+    clearChatBtn.disabled =
+      true;
+
+
+    clearChatBtn.textContent =
+      "Clearing Chat...";
+
+
+    try{
+
+      /*
+        Get every message from every channel.
+      */
+
+      const snapshot =
+        await getDocs(
+          collection(
+            db,
+            "messages"
+          )
+        );
+
+
+      if(snapshot.empty){
+
+        alert(
+          "The chat is already empty."
+        );
+
+        return;
+
+      }
+
+
+      /*
+        Firestore batches allow up to 500 writes.
+        So we delete in groups of 500.
+      */
+
+      const documents =
+        snapshot.docs;
+
+
+      const batchSize =
+        500;
+
+
+      for(
+        let start = 0;
+        start < documents.length;
+        start += batchSize
+      ){
+
+        const batch =
+          writeBatch(db);
+
+
+        const batchDocs =
+          documents.slice(
+            start,
+            start + batchSize
+          );
+
+
+        batchDocs.forEach(
+          messageDoc => {
+
+            batch.delete(
+              doc(
+                db,
+                "messages",
+                messageDoc.id
+              )
+            );
+
+          }
+        );
+
+
+        await batch.commit();
+
+      }
+
+
+      alert(
+        "The entire chat has been cleared."
+      );
+
+
+    }catch(error){
+
+      console.error(
+        "Clear chat error:",
+        error
+      );
+
+
+      alert(
+        `Couldn't clear the chat (${error.code || error.message}). Make sure you have published the new firestore.rules.`
+      );
+
+
+    }finally{
+
+      clearChatBtn.disabled =
+        false;
+
+
+      clearChatBtn.textContent =
+        "Clear Entire Chat";
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   EDIT MESSAGE
+   ========================================================== */
+
+box.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        "[data-edit]"
+      );
+
+
+    if(!button){
+
+      return;
+
+    }
+
+
+    const messageId =
+      button.dataset.edit;
+
+
+    const message =
+      button.closest(
+        ".msg"
+      );
+
+
+    if(!message){
+
+      return;
+
+    }
+
+
+    const textElement =
+      message.querySelector(
+        ".msg-text"
+      );
+
+
+    const oldText =
+      textElement?.textContent || "";
+
+
+    textElement.innerHTML = `
+
+      <textarea
+        class="msg-edit-box"
+        maxlength="500">${esc(oldText)}</textarea>
+
+      <div
+        class="msg-edit-actions">
+
+        <button
+          type="button"
+          class="msg-save"
+          data-save-edit="${esc(messageId)}">
+
+          Save
+
+        </button>
+
+
+        <button
+          type="button"
+          class="msg-cancel"
+          data-cancel-edit>
+
+          Cancel
+
+        </button>
+
+      </div>
+
+    `;
+
+
+    button.style.display =
+      "none";
+
+  }
+);
+
+
+/* ==========================================================
+   SAVE EDIT
+   ========================================================== */
+
+box.addEventListener(
+  "click",
+  async event => {
+
+    const button =
+      event.target.closest(
+        "[data-save-edit]"
+      );
+
+
+    if(!button){
+
+      return;
+
+    }
+
+
+    const messageId =
+      button.dataset.saveEdit;
+
+
+    const message =
+      button.closest(
+        ".msg"
+      );
+
+
+    const textarea =
+      message?.querySelector(
+        ".msg-edit-box"
+      );
+
+
+    if(
+      !message ||
+      !textarea
+    ){
+
+      return;
+
+    }
+
+
+    const text =
+      textarea.value.trim();
+
+
+    if(!text){
+
+      alert(
+        "Message cannot be empty."
+      );
+
+      return;
+
+    }
+
+
+    button.disabled =
+      true;
+
+
+    button.textContent =
+      "Saving...";
+
+
+    try{
+
+      await updateDoc(
+        doc(
+          db,
+          "messages",
+          messageId
+        ),
+        {
+          text
+        }
+      );
+
+
+    }catch(error){
+
+      console.error(
+        "Edit message error:",
+        error
+      );
+
+
+      alert(
+        `Couldn't edit message (${error.code || error.message}).`
+      );
+
+
+      button.disabled =
+        false;
+
+
+      button.textContent =
+        "Save";
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   CANCEL EDIT
+   ========================================================== */
+
+box.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        "[data-cancel-edit]"
+      );
+
+
+    if(!button){
+
+      return;
+
+    }
+
+
+    openChannel(
+      currentChannel
+    );
+
   }
 );
 
@@ -722,504 +1479,86 @@ form.addEventListener(
 
     event.preventDefault();
 
+
     const text =
       input.value.trim();
 
-    if (!text) return;
+
+    if(!text){
+
+      return;
+
+    }
 
 
     const uid =
-      currentUid();
+      me();
 
-    if (!uid) {
+
+    if(!uid){
 
       alert(
         "You are not signed in."
       );
 
       return;
+
     }
 
 
     const name =
       sessionStorage.getItem(
         "bcfc-name"
-      ) || "Worker";
+      )
+      ||
+      "Worker";
 
 
-    try {
+    try{
 
       await addDoc(
-        collection(db, "messages"),
+        collection(
+          db,
+          "messages"
+        ),
         {
-          channel: currentChannel,
+
+          channel:
+            currentChannel,
+
           text,
+
           uid,
+
           name,
+
           createdAt:
             serverTimestamp()
+
         }
       );
 
-      input.value = "";
 
-      mentionBox.hidden = true;
+      input.value =
+        "";
 
       input.focus();
 
-    } catch (error) {
 
-      console.error(error);
-
-      alert(
-        `Couldn't send the message.\n\n${error.code || error.message}`
-      );
-    }
-  }
-);
-
-
-/* ==========================================================
-   @ MENTION SUGGESTIONS
-   ========================================================== */
-
-input.addEventListener(
-  "input",
-  () => {
-
-    const value =
-      input.value;
-
-    const match =
-      value.match(
-        /@([A-Za-z0-9._-]*)$/
-      );
-
-
-    if (!match) {
-
-      mentionBox.hidden = true;
-
-      return;
-    }
-
-
-    const search =
-      match[1].toLowerCase();
-
-
-    const results =
-      members
-        .filter(member =>
-          String(member.name || "")
-            .toLowerCase()
-            .includes(search)
-        )
-        .slice(0, 8);
-
-
-    if (!results.length) {
-
-      mentionBox.hidden = true;
-
-      return;
-    }
-
-
-    mentionBox.innerHTML =
-      results.map(member => {
-
-        return `
-          <div
-            class="mention-item"
-            data-name="${esc(member.name || "Worker")}"
-          >
-
-            <strong>
-              ${esc(member.name || "Worker")}
-            </strong>
-
-            <small>
-              ${esc(member.role || "")}
-            </small>
-
-          </div>
-        `;
-
-      }).join("");
-
-
-    mentionBox.hidden = false;
-  }
-);
-
-
-/* ==========================================================
-   SELECT MENTION
-   ========================================================== */
-
-mentionBox.addEventListener(
-  "click",
-  event => {
-
-    const item =
-      event.target.closest(
-        ".mention-item"
-      );
-
-    if (!item) return;
-
-
-    const name =
-      item.dataset.name;
-
-
-    input.value =
-      input.value.replace(
-        /@([A-Za-z0-9._-]*)$/,
-        `@${name} `
-      );
-
-
-    mentionBox.hidden = true;
-
-    input.focus();
-  }
-);
-
-
-/* ==========================================================
-   HIDE MENTION BOX
-   ========================================================== */
-
-document.addEventListener(
-  "click",
-  event => {
-
-    if (
-      !event.target.closest(
-        ".chat-form"
-      )
-    ) {
-
-      mentionBox.hidden = true;
-    }
-  }
-);
-
-
-/* ==========================================================
-   EDIT MESSAGE
-   ========================================================== */
-
-async function editMessage(
-  messageId,
-  messageElement
-) {
-
-  if (editingMessageId) {
-    return;
-  }
-
-  editingMessageId =
-    messageId;
-
-
-  const textElement =
-    messageElement.querySelector(
-      ".message-text"
-    );
-
-  const originalText =
-    textElement.textContent
-      .replace("(edited)", "")
-      .trim();
-
-
-  textElement.innerHTML = `
-    <div class="edit-area">
-
-      <input
-        class="edit-input"
-        maxlength="500"
-        value="${esc(originalText)}"
-      >
-
-      <button
-        type="button"
-        class="save-edit"
-      >
-        Save
-      </button>
-
-      <button
-        type="button"
-        class="cancel-edit"
-      >
-        Cancel
-      </button>
-
-    </div>
-  `;
-
-
-  const editInput =
-    messageElement.querySelector(
-      ".edit-input"
-    );
-
-  editInput.focus();
-
-
-  messageElement
-    .querySelector(".save-edit")
-    .addEventListener(
-      "click",
-      async () => {
-
-        const newText =
-          editInput.value.trim();
-
-        if (!newText) return;
-
-
-        try {
-
-          await updateDoc(
-            doc(
-              db,
-              "messages",
-              messageId
-            ),
-            {
-              text: newText,
-              edited: true
-            }
-          );
-
-          editingMessageId = null;
-
-        } catch (error) {
-
-          console.error(error);
-
-          alert(
-            `Couldn't edit the message.\n\n${error.code || error.message}`
-          );
-
-          editingMessageId = null;
-        }
-      }
-    );
-
-
-  messageElement
-    .querySelector(".cancel-edit")
-    .addEventListener(
-      "click",
-      () => {
-
-        editingMessageId = null;
-
-        openChannel(
-          currentChannel
-        );
-      }
-    );
-}
-
-
-/* ==========================================================
-   MESSAGE ACTIONS
-   ========================================================== */
-
-box.addEventListener(
-  "click",
-  async event => {
-
-    const button =
-      event.target.closest(
-        "[data-action]"
-      );
-
-    if (!button) return;
-
-
-    const messageId =
-      button.dataset.id;
-
-    const messageElement =
-      button.closest(".msg");
-
-
-    if (
-      button.dataset.action === "edit"
-    ) {
-
-      await editMessage(
-        messageId,
-        messageElement
-      );
-
-      return;
-    }
-
-
-    if (
-      button.dataset.action === "delete"
-    ) {
-
-      const confirmed =
-        confirm(
-          "Delete this message?"
-        );
-
-      if (!confirmed) return;
-
-
-      try {
-
-        await deleteDoc(
-          doc(
-            db,
-            "messages",
-            messageId
-          )
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        alert(
-          `Couldn't delete the message.\n\n${error.code || error.message}`
-        );
-      }
-    }
-  }
-);
-
-
-/* ==========================================================
-   ADMIN: CLEAR CURRENT CHAT
-   ========================================================== */
-
-clearButton.addEventListener(
-  "click",
-  async () => {
-
-    if (
-      window.currentRole !== "admin"
-    ) {
-
-      alert(
-        "Only an admin can clear chats."
-      );
-
-      return;
-    }
-
-
-    const confirmed =
-      confirm(
-        `Clear ALL messages in "${CHANNELS[currentChannel]}"?\n\nThis cannot be undone.`
-      );
-
-    if (!confirmed) return;
-
-
-    clearButton.disabled = true;
-
-    clearButton.textContent =
-      "Clearing...";
-
-
-    try {
-
-      const snapshot =
-        await getDocs(
-          query(
-            collection(db, "messages"),
-            where(
-              "channel",
-              "==",
-              currentChannel
-            )
-          )
-        );
-
-
-      if (snapshot.empty) {
-
-        alert(
-          "This chat is already empty."
-        );
-
-        return;
-      }
-
-
-      /*
-         Firestore batches can contain up to 500 writes.
-         Split the messages into batches.
-      */
-
-      const docs =
-        snapshot.docs;
-
-
-      for (
-        let i = 0;
-        i < docs.length;
-        i += 450
-      ) {
-
-        const batch =
-          writeBatch(db);
-
-        const chunk =
-          docs.slice(
-            i,
-            i + 450
-          );
-
-
-        chunk.forEach(messageDoc => {
-
-          batch.delete(
-            messageDoc.ref
-          );
-
-        });
-
-
-        await batch.commit();
-      }
-
-
-      alert(
-        "The current chat has been cleared."
-      );
-
-
-    } catch (error) {
+    }catch(error){
 
       console.error(
-        "Clear chat error:",
+        "Send message error:",
         error
       );
 
+
       alert(
-        `Couldn't clear the chat.\n\n${error.code || error.message}\n\nMake sure the latest Firestore rules have been published.`
+        `Couldn't send message (${error.code || error.message}).`
       );
 
-    } finally {
-
-      clearButton.disabled = false;
-
-      clearButton.textContent =
-        "🗑 Clear Current Chat";
     }
+
   }
 );
 
@@ -1232,23 +1571,31 @@ window.addEventListener(
   "rolechange",
   () => {
 
-    const role =
-      window.currentRole || "guest";
+    const channels =
+      allowed(
+        window.currentRole
+      );
 
-    const allowed =
-      allowedChannels(role);
 
-
-    if (!allowed.includes(currentChannel)) {
-
-      currentChannel =
-        "general";
-    }
+    updateAdminControls();
 
 
     openChannel(
+
+      channels.includes(
+        currentChannel
+      )
+
+      ?
+
       currentChannel
+
+      :
+
+      "general"
+
     );
+
   }
 );
 
@@ -1258,15 +1605,39 @@ window.addEventListener(
    ========================================================== */
 
 auth.authStateReady()
-  .then(async () => {
+  .then(
+    () => {
 
-    await loadMembers();
+      const channels =
+        allowed(
+          window.currentRole
+        );
 
-    openChannel("general");
 
-  });
-  
+      updateAdminControls();
+
+
+      openChannel(
+
+        channels.includes(
+          "general"
+        )
+
+        ?
+
+        "general"
+
+        :
+
+        channels[0]
+
+      );
+
+    }
+  );
+
 </script>
+
 
 </body>
 </html>
