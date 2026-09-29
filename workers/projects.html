@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team | BCFC Workers</title>
+<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css"></head>
+<body>
+<header class="portal-header" id="portal-header"></header>
+<main class="board-page"><h1 id="page-title">Team</h1><p id="page-note" class="page-note"></p><div id="boards" class="boards"></div></main>
+<script type="module">
+import { board, eventFields, eventItem, byDate, esc } from './board.js';
+const N = { production: 'Production', creatives: 'Creatives' };
+const m = new URLSearchParams(location.search).get('m');
+const name = N[m] || 'Team';
+document.getElementById('page-title').textContent = name + ' Team';
+document.title = name + ' | BCFC Workers';
+document.getElementById('page-note').textContent = `The ${name} lead creates projects, assigns tasks and schedules. Schedule items also show on the Calendar.`;
+const lead = r => r === 'admin' || r === m + '-lead';
+const team = [m, m + '-lead'];
+const B = document.getElementById('boards');
+const filter = { module: m }, defaults = { module: m };
+const tag = d => `<b>${esc(d.title)}</b><small>${esc(d.status || '')}${d.project ? ' · ' + esc(d.project) : ''}${d.assignee ? ' · ' + esc(d.assignee) : ''}${d.date ? ' · due ' + esc(d.date) : ''}</small>${d.notes ? `<p>${esc(d.notes)}</p>` : ''}`;
+const dueSort = (a, b) => (a.date || '9').localeCompare(b.date || '9');
+
+board(B, { title: 'Projects', col: 'projects', filter, defaults, canWrite: lead, item: tag, sort: dueSort, fields: [
+  { k: 'title', label: 'Project name', req: 1 },
+  { k: 'status', label: 'Status', type: 'select', options: ['Planning', 'In progress', 'Done'] },
+  { k: 'date', label: 'Due date', type: 'date' },
+  { k: 'notes', label: 'Description', type: 'textarea' }] });
+
+board(B, { title: 'Tasks', col: 'tasks', filter, defaults, canWrite: lead, item: tag, sort: dueSort, fields: [
+  { k: 'title', label: 'Task', req: 1 },
+  { k: 'project', label: 'Project' },
+  { k: 'assignee', label: 'Assigned to', type: 'person', roles: team },
+  { k: 'status', label: 'Status', type: 'select', options: ['To do', 'In progress', 'Done'] },
+  { k: 'date', label: 'Due date', type: 'date' }] });
+
+board(B, { title: m === 'production' ? 'Staff Assignments & Meetings' : 'Recording, Content & Video Schedule', col: 'events', filter, defaults, canWrite: lead,
+  item: eventItem, sort: byDate,
+  fields: eventFields(m === 'production' ? ['Staff assignment', 'Meeting', 'Project deadline'] : ['Recording', 'Content post', 'Video playing', 'Meeting'], team) });
+
+if (m === 'production') board(B, { title: 'Inventory', col: 'inventory', filter, defaults,
+  canWrite: r => ['admin', 'production-lead', 'production'].includes(r), sort: (a, b) => (a.title || '').localeCompare(b.title || ''),
+  item: d => `<b>${esc(d.title)}</b><small>Qty ${esc(d.qty)} · ${esc(d.status)}</small>${d.notes ? `<p>${esc(d.notes)}</p>` : ''}`,
+  fields: [{ k: 'title', label: 'Item', req: 1 }, { k: 'qty', label: 'Quantity', type: 'number' },
+    { k: 'status', label: 'Condition', type: 'select', options: ['Good', 'Needs repair', 'Missing'] },
+    { k: 'notes', label: 'Location / notes', type: 'textarea' }] });
+</script></body></html>

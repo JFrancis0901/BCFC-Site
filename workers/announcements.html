@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Announcements | BCFC Workers</title>
+<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css"></head>
+<body>
+<header class="portal-header" id="portal-header"></header>
+<main class="board-page"><h1 id="page-title">Announcements</h1><p id="page-note" class="page-note"></p><div id="boards" class="boards"></div></main>
+<script type="module">
+import { board, esc } from './board.js';
+document.getElementById('page-note').textContent = 'Announcements from the Pastor to all department leads. Only the Pastor can post.';
+board(document.getElementById('boards'), { title: 'Announcements', col: 'announcements', canWrite: r => r === 'admin' || r === 'pastor',
+  item: d => `<b>${esc(d.title)}</b><small>${esc(d.createdByName || '')} · ${esc(d.createdAt?.toDate?.().toLocaleDateString() || 'just now')}</small><p>${esc(d.message)}</p>`,
+  fields: [{ k: 'title', label: 'Title', req: 1 }, { k: 'message', label: 'Message', type: 'textarea' }] });
+</script></body></html>

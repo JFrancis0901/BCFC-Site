@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Praise & Worship | BCFC Workers</title>
+<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css"></head>
+<body>
+<header class="portal-header" id="portal-header"></header>
+<main class="board-page"><h1 id="page-title">Praise & Worship</h1><p id="page-note" class="page-note"></p><div id="boards" class="boards"></div></main>
+<script type="module">
+import { board, esc } from './board.js';
+document.getElementById('page-note').textContent = 'Set the song list for each service and keep the song library with keys. Pastor and Preaching Staff can edit.';
+const canWrite = r => ['admin', 'pastor', 'preaching'].includes(r);
+const KEYS = ['C','C#/Db','D','Eb','E','F','F#/Gb','G','Ab','A','Bb','B'].flatMap(k => [k, k + ' minor']);
+const B = document.getElementById('boards');
+board(B, { title: 'Service Song List', col: 'setlists', canWrite, sort: (a, b) => (b.date || '').localeCompare(a.date || ''),
+  item: d => `<b>${esc(d.title)}</b><small>${esc(d.date)}</small><pre>${esc(d.songs)}</pre>`,
+  fields: [{ k: 'title', label: 'Service', req: 1 }, { k: 'date', label: 'Date', type: 'date', req: 1 },
+    { k: 'songs', label: 'Songs (one per line, with key)', type: 'textarea' }] });
+board(B, { title: 'Song Library', col: 'songs', canWrite, sort: (a, b) => (a.title || '').localeCompare(b.title || ''),
+  item: d => `<b>${esc(d.title)}</b><small>${esc(d.artist || '')} · Key: ${esc(d.key)}</small>${d.notes ? `<p>${esc(d.notes)}</p>` : ''}`,
+  fields: [{ k: 'title', label: 'Song title', req: 1 }, { k: 'artist', label: 'Artist / source' },
+    { k: 'key', label: 'Key', type: 'select', options: KEYS }, { k: 'notes', label: 'Notes', type: 'textarea' }] });
+</script></body></html>

@@ -21,47 +21,7 @@
 
 <!-- ============ WORKERS HEADER ============ -->
 <!-- Same header will appear on every workers page later (calendar, chat, department pages). -->
-<header class="portal-header">
-  <a href="calendar.html" class="portal-logo">BCFC <span>Workers</span></a>
-
-  <!-- EDIT: this list will grow as each module below gets its own page.
-       data-roles = which roles can see this link. "all" = every logged-in role. -->
-  <nav class="portal-nav" id="portal-nav">
-    <a href="calendar.html" class="active" data-roles="all">Calendar</a>
-    <a href="#" data-roles="admin,pastor">Announcements</a>
-    <a href="#" data-roles="admin,childrens-lead,childrens">Children's Church</a>
-    <a href="#" data-roles="admin,ufy-lead,ufy">UFY</a>
-    <a href="#" data-roles="admin,ufw-lead,ufw">UFW</a>
-    <a href="#" data-roles="admin,ufm-lead,ufm">UFM</a>
-    <a href="#" data-roles="admin,pastor,preaching">Praise &amp; Worship</a>
-    <a href="#" data-roles="admin,production-lead,production">Production</a>
-    <a href="#" data-roles="admin,creatives-lead,creatives">Creatives</a>
-    <a href="#" data-roles="all">Chat</a>
-  </nav>
-
-  <div class="portal-user">
-    <!-- TEMPORARY testing tool — see comment at top of file -->
-    <label for="role-switch" class="role-label">Viewing as</label>
-    <select id="role-switch">
-      <option value="admin">Admin</option>
-      <option value="pastor">Pastor</option>
-      <option value="preaching">Preaching Staff</option>
-      <option value="childrens-lead">Children's Church Lead</option>
-      <option value="childrens">Children's Church Worker</option>
-      <option value="ufy-lead">UFY Lead</option>
-      <option value="ufy">UFY Worker</option>
-      <option value="ufw-lead">UFW Lead</option>
-      <option value="ufw">UFW Worker</option>
-      <option value="ufm-lead">UFM Lead</option>
-      <option value="ufm">UFM Worker</option>
-      <option value="production-lead">Production Lead</option>
-      <option value="production">Production Worker</option>
-      <option value="creatives-lead">Creatives Lead</option>
-      <option value="creatives">Creatives Worker</option>
-    </select>
-    <a href="login.html" class="btn-logout">Log Out</a>
-  </div>
-</header>
+<header class="portal-header" id="portal-header"></header>
 
 <main class="calendar-page">
 
@@ -85,6 +45,7 @@
       <span><i class="dot dot-ufm"></i>UFM</span>
       <span><i class="dot dot-production"></i>Production</span>
       <span><i class="dot dot-creatives"></i>Creatives</span>
+      <span><i class="dot dot-other"></i>Other</span>
     </div>
 
     <div class="weekday-row">
@@ -105,7 +66,34 @@
   </aside>
 </main>
 
+<!-- ============ ADD ACTIVITY DIALOG ============ -->
+<dialog id="event-dialog" class="event-dialog">
+  <form id="event-form" method="dialog">
+    <h2>Add Activity</h2>
+    <p id="event-error" class="event-error" hidden></p>
+    <label for="evt-title">Title</label>
+    <input id="evt-title" required maxlength="80">
+    <label for="evt-module">Category</label>
+    <select id="evt-module" required></select>
+    <div class="row2">
+      <div><label for="evt-date">Date</label><input type="date" id="evt-date" required></div>
+      <div><label for="evt-time">Time</label><input type="time" id="evt-time"></div>
+    </div>
+    <div id="preacher-row" hidden>
+      <label for="evt-preacher">Preacher</label>
+      <input id="evt-preacher" list="preacher-list" maxlength="60" placeholder="Assign a preaching staff">
+      <datalist id="preacher-list"></datalist>
+    </div>
+    <label for="evt-notes">Notes (optional)</label>
+    <textarea id="evt-notes" rows="3" maxlength="300"></textarea>
+    <div class="dialog-actions">
+      <button type="button" id="evt-cancel" class="btn-cancel">Cancel</button>
+      <button type="submit" id="evt-save" class="btn-add-event">Save</button>
+    </div>
+  </form>
+</dialog>
+
 <script type="module" src="portal.js"></script>
-<script src="calendar.js"></script>
+<script type="module" src="calendar.js"></script>
 </body>
 </html>
