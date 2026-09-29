@@ -1,10 +1,9 @@
 /* ==========================================================
    portal.js = shared logic for EVERY workers page.
-   - Builds the header + navbar.
    - Requires a real Firebase session.
-   - Blocks pages your role isn't allowed to open.
-   - The user's Firebase role is FIXED after login.
-   - No role-switching/dropdown.
+   - Firebase users/{uid}.role is the user's REAL role.
+   - NO role-switching/debug dropdown.
+   - Admins get access to the Members page.
    ========================================================== */
 
 import { signOut, onAuthStateChanged }
@@ -28,65 +27,49 @@ const LEADS =
    NAVIGATION
    ========================================================== */
 
-// [label, page, roles allowed]
-// "all" = every logged-in role
-
 const NAV = [
   ['Calendar', 'calendar.html', 'all'],
 
-  [
-    'Announcements',
+  ['Announcements',
     'announcements.html',
-    `admin,pastor,${LEADS}`
-  ],
+    `admin,pastor,${LEADS}`],
 
-  [
-    "Children's Church",
+  ["Children's Church",
     'dept.html?m=childrens',
-    'admin,childrens-lead,childrens'
-  ],
+    'admin,childrens-lead,childrens'],
 
-  [
-    'UFY',
+  ['UFY',
     'dept.html?m=ufy',
-    'admin,ufy-lead,ufy'
-  ],
+    'admin,ufy-lead,ufy'],
 
-  [
-    'UFW',
+  ['UFW',
     'dept.html?m=ufw',
-    'admin,ufw-lead,ufw'
-  ],
+    'admin,ufw-lead,ufw'],
 
-  [
-    'UFM',
+  ['UFM',
     'dept.html?m=ufm',
-    'admin,ufm-lead,ufm'
-  ],
+    'admin,ufm-lead,ufm'],
 
-  [
-    'Praise & Worship',
+  ['Praise & Worship',
     'worship.html',
-    'admin,pastor,preaching'
-  ],
+    'admin,pastor,preaching'],
 
-  [
-    'Production',
+  ['Production',
     'projects.html?m=production',
-    'admin,production-lead,production'
-  ],
+    'admin,production-lead,production'],
 
-  [
-    'Creatives',
+  ['Creatives',
     'projects.html?m=creatives',
-    'admin,creatives-lead,creatives'
-  ],
+    'admin,creatives-lead,creatives'],
 
-  [
-    'Chat',
+  // ADMIN ONLY
+  ['Members',
+    'members.html',
+    'admin'],
+
+  ['Chat',
     'chat.html',
-    'all'
-  ]
+    'all']
 ];
 
 
@@ -122,15 +105,18 @@ const NAMES = {
 
 
 /* ==========================================================
-   GET LOGGED-IN USER
+   REAL USER ROLE
    ========================================================== */
 
-const realRole = sessionStorage.getItem('bcfc-role');
-const userName = sessionStorage.getItem('bcfc-name') || '';
+const realRole =
+  sessionStorage.getItem('bcfc-role');
+
+const userName =
+  sessionStorage.getItem('bcfc-name') || '';
 
 
 /* ==========================================================
-   LOGOUT / RETURN TO LOGIN
+   LOGOUT
    ========================================================== */
 
 function leaveToLogin() {
@@ -140,7 +126,7 @@ function leaveToLogin() {
     'bcfc-name',
     'bcfc-email',
 
-    // Remove any old role-switch information
+    // Remove old role-switching values
     'bcfc-view-role',
     'bcfc-test-role'
 
@@ -156,7 +142,7 @@ if (!realRole) {
 
 
 /* ==========================================================
-   VERIFY FIREBASE USER
+   VERIFY FIREBASE SESSION + REAL ROLE
    ========================================================== */
 
 onAuthStateChanged(auth, async user => {
@@ -165,11 +151,6 @@ onAuthStateChanged(auth, async user => {
     return leaveToLogin();
   }
 
-  /*
-    Verify that the role stored in the user's Firestore
-    document is the same role being used by this page.
-  */
-
   try {
 
     const snap = await getDoc(
@@ -177,18 +158,18 @@ onAuthStateChanged(auth, async user => {
     );
 
     if (!snap.exists()) {
-
       return warn(
-        `No document at users/${user.uid} in Firestore. ` +
-        `Create it with a "role" field, or the database will reject everything you do.`
+        `No user profile found for ${user.uid}.`
       );
     }
 
     const dbRole = snap.data().role;
 
     /*
-      If the Firebase database says the user has a different
-      role, trust the database and update the session.
+      The Firestore role is the authority.
+
+      If the browser's session somehow differs,
+      replace it with the database role.
     */
 
     if (dbRole !== realRole) {
@@ -206,47 +187,53 @@ onAuthStateChanged(auth, async user => {
       location.reload();
     }
 
-  } catch (e) {
+  } catch (err) {
+
+    console.error(err);
 
     warn(
-      `Could not read your users document (${e.code || e.message}). ` +
-      `Publish the latest firestore.rules.`
+      `Could not verify your account role (${err.code || err.message}).`
     );
   }
 });
 
 
 /* ==========================================================
-   WARNING MESSAGE
+   WARNING
    ========================================================== */
 
-function warn(msg) {
+function warn(message) {
 
-  console.warn(msg);
+  console.warn(message);
 
-  const b = document.createElement('div');
+  const box =
+    document.createElement('div');
 
-  b.style.cssText =
+  box.style.cssText =
     'background:#fdeceb;' +
     'color:#b3122a;' +
     'padding:.6rem 1rem;' +
     'font:600 .85rem sans-serif;' +
     'text-align:center';
 
-  b.textContent = msg;
+  box.textContent = message;
 
-  document.body.prepend(b);
+  document.body.prepend(box);
 }
 
 
 /* ==========================================================
-   IMPORTANT:
-   THE CURRENT ROLE IS ALWAYS THE REAL FIREBASE ROLE.
-   
-   There is NO role-switching anymore.
+   IMPORTANT
    ========================================================== */
 
 window.realRole = realRole;
+
+/*
+  There is NO longer a separate "viewing role".
+
+  currentRole is ALWAYS the actual Firebase role.
+*/
+
 window.currentRole = realRole;
 
 
@@ -260,31 +247,44 @@ const here =
 
 
 /* ==========================================================
-   HEADER
+   BUILD HEADER
    ========================================================== */
 
 const header =
   document.getElementById('portal-header');
 
-
 header.innerHTML = `
+
   <a href="calendar.html" class="portal-logo">
     BCFC <span>Workers</span>
   </a>
 
   <nav class="portal-nav">
-    ${NAV.map(([t, h, r]) =>
-      `<a href="${h}" data-roles="${r}"${h === here ? ' class="active"' : ''}>
-        ${t.replace('&', '&amp;')}
-      </a>`
-    ).join('')}
+
+    ${NAV.map(([title, href, roles]) => `
+
+      <a
+        href="${href}"
+        data-roles="${roles}"
+        ${href === here ? 'class="active"' : ''}
+      >
+        ${title.replace('&', '&amp;')}
+      </a>
+
+    `).join('')}
+
   </nav>
 
   <div class="portal-user">
 
-    <span class="role-label" id="role-label"></span>
+    <span
+      class="role-label"
+      id="role-label">
+    </span>
 
-    <a href="login.html" class="btn-logout">
+    <a
+      href="login.html"
+      class="btn-logout">
       Log Out
     </a>
 
@@ -307,28 +307,26 @@ const navLinks =
    PERMISSION CHECK
    ========================================================== */
 
-const canSee = a =>
-  a.dataset.roles
+const canSee = link => {
+
+  return link.dataset.roles
     .split(',')
-    .some(
-      r => r === 'all' || r === window.currentRole
+    .some(role =>
+      role === 'all' ||
+      role === window.currentRole
     );
+
+};
 
 
 /* ==========================================================
-   REFRESH INTERFACE
+   REFRESH NAVIGATION
    ========================================================== */
 
 function refresh() {
 
   /*
-    Display ONLY the user's real role.
-    
-    Example:
-    
-    John (Admin)
-    Maria (UFY Worker)
-    Daniel (Production Lead)
+    Display the REAL role only.
   */
 
   roleLabel.textContent =
@@ -337,37 +335,38 @@ function refresh() {
 
 
   /*
-    Lock navigation items that the user's role
-    isn't allowed to access.
+    Show/hide navigation based on real role.
   */
 
-  navLinks.forEach(a => {
+  navLinks.forEach(link => {
 
-    const allowed = canSee(a);
+    const allowed =
+      canSee(link);
 
-    a.classList.toggle(
+    link.classList.toggle(
       'locked',
       !allowed
     );
 
-    a.setAttribute(
+    link.setAttribute(
       'aria-disabled',
       String(!allowed)
     );
+
   });
 
 
   /*
-    Page guard.
-    
-    If somebody manually enters a URL they don't
-    have permission to access, send them back
-    to the calendar.
+    Page protection.
+
+    If someone manually types a URL they don't
+    have access to, send them to Calendar.
   */
 
   const current =
     navLinks.find(
-      a => a.getAttribute('href') === here
+      link =>
+        link.getAttribute('href') === here
     );
 
   if (
@@ -381,10 +380,6 @@ function refresh() {
   }
 }
 
-
-/* ==========================================================
-   START INTERFACE
-   ========================================================== */
 
 refresh();
 
@@ -406,7 +401,9 @@ document
     } catch (err) {
 
       console.error(err);
+
     }
 
     leaveToLogin();
+
   });
