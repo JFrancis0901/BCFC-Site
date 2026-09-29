@@ -1,0 +1,40 @@
+/* ==========================================================
+   portal.css = shared look for EVERY workers page (header, nav, colors).
+   Every future module page (chat.html, ufy.html, etc.) should link this file
+   too, so the header/nav look the same everywhere. Page-specific styling
+   (like the calendar grid) goes in its own file, e.g. calendar.css.
+   ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600&display=swap');
+
+:root{
+  --scarlet:#b3122a; --blue:#1c3f94; --navy:#101a3d; --gold:#d9a521; --purple:#4a2b7a;
+  --ivory:#f8f5ef; --ink:#1c1a2b; --line:#e2dfe8;
+  --head:'Playfair Display',Georgia,serif; --body:'Poppins',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--ivory)}
+
+/* ---------- Header / nav shared across all workers pages ---------- */
+.portal-header{
+  display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;
+  background:var(--navy);color:#fff;padding:.75rem 1.5rem;border-bottom:4px solid var(--gold);
+  position:sticky;top:0;z-index:20;
+}
+.portal-logo{font:900 1.3rem var(--head);color:#fff;text-decoration:none;white-space:nowrap}
+.portal-logo span{color:var(--gold)}
+.portal-nav{display:flex;gap:1.1rem;flex-wrap:wrap;flex:1}
+.portal-nav a{color:#cfd3e6;text-decoration:none;font-size:.92rem;font-weight:600;padding:.3rem 0}
+.portal-nav a:hover{color:#fff}
+.portal-nav a.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+.portal-nav a.locked{color:#5c6083;pointer-events:none}     /* set by portal.js when a role can't see it */
+
+.portal-user{display:flex;align-items:center;gap:.6rem;margin-left:auto}
+.role-label{font-size:.75rem;color:#a9a4c4}
+#role-switch{font:600 .85rem var(--body);padding:.3rem .5rem;border-radius:4px;border:1px solid var(--purple);background:#fff;color:var(--ink)}
+.btn-logout{color:#fff;background:var(--scarlet);text-decoration:none;font-size:.85rem;font-weight:600;padding:.4rem .8rem;border-radius:4px}
+.btn-logout:hover{background:#8f0e21}
+
+@media (max-width:900px){
+  .portal-nav{order:3;width:100%;overflow-x:auto;gap:1rem;padding-top:.5rem;border-top:1px solid rgba(255,255,255,.15)}
+  .portal-user{order:2;margin-left:0}
+}

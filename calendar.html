@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--
+  calendar.html = the WORKERS landing page after a real login (Module IV.1 in the spec).
+  Shows one month at a time. Each event is color-coded by which module/department it belongs to.
+  Clicking a day shows that day's events in the panel on the right (bottom, on phones).
+
+  ROLE SWITCHER: there's no backend yet, so real roles from a database don't exist.
+  The dropdown in the header lets you PRETEND to be each role so we can build and test
+  role-based navigation before auth is connected. TODO: BACKEND — once Firebase (or another
+  backend) is wired up, replace the dropdown with the user's real saved role and remove it.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendar | BCFC Workers</title>
+<link rel="stylesheet" href="portal.css">
+<link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+
+<!-- ============ WORKERS HEADER ============ -->
+<!-- Same header will appear on every workers page later (calendar, chat, department pages). -->
+<header class="portal-header">
+  <a href="calendar.html" class="portal-logo">BCFC <span>Workers</span></a>
+
+  <!-- EDIT: this list will grow as each module below gets its own page.
+       data-roles = which roles can see this link. "all" = every logged-in role. -->
+  <nav class="portal-nav" id="portal-nav">
+    <a href="calendar.html" class="active" data-roles="all">Calendar</a>
+    <a href="#" data-roles="admin,pastor">Announcements</a>
+    <a href="#" data-roles="admin,childrens-lead,childrens">Children's Church</a>
+    <a href="#" data-roles="admin,ufy-lead,ufy">UFY</a>
+    <a href="#" data-roles="admin,ufw-lead,ufw">UFW</a>
+    <a href="#" data-roles="admin,ufm-lead,ufm">UFM</a>
+    <a href="#" data-roles="admin,pastor,preaching">Praise &amp; Worship</a>
+    <a href="#" data-roles="admin,production-lead,production">Production</a>
+    <a href="#" data-roles="admin,creatives-lead,creatives">Creatives</a>
+    <a href="#" data-roles="all">Chat</a>
+  </nav>
+
+  <div class="portal-user">
+    <!-- TEMPORARY testing tool — see comment at top of file -->
+    <label for="role-switch" class="role-label">Viewing as</label>
+    <select id="role-switch">
+      <option value="admin">Admin</option>
+      <option value="pastor">Pastor</option>
+      <option value="preaching">Preaching Staff</option>
+      <option value="childrens-lead">Children's Church Lead</option>
+      <option value="childrens">Children's Church Worker</option>
+      <option value="ufy-lead">UFY Lead</option>
+      <option value="ufy">UFY Worker</option>
+      <option value="ufw-lead">UFW Lead</option>
+      <option value="ufw">UFW Worker</option>
+      <option value="ufm-lead">UFM Lead</option>
+      <option value="ufm">UFM Worker</option>
+      <option value="production-lead">Production Lead</option>
+      <option value="production">Production Worker</option>
+      <option value="creatives-lead">Creatives Lead</option>
+      <option value="creatives">Creatives Worker</option>
+    </select>
+    <a href="login.html" class="btn-logout">Log Out</a>
+  </div>
+</header>
+
+<main class="calendar-page">
+
+  <!-- ============ CALENDAR GRID ============ -->
+  <section class="calendar-main">
+    <div class="calendar-toolbar">
+      <button id="prev-month" aria-label="Previous month">&#8249;</button>
+      <h1 id="month-label">Month Year</h1>
+      <button id="next-month" aria-label="Next month">&#8250;</button>
+      <button id="today-btn" class="btn-today">Today</button>
+    </div>
+
+    <!-- Color legend — EDIT: add a line here whenever you add a new module/color -->
+    <div class="legend">
+      <span><i class="dot dot-sunday"></i>Sunday Service</span>
+      <span><i class="dot dot-nurture"></i>Family Nurture</span>
+      <span><i class="dot dot-prayer"></i>Abound in Prayer</span>
+      <span><i class="dot dot-childrens"></i>Children's Church</span>
+      <span><i class="dot dot-ufy"></i>UFY</span>
+      <span><i class="dot dot-ufw"></i>UFW</span>
+      <span><i class="dot dot-ufm"></i>UFM</span>
+      <span><i class="dot dot-production"></i>Production</span>
+      <span><i class="dot dot-creatives"></i>Creatives</span>
+    </div>
+
+    <div class="weekday-row">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+
+    <!-- Filled in by calendar.js — one button per day, with colored dots for that day's events -->
+    <div id="calendar-grid" class="calendar-grid"></div>
+  </section>
+
+  <!-- ============ SELECTED DAY PANEL ============ -->
+  <aside class="day-panel">
+    <h2 id="day-panel-title">Select a day</h2>
+    <ul id="day-panel-list" class="day-panel-list"></ul>
+    <!-- EDIT: only certain roles should be able to add events — enforce this for real once
+         the backend exists. For now the button always shows. -->
+    <button class="btn-add-event" id="add-event-btn">+ Add Activity</button>
+  </aside>
+</main>
+
+<script src="portal.js"></script>
+<script src="calendar.js"></script>
+</body>
+</html>
