@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <!--
-  login.html = the sign-in page for the WORKERS site (bcfc.com/login).
-  This is separate from the public site (index.html, about.html, etc).
-  It does NOT use script.js / style.css from the public site — it's self-contained
-  so the workers portal can grow on its own later.
-
-  IMPORTANT: this page only handles the FORM (what people type and see).
-  It cannot actually check a password by itself — that needs a backend.
-  Every place you'll need to connect one is marked "TODO: BACKEND".
+  login.html = sign-in AND sign-up page for the WORKERS site.
+  Sign-up is 3 steps: 1) pick your role  2) enter the access code for that role
+  3) name, email, password. The code is verified by Firestore rules (see firestore.rules),
+  not by this page, so it can't be bypassed by editing the JavaScript.
 -->
 <html lang="en">
 <head>
@@ -21,46 +17,85 @@
 <main class="login-page">
   <div class="login-card">
 
-    <!-- EDIT: replace with your logo image if you have one -->
     <div class="brand">
       <span class="brand-mark">BCFC</span>
       <p>Workers Portal</p>
     </div>
 
-    <!-- ============ LOGIN FORM ============ -->
-    <!-- This is the ONLY thing that logs someone in. Guest login is separate, below. -->
-    <form id="login-form" novalidate>
+    <div class="auth-tabs" role="tablist">
+      <button type="button" id="tab-login" class="on" role="tab" aria-selected="true">Log in</button>
+      <button type="button" id="tab-signup" role="tab" aria-selected="false">Sign up</button>
+    </div>
 
-      <!-- Shows error messages, e.g. "Wrong email or password" -->
-      <p id="form-error" class="form-error" role="alert" hidden></p>
+    <!-- ============ LOG IN ============ -->
+    <section id="login-panel">
+      <form id="login-form" novalidate>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" autocomplete="username" required placeholder="you@bcfc.com">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="username" required placeholder="you@bcfc.com">
 
-      <label for="password">Password</label>
-      <div class="password-field">
-        <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
-        <!-- Eye icon: toggles password visibility. Handled in login.js -->
-        <button type="button" id="toggle-password" aria-label="Show password">Show</button>
+        <label for="password">Password</label>
+        <div class="password-field">
+          <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+          <button type="button" id="toggle-password" aria-label="Show password">Show</button>
+        </div>
+
+        <a href="#forgot-password" class="forgot-link">Forgot password?</a>
+
+        <button type="submit" class="btn btn-primary" id="login-btn">Log In</button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+      <button type="button" class="btn btn-guest" id="guest-btn">Log In as Guest</button>
+    </section>
+
+    <!-- ============ SIGN UP ============ -->
+    <section id="signup-panel" hidden>
+
+      <!-- Step 1: who are you? (buttons are built by login.js) -->
+      <div id="step-role">
+        <h2 class="step-title">Who are you signing up as?</h2>
+        <div id="role-groups"></div>
       </div>
 
-      <!-- Link opens the "Forgot password" panel further down the page -->
-      <a href="#forgot-password" class="forgot-link">Forgot password?</a>
+      <!-- Step 2: access code for that role -->
+      <div id="step-code" hidden>
+        <button type="button" class="back-link" data-back="role">&#8249; Change role</button>
+        <h2 class="step-title" id="code-title">Enter your access code</h2>
+        <p class="step-help">Ask your pastor or admin for the code for this role.</p>
+        <p id="code-error" class="form-error" role="alert" hidden></p>
+        <form id="code-form" novalidate>
+          <label for="access-code">Access code</label>
+          <input id="access-code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="40" required>
+          <button type="submit" class="btn btn-primary">Continue</button>
+        </form>
+      </div>
 
-      <button type="submit" class="btn btn-primary" id="login-btn">Log In</button>
-    </form>
-
-    <div class="divider"><span>or</span></div>
-
-    <!-- ============ GUEST LOGIN ============ -->
-    <!-- EDIT: decide what a guest can see (e.g. read-only calendar, no chat/admin pages) -->
-    <button type="button" class="btn btn-guest" id="guest-btn">Log In as Guest</button>
+      <!-- Step 3: account details -->
+      <div id="step-account" hidden>
+        <button type="button" class="back-link" data-back="code">&#8249; Change code</button>
+        <h2 class="step-title">Create your account</h2>
+        <p class="role-chip" id="role-chip"></p>
+        <p id="signup-error" class="form-error" role="alert" hidden></p>
+        <form id="signup-form" novalidate>
+          <label for="su-name">Full name</label>
+          <input id="su-name" autocomplete="name" maxlength="60" required>
+          <label for="su-email">Email</label>
+          <input type="email" id="su-email" autocomplete="username" required placeholder="you@bcfc.com">
+          <label for="su-password">Password</label>
+          <input type="password" id="su-password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
+          <label for="su-password2">Confirm password</label>
+          <input type="password" id="su-password2" autocomplete="new-password" required>
+          <button type="submit" class="btn btn-primary" id="signup-btn">Create account</button>
+        </form>
+      </div>
+    </section>
 
     <p class="portal-note">Workers portal for BCFC staff and department leads.</p>
   </div>
 
   <!-- ============ FORGOT PASSWORD PANEL ============ -->
-  <!-- Hidden until "Forgot password?" is clicked (login.js toggles the "show" class) -->
   <div id="forgot-password" class="login-card forgot-card">
     <button type="button" class="close-forgot" aria-label="Close">&times;</button>
     <h2>Reset your password</h2>

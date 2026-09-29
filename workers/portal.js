@@ -6,7 +6,8 @@
    - ADMINS get a "Viewing as" dropdown to act as any role (debugging).
    ========================================================== */
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { auth } from "./firebase-config.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { auth, db } from "./firebase-config.js";
 
 const LEADS = 'childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead';
 // EDIT: [label, page, roles allowed]. "all" = every logged-in role.
@@ -38,7 +39,27 @@ function leaveToLogin() {
   window.location.href = "login.html";
 }
 if (!realRole) leaveToLogin();
-onAuthStateChanged(auth, user => { if (!user) leaveToLogin(); });
+onAuthStateChanged(auth, async user => {
+  if (!user) return leaveToLogin();
+  // Sanity check: the role the rules use (users/{uid} in Firestore) must match the role this page thinks you have.
+  try {
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) return warn(`No document at users/${user.uid} in Firestore. Create it with a "role" field, or the database will reject everything you do.`);
+    const dbRole = snap.data().role;
+    if (dbRole !== realRole) {
+      sessionStorage.setItem('bcfc-role', dbRole || 'guest');
+      sessionStorage.setItem('bcfc-name', snap.data().name || '');
+      location.reload();
+    }
+  } catch (e) { warn(`Could not read your users document (${e.code || e.message}). Publish the latest firestore.rules.`); }
+});
+function warn(msg) {
+  console.warn(msg);
+  const b = document.createElement('div');
+  b.style.cssText = 'background:#fdeceb;color:#b3122a;padding:.6rem 1rem;font:600 .85rem sans-serif;text-align:center';
+  b.textContent = msg;
+  document.body.prepend(b);
+}
 
 window.realRole = realRole;
 window.currentRole = (realRole === 'admin' && sessionStorage.getItem('bcfc-view-role')) || realRole;

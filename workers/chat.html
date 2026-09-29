@@ -26,7 +26,7 @@ function open(c) {
     box.innerHTML = msgs.length ? msgs.map(m => `<div class="msg${m.uid === me() ? ' mine' : ''}"><small>${esc(m.name || 'Worker')}</small><span>${esc(m.text)}</span></div>`).join('')
       : '<p class="page-note">No messages yet. Say hello!</p>';
     box.scrollTop = box.scrollHeight;
-  }, e => { console.error(e); box.innerHTML = '<p class="page-note">Couldn\'t load this channel.</p>'; });
+  }, e => { console.error(e); box.innerHTML = `<p class="page-note">Couldn't load this channel (${esc(e.code || e.message)}). Publish the latest firestore.rules and make sure your account has a users document.</p>`; });
 }
 tabs.addEventListener('click', e => { const b = e.target.closest('button'); if (b) open(b.dataset.c); });
 form.addEventListener('submit', async e => {
@@ -34,8 +34,8 @@ form.addEventListener('submit', async e => {
   const text = input.value.trim(); if (!text) return;
   input.value = '';
   try { await addDoc(collection(db, 'messages'), { channel: ch, text, uid: me() || '', name: sessionStorage.getItem('bcfc-name') || 'Worker', createdAt: serverTimestamp() }); }
-  catch (err) { console.error(err); alert("Couldn't send. You may not have access to this channel."); }
+  catch (err) { console.error(err); alert(`Couldn't send (${err.code || err.message}). You may not have access to this channel.`); }
 });
 window.addEventListener('rolechange', () => open(allowed(window.currentRole).includes(ch) ? ch : 'general'));
-open('general');
+auth.authStateReady().then(() => open('general'));   // wait until Firebase knows who is signed in
 </script></body></html>
