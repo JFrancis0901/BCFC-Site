@@ -2,16 +2,30 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1">
 
 <title>Calendar | BCFC Workers</title>
 
-<link rel="stylesheet" href="portal.css">
-<link rel="stylesheet" href="calendar.css">
+<link
+  rel="stylesheet"
+  href="portal.css">
+
+<link
+  rel="stylesheet"
+  href="calendar.css">
+
 </head>
 
+
 <body>
+
+
+<!-- WORKERS HEADER -->
 
 <header
   class="portal-header"
@@ -19,9 +33,14 @@
 </header>
 
 
+<!-- =====================================================
+     CALENDAR
+     ===================================================== -->
+
 <main class="calendar-page">
 
-  <!-- CALENDAR -->
+
+  <!-- CALENDAR GRID -->
 
   <section class="calendar-main">
 
@@ -51,8 +70,6 @@
 
     </div>
 
-
-    <!-- LEGEND -->
 
     <div class="legend">
 
@@ -109,8 +126,6 @@
     </div>
 
 
-    <!-- DAYS -->
-
     <div class="weekday-row">
 
       <span>Sun</span>
@@ -156,7 +171,9 @@
 </main>
 
 
-<!-- ADD ACTIVITY -->
+<!-- =====================================================
+     ADD ACTIVITY DIALOG
+     ===================================================== -->
 
 <dialog
   id="event-dialog"
@@ -178,8 +195,6 @@
     </p>
 
 
-    <!-- TITLE -->
-
     <label for="evt-title">
       Title
     </label>
@@ -190,8 +205,6 @@
       maxlength="80">
 
 
-    <!-- CATEGORY -->
-
     <label for="evt-module">
       Category
     </label>
@@ -201,8 +214,6 @@
       required>
     </select>
 
-
-    <!-- DATE -->
 
     <div class="row2">
 
@@ -220,63 +231,24 @@
       </div>
 
 
-      <!-- PLACE -->
-
-      <div>
-
-        <label for="evt-place">
-          Place
-        </label>
-
-        <input
-          type="text"
-          id="evt-place"
-          required
-          maxlength="120"
-          placeholder="Example: BCFC Main Hall">
-
-      </div>
-
-    </div>
-
-
-    <!-- START + END TIME -->
-
-    <div class="row2">
-
       <div>
 
         <label for="evt-time">
-          Start Time
+          Time
         </label>
 
         <input
           type="time"
-          id="evt-time"
-          required>
-
-      </div>
-
-
-      <div>
-
-        <label for="evt-end-time">
-          End Time
-        </label>
-
-        <input
-          type="time"
-          id="evt-end-time"
-          required>
+          id="evt-time">
 
       </div>
 
     </div>
 
 
-    <!-- PREACHER -->
-
-    <div id="preacher-row" hidden>
+    <div
+      id="preacher-row"
+      hidden>
 
       <label for="evt-preacher">
         Preacher
@@ -288,13 +260,12 @@
         maxlength="60"
         placeholder="Assign a preaching staff">
 
-      <datalist id="preacher-list">
+      <datalist
+        id="preacher-list">
       </datalist>
 
     </div>
 
-
-    <!-- NOTES -->
 
     <label for="evt-notes">
       Notes (optional)
@@ -306,8 +277,6 @@
       maxlength="300">
     </textarea>
 
-
-    <!-- BUTTONS -->
 
     <div class="dialog-actions">
 
@@ -332,6 +301,77 @@
 </dialog>
 
 
+<!-- =====================================================
+     NAME SETUP OVERLAY
+     This blocks the whole dashboard until the user
+     enters their name.
+     ===================================================== -->
+
+<div
+  id="profile-setup-overlay"
+  class="profile-setup-overlay"
+  hidden>
+
+  <div
+    class="profile-setup-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="profile-setup-title">
+
+    <div class="profile-setup-icon">
+      BCFC
+    </div>
+
+
+    <h2 id="profile-setup-title">
+      Welcome to the Workers Portal
+    </h2>
+
+
+    <p class="profile-setup-text">
+      Before you can use the dashboard, please enter your full name.
+    </p>
+
+
+    <form
+      id="profile-setup-form"
+      novalidate>
+
+      <label for="profile-setup-name">
+        Full name
+      </label>
+
+      <input
+        type="text"
+        id="profile-setup-name"
+        maxlength="60"
+        autocomplete="name"
+        required
+        placeholder="Enter your full name">
+
+
+      <p
+        id="profile-setup-error"
+        class="profile-setup-error"
+        role="alert"
+        hidden>
+      </p>
+
+
+      <button
+        type="submit"
+        id="profile-setup-btn"
+        class="profile-setup-btn">
+        Continue
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
 <script
   type="module"
   src="portal.js">
@@ -341,6 +381,7 @@
   type="module"
   src="calendar.js">
 </script>
+
 
 </body>
 </html>
