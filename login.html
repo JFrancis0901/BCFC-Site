@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--
+  login.html = the sign-in page for the WORKERS site (bcfc.com/login).
+  This is separate from the public site (index.html, about.html, etc).
+  It does NOT use script.js / style.css from the public site — it's self-contained
+  so the workers portal can grow on its own later.
+
+  IMPORTANT: this page only handles the FORM (what people type and see).
+  It cannot actually check a password by itself — that needs a backend.
+  Every place you'll need to connect one is marked "TODO: BACKEND".
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Worker Login | BCFC</title>
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<main class="login-page">
+  <div class="login-card">
+
+    <!-- EDIT: replace with your logo image if you have one -->
+    <div class="brand">
+      <span class="brand-mark">BCFC</span>
+      <p>Workers Portal</p>
+    </div>
+
+    <!-- ============ LOGIN FORM ============ -->
+    <!-- This is the ONLY thing that logs someone in. Guest login is separate, below. -->
+    <form id="login-form" novalidate>
+
+      <!-- Shows error messages, e.g. "Wrong email or password" -->
+      <p id="form-error" class="form-error" role="alert" hidden></p>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" autocomplete="username" required placeholder="you@bcfc.com">
+
+      <label for="password">Password</label>
+      <div class="password-field">
+        <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+        <!-- Eye icon: toggles password visibility. Handled in login.js -->
+        <button type="button" id="toggle-password" aria-label="Show password">Show</button>
+      </div>
+
+      <!-- Link opens the "Forgot password" panel further down the page -->
+      <a href="#forgot-password" class="forgot-link">Forgot password?</a>
+
+      <button type="submit" class="btn btn-primary" id="login-btn">Log In</button>
+    </form>
+
+    <div class="divider"><span>or</span></div>
+
+    <!-- ============ GUEST LOGIN ============ -->
+    <!-- EDIT: decide what a guest can see (e.g. read-only calendar, no chat/admin pages) -->
+    <button type="button" class="btn btn-guest" id="guest-btn">Log In as Guest</button>
+
+    <p class="portal-note">Workers portal for BCFC staff and department leads.</p>
+  </div>
+
+  <!-- ============ FORGOT PASSWORD PANEL ============ -->
+  <!-- Hidden until "Forgot password?" is clicked (login.js toggles the "show" class) -->
+  <div id="forgot-password" class="login-card forgot-card">
+    <button type="button" class="close-forgot" aria-label="Close">&times;</button>
+    <h2>Reset your password</h2>
+    <p>Enter the email you log in with. We'll send you a link to reset your password.</p>
+    <form id="forgot-form" novalidate>
+      <p id="forgot-success" class="form-success" role="status" hidden>Check your email for a reset link.</p>
+      <label for="forgot-email">Email</label>
+      <input type="email" id="forgot-email" name="forgot-email" required placeholder="you@bcfc.com">
+      <button type="submit" class="btn btn-primary">Send Reset Link</button>
+    </form>
+  </div>
+</main>
+
+<script src="login.js"></script>
+</body>
+</html>
