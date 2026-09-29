@@ -1,18 +1,15 @@
 rules_version = '2';
 
 service cloud.firestore {
-
   match /databases/{database}/documents {
 
-
-    /* ======================================================
-       HELPER FUNCTIONS
-       ====================================================== */
+    /* ==========================================================
+       HELPERS
+       ========================================================== */
 
     function signedIn() {
       return request.auth != null;
     }
-
 
     function role() {
       return get(
@@ -20,186 +17,170 @@ service cloud.firestore {
       ).data.role;
     }
 
-
     function isAdmin() {
-      return signedIn()
-        && role() == 'admin';
+      return signedIn() && role() == 'admin';
     }
-
 
     function isLead() {
-      return signedIn()
-        && role().matches('.*-lead');
+      return signedIn() && role().matches('.*-lead');
     }
-
-
-    /*
-       Admin
-       Pastor for specific modules
-       Department lead for their own department
-    */
 
     function canManage(mod) {
-
       return role() == 'admin'
-
         || (
-          role() == 'pastor'
-          && mod in [
-            'sunday',
-            'nurture',
-            'prayer',
-            'other'
-          ]
+          role() == 'pastor' &&
+          mod in ['sunday','nurture','prayer','other']
         )
-
         || (
-          isLead()
-          && role() == mod + '-lead'
+          isLead() &&
+          role() == mod + '-lead'
         );
     }
-
 
     function worship() {
-
-      return role() in [
-        'admin',
-        'pastor',
-        'preaching'
-      ];
+      return role() in ['admin','pastor','preaching'];
     }
 
-
-    /* ======================================================
-       CHAT CHANNEL PERMISSIONS
-       ====================================================== */
-
-    function chanOk(channel) {
-
+    function chanOk(c) {
       return role() == 'admin'
-
-        || channel == 'general'
-
-        || channel == role().replace('-lead', '')
-
+        || c == 'general'
         || (
-          channel == 'leads'
-          && (
-            isLead()
-            || role() == 'pastor'
-          )
+          c == 'childrens' &&
+          role() in ['childrens','childrens-lead']
         )
-
         || (
-          channel == 'preaching'
-          && role() in [
-            'pastor',
-            'preaching'
-          ]
+          c == 'ufy' &&
+          role() in ['ufy','ufy-lead']
+        )
+        || (
+          c == 'ufw' &&
+          role() in ['ufw','ufw-lead']
+        )
+        || (
+          c == 'ufm' &&
+          role() in ['ufm','ufm-lead']
+        )
+        || (
+          c == 'production' &&
+          role() in ['production','production-lead']
+        )
+        || (
+          c == 'creatives' &&
+          role() in ['creatives','creatives-lead']
+        )
+        || (
+          c == 'leads' &&
+          (isLead() || role() == 'pastor')
+        )
+        || (
+          c == 'preaching' &&
+          role() in ['pastor','preaching']
         );
     }
 
 
-    /* ======================================================
-       ROLE CODE CONFIG
-       ====================================================== */
+    /* ==========================================================
+       CONFIG
+       ========================================================== */
 
     match /config/{id} {
-
       allow read, write: if false;
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        SIGNUPS
-       ====================================================== */
+       ========================================================== */
 
     match /signups/{uid} {
 
-      allow create:
+      /*
+         NEW ACCOUNT
+      */
 
-        if signedIn()
+      allow create: if signedIn()
         && request.auth.uid == uid
-
         && request.resource.data.keys().hasOnly([
           'role',
           'code'
         ])
-
-        && request.resource.data.code
-          ==
+        && request.resource.data.code ==
           get(
-            /databases/$(database)
-            /documents/config/roleCodes
-          ).data[
-            request.resource.data.role
-          ];
+            /databases/$(database)/documents/config/roleCodes
+          ).data[request.resource.data.role];
+
+
+      /*
+         IMPORTANT FIX:
+
+         EXISTING AUTH ACCOUNT WITH AN INCOMPLETE SIGNUP
+         MAY UPDATE ITS OWN SIGNUP RECORD.
+
+         The new role/code must still be validated
+         against config/roleCodes.
+      */
+
+      allow update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly([
+          'role',
+          'code'
+        ])
+        && request.resource.data.code ==
+          get(
+            /databases/$(database)/documents/config/roleCodes
+          ).data[request.resource.data.role];
+
+
+      allow read, delete: if false;
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        USERS
-       ====================================================== */
+       ========================================================== */
 
     match /users/{uid} {
 
-      /*
-         Signed-in users can read member names.
-         This is required for @mentions.
-      */
-
-      allow read:
-        if signedIn();
+      allow read: if signedIn();
 
 
       /*
-         New user can only create their own account
-         using the role whose access code they proved.
+         NEW USER PROFILE
       */
 
-      allow create:
-
-        if signedIn()
+      allow create: if signedIn()
         && request.auth.uid == uid
-
         && request.resource.data.keys().hasOnly([
           'role',
           'name',
           'email',
           'createdAt'
         ])
-
         && exists(
-          /databases/$(database)
-          /documents/signups/$(uid)
+          /databases/$(database)/documents/signups/$(uid)
         )
-
         && get(
-          /databases/$(database)
-          /documents/signups/$(uid)
-        ).data.role
-          ==
+          /databases/$(database)/documents/signups/$(uid)
+        ).data.role ==
           request.resource.data.role;
 
 
       /*
-         Only admin can change or remove members.
+         ADMIN CAN EDIT OR REMOVE USERS
       */
 
-      allow update, delete:
-        if isAdmin();
+      allow update, delete: if isAdmin();
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        EVENTS / PROJECTS / TASKS
-       ====================================================== */
+       ========================================================== */
 
     match /{coll}/{id} {
 
-      allow read:
-
-        if signedIn()
+      allow read: if signedIn()
         && coll in [
           'events',
           'projects',
@@ -209,59 +190,45 @@ service cloud.firestore {
           'songs'
         ];
 
-
-      allow create:
-
-        if signedIn()
+      allow create: if signedIn()
         && coll in [
           'events',
           'projects',
           'tasks'
         ]
-
         && canManage(
           request.resource.data.module
         );
 
-
-      allow update:
-
-        if signedIn()
+      allow update: if signedIn()
         && coll in [
           'events',
           'projects',
           'tasks'
         ]
-
         && canManage(
           resource.data.module
         );
 
-
-      allow delete:
-
-        if signedIn()
+      allow delete: if signedIn()
         && coll in [
           'events',
           'projects',
           'tasks'
         ]
-
         && canManage(
           resource.data.module
         );
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        INVENTORY
-       ====================================================== */
+       ========================================================== */
 
     match /inventory/{id} {
 
-      allow create, update, delete:
-
-        if signedIn()
+      allow create, update, delete: if signedIn()
         && role() in [
           'admin',
           'production',
@@ -270,161 +237,90 @@ service cloud.firestore {
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        SETLISTS
-       ====================================================== */
+       ========================================================== */
 
     match /setlists/{id} {
 
-      allow create, update, delete:
-
-        if signedIn()
+      allow create, update, delete: if signedIn()
         && worship();
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        SONGS
-       ====================================================== */
+       ========================================================== */
 
     match /songs/{id} {
 
-      allow create, update, delete:
-
-        if signedIn()
+      allow create, update, delete: if signedIn()
         && worship();
     }
 
 
-    /* ======================================================
+    /* ==========================================================
        ANNOUNCEMENTS
-       ====================================================== */
+       ========================================================== */
 
     match /announcements/{id} {
 
-      allow read:
-
-        if signedIn()
+      allow read: if signedIn()
         && (
-          role() in [
-            'admin',
-            'pastor'
-          ]
+          role() in ['admin','pastor']
           || isLead()
         );
 
-
-      allow create, update, delete:
-
-        if signedIn()
-        && role() in [
-          'admin',
-          'pastor'
-        ];
+      allow create, update, delete: if signedIn()
+        && role() in ['admin','pastor'];
     }
 
 
-    /* ======================================================
-       CHAT MESSAGES
-       ====================================================== */
+    /* ==========================================================
+       CHAT
+       ========================================================== */
 
     match /messages/{id} {
 
-
-      /*
-         READ
-      */
-
-      allow read:
-
-        if signedIn()
+      allow read: if signedIn()
         && chanOk(
           resource.data.channel
         );
 
 
-      /*
-         SEND
-      */
-
-      allow create:
-
-        if signedIn()
-
-        && request.resource.data.uid
-          == request.auth.uid
-
-        && request.resource.data.channel
-          is string
-
-        && request.resource.data.text
-          is string
-
+      allow create: if signedIn()
+        && request.resource.data.uid ==
+          request.auth.uid
+        && request.resource.data.channel is string
+        && request.resource.data.text is string
         && request.resource.data.text.size() > 0
-
         && request.resource.data.text.size() <= 500
-
         && chanOk(
           request.resource.data.channel
         );
 
 
-      /*
-         EDIT
-         
-         Users can edit their own messages.
-         Admin can edit any message.
-
-         The UID and channel cannot be changed.
-      */
-
-      allow update:
-
-        if signedIn()
-
+      allow update: if signedIn()
         && (
-          resource.data.uid
-            == request.auth.uid
-
+          resource.data.uid ==
+            request.auth.uid
           || isAdmin()
         )
-
-        && request.resource.data.uid
-          == resource.data.uid
-
-        && request.resource.data.channel
-          == resource.data.channel
-
-        && request.resource.data.text
-          is string
-
+        && request.resource.data.uid ==
+          resource.data.uid
+        && request.resource.data.channel ==
+          resource.data.channel
+        && request.resource.data.text is string
         && request.resource.data.text.size() > 0
-
         && request.resource.data.text.size() <= 500;
 
 
-      /*
-         DELETE
-         
-         Users can delete their own messages.
-         ADMIN CAN DELETE ANY MESSAGE.
-
-         This is what fixes the
-         "permission-denied" error when
-         Admin clears a chat.
-      */
-
-      allow delete:
-
-        if signedIn()
-
+      allow delete: if signedIn()
         && (
-          resource.data.uid
-            == request.auth.uid
-
+          resource.data.uid ==
+            request.auth.uid
           || isAdmin()
         );
     }
-
   }
 }
