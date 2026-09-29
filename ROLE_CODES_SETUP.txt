@@ -1,0 +1,35 @@
+BCFC Workers — Firebase role code setup
+
+The signup code is checked by Firestore Rules against this document:
+config / roleCodes
+
+Create the document in Firebase Console > Firestore Database > Data:
+Collection ID: config
+Document ID: roleCodes
+
+Add these STRING fields exactly:
+
+admin            = BCFC-ADM-4821
+pastor           = BCFC-PST-3107
+preaching        = BCFC-PRC-5590
+childrens-lead   = BCFC-CCL-2264
+childrens        = BCFC-CCW-7735
+ufy-lead         = BCFC-YL-1846
+ufy              = BCFC-YW-9021
+ufw-lead         = BCFC-WL-6413
+ufw              = BCFC-WW-3378
+ufm-lead         = BCFC-ML-8052
+ufm              = BCFC-MW-4469
+production-lead  = BCFC-PL-7190
+production       = BCFC-PW-2583
+creatives-lead   = BCFC-CL-6647
+creatives        = BCFC-CW-1934
+
+IMPORTANT:
+1. Field names are case-sensitive and must match exactly.
+2. Values must be String fields, not numbers/booleans.
+3. Publish/deploy the current firestore.rules after confirming the document exists.
+4. The updated login.js converts entered codes to uppercase before sending them.
+
+Why this is needed:
+login.js intentionally does not store the access codes in the browser. It creates an authenticated Firebase user, then writes signups/{uid} with role + code. Firestore Rules compare that code against config/roleCodes. If config/roleCodes is missing or its fields do not match, signup ends with permission-denied.
