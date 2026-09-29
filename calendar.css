@@ -1,0 +1,63 @@
+/* ==========================================================
+   calendar.css = styling for calendar.html ONLY (the grid, day panel, legend).
+   Header/nav styling lives in portal.css.
+   ========================================================== */
+
+.calendar-page{
+  display:grid;grid-template-columns:1fr 300px;gap:1.5rem;
+  max-width:1200px;margin:1.5rem auto;padding:0 1.5rem;
+}
+
+/* ---------- Toolbar: < Month Year > + Today button ---------- */
+.calendar-toolbar{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.calendar-toolbar h1{font:700 1.4rem var(--head);margin:0;flex:1;text-align:center}
+.calendar-toolbar button{background:#fff;border:1px solid var(--line);border-radius:6px;font-size:1.2rem;width:2.4rem;height:2.4rem;cursor:pointer}
+.calendar-toolbar button:hover{background:var(--gold);color:#fff}
+.btn-today{width:auto!important;padding:0 .9rem;font:600 .85rem var(--body)!important}
+
+/* ---------- Color legend ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:.9rem;font-size:.8rem;margin-bottom:1rem;color:#55516a}
+.legend span{display:flex;align-items:center;gap:.35rem}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+/* EDIT: add a --dot-* rule here whenever you add a new module color */
+.dot-sunday{background:var(--gold)}
+.dot-nurture{background:var(--purple)}
+.dot-prayer{background:var(--blue)}
+.dot-childrens{background:#e07a9c}
+.dot-ufy{background:#2fa38b}
+.dot-ufw{background:#c9702e}
+.dot-ufm{background:#5a6ac9}
+.dot-production{background:var(--navy)}
+.dot-creatives{background:var(--scarlet)}
+
+/* ---------- Weekday header row ---------- */
+.weekday-row{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font:600 .8rem var(--body);color:#8b87a0;margin-bottom:.4rem}
+
+/* ---------- The grid of day buttons ---------- */
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day-cell{
+  background:#fff;border:1px solid var(--line);border-radius:6px;min-height:78px;
+  padding:.4rem;text-align:left;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:.3rem;
+}
+.day-cell:hover{border-color:var(--gold)}
+.day-cell.selected{border-color:var(--purple);box-shadow:0 0 0 2px var(--purple) inset}
+.day-cell.other-month{opacity:.35}
+.day-cell.today .day-num{background:var(--gold);color:#fff;border-radius:50%}
+.day-num{font-weight:700;font-size:.85rem;width:1.5rem;height:1.5rem;display:flex;align-items:center;justify-content:center}
+.day-dots{display:flex;flex-wrap:wrap;gap:3px}
+
+/* ---------- Side panel: selected day's events ---------- */
+.day-panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:1.2rem;align-self:start}
+.day-panel h2{font:700 1.1rem var(--head);margin:0 0 .8rem}
+.day-panel-list{list-style:none;padding:0;margin:0 0 1rem;display:flex;flex-direction:column;gap:.6rem}
+.day-panel-list li{border-left:4px solid var(--gold);padding:.4rem .7rem;background:var(--ivory);border-radius:4px}
+.day-panel-list li .evt-title{font-weight:600;display:block}
+.day-panel-list li .evt-module{font-size:.75rem;color:#6c6880}
+.day-panel-empty{color:#8b87a0;font-size:.9rem}
+.btn-add-event{width:100%;padding:.65rem;background:var(--navy);color:#fff;border:0;border-radius:6px;font:600 .9rem inherit;cursor:pointer}
+.btn-add-event:hover{background:var(--purple)}
+
+@media (max-width:800px){
+  .calendar-page{grid-template-columns:1fr}
+  .day-panel{order:-1}
+}

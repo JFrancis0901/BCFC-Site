@@ -64,12 +64,11 @@ function showError(message) {
 }
 
 /* ---------- 3. GUEST LOGIN ---------- */
+// Guests are NOT workers — they get sent to the PUBLIC site (bcfc.com/),
+// not into the workers portal. "../" steps out of the /workers folder
+// back to the site root where index.html lives.
 guestBtn.addEventListener('click', () => {
-  // TODO: BACKEND — decide what a guest account can see.
-  // Simplest approach: skip real sign-in and send them straight to a
-  // read-only version of the Calendar page, e.g.:
-  //   window.location.href = "calendar.html?guest=1";
-  alert('Guest login is not connected yet — this will open a read-only view of the Calendar.');
+  window.location.href = "../index.html";
 });
 
 /* ---------- 4. FORGOT PASSWORD PANEL ---------- */
