@@ -1,8 +1,9 @@
 /* ==========================================================
-   login.css = look of the login page only.
+   login.css = look of the login page
    ========================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600&display=swap');
+
 
 :root{
   --scarlet:#b3122a;
@@ -13,20 +14,23 @@
   --ivory:#f8f5ef;
   --ink:#1c1a2b;
   --line:#e2dfe8;
+
   --head:'Playfair Display',Georgia,serif;
   --body:'Poppins',system-ui,sans-serif;
 }
 
+
 *{
-  box-sizing:border-box
+  box-sizing:border-box;
 }
+
 
 body{
   margin:0;
   font-family:var(--body);
   color:var(--ink);
   background:var(--navy);
-  min-height:100vh
+  min-height:100vh;
 }
 
 
@@ -40,8 +44,9 @@ body{
   align-items:center;
   justify-content:center;
   padding:1.5rem;
-  position:relative
+  position:relative;
 }
+
 
 .login-card{
   background:#fff;
@@ -50,7 +55,7 @@ body{
   padding:2.4rem 2rem;
   border-radius:8px;
   border-top:6px solid var(--gold);
-  box-shadow:0 20px 50px rgba(0,0,0,.35)
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
 }
 
 
@@ -60,19 +65,21 @@ body{
 
 .brand{
   text-align:center;
-  margin-bottom:1.6rem
+  margin-bottom:1.6rem;
 }
+
 
 .brand-mark{
   font:900 2rem var(--head);
-  color:var(--navy)
+  color:var(--navy);
 }
+
 
 .brand p{
   margin:.2rem 0 0;
   color:var(--purple);
   font-weight:600;
-  letter-spacing:.03em
+  letter-spacing:.03em;
 }
 
 
@@ -84,8 +91,9 @@ label{
   display:block;
   font-weight:600;
   font-size:.9rem;
-  margin:1rem 0 .35rem
+  margin:1rem 0 .35rem;
 }
+
 
 input{
   width:100%;
@@ -94,22 +102,24 @@ input{
   border-radius:6px;
   font:inherit;
   font-size:1rem;
-  background:#fff;
-  color:var(--ink)
 }
+
 
 input:focus{
   outline:none;
-  border-color:var(--gold)
+  border-color:var(--gold);
 }
+
 
 .password-field{
-  position:relative
+  position:relative;
 }
 
+
 .password-field input{
-  padding-right:3.6rem
+  padding-right:3.6rem;
 }
+
 
 #toggle-password{
   position:absolute;
@@ -122,93 +132,9 @@ input:focus{
   font-weight:600;
   font-size:.85rem;
   cursor:pointer;
-  padding:.4rem
+  padding:.4rem;
 }
 
-
-/* ==========================================================
-   PASSWORD COLORS
-   ========================================================== */
-
-/* Empty = GRAY */
-
-#su-password.password-empty,
-#su-password2.password-empty{
-  border-color:#b9b9b9;
-  box-shadow:0 0 0 2px rgba(120,120,120,.10)
-}
-
-
-/* Weak / partial = YELLOW */
-
-#su-password.password-weak,
-#su-password2.password-weak{
-  border-color:#d9a521;
-  box-shadow:0 0 0 2px rgba(217,165,33,.18)
-}
-
-
-/* Strong / exact match = GREEN */
-
-#su-password.password-strong,
-#su-password2.password-strong{
-  border-color:#249447;
-  box-shadow:0 0 0 2px rgba(36,148,71,.16)
-}
-
-
-/* ==========================================================
-   ERROR GLOW
-   ========================================================== */
-
-.field-error-glow{
-  border-color:#b3122a !important;
-  box-shadow:
-    0 0 0 2px rgba(179,18,42,.18),
-    0 0 10px rgba(179,18,42,.25) !important;
-
-  animation:
-    login-error-shake .22s ease-in-out
-}
-
-@keyframes login-error-shake{
-
-  0%{
-    transform:translateX(0)
-  }
-
-  25%{
-    transform:translateX(-4px)
-  }
-
-  50%{
-    transform:translateX(4px)
-  }
-
-  75%{
-    transform:translateX(-3px)
-  }
-
-  100%{
-    transform:translateX(0)
-  }
-
-}
-
-
-/* ==========================================================
-   ACCESS CODE
-   ========================================================== */
-
-#access-code{
-  letter-spacing:.08em;
-  text-transform:uppercase
-}
-
-
-/* ==========================================================
-   FORGOT PASSWORD
-   ========================================================== */
 
 .forgot-link{
   display:block;
@@ -216,11 +142,12 @@ input:focus{
   font-size:.85rem;
   color:var(--blue);
   text-decoration:none;
-  margin:.6rem 0 0
+  margin:.6rem 0 0;
 }
 
+
 .forgot-link:hover{
-  text-decoration:underline
+  text-decoration:underline;
 }
 
 
@@ -235,31 +162,87 @@ input:focus{
   font:600 1rem inherit;
   border-radius:6px;
   cursor:pointer;
-  border:2px solid transparent
+  border:2px solid transparent;
 }
+
 
 .btn-primary{
   background:var(--navy);
-  color:#fff
+  color:#fff;
 }
 
+
 .btn-primary:hover{
-  background:var(--purple)
+  background:var(--purple);
 }
+
 
 .btn-guest{
   background:#fff;
   color:var(--navy);
-  border-color:var(--navy)
+  border-color:var(--navy);
 }
+
 
 .btn-guest:hover{
-  background:var(--ivory)
+  background:var(--ivory);
 }
 
-.btn:disabled{
+
+/* ==========================================================
+   GOOGLE BUTTON
+   Same style as Log In button.
+   Text first, small Google logo on the right.
+   ========================================================== */
+
+.btn-google{
+  width:100%;
+  padding:.85rem;
+  margin-top:1.3rem;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.55rem;
+
+  background:var(--navy);
+  color:#fff;
+
+  border:2px solid transparent;
+  border-radius:6px;
+
+  font:600 1rem var(--body);
+  cursor:pointer;
+}
+
+
+.btn-google:hover{
+  background:var(--purple);
+}
+
+
+.btn-google:disabled{
   opacity:.65;
-  cursor:not-allowed
+  cursor:not-allowed;
+}
+
+
+.google-icon{
+  width:18px;
+  height:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-shrink:0;
+}
+
+
+.google-icon svg{
+  width:18px;
+  height:18px;
+  display:block;
 }
 
 
@@ -273,18 +256,20 @@ input:focus{
   text-align:center;
   color:#9a97ab;
   font-size:.8rem;
-  margin:1.4rem 0
+  margin:1.4rem 0;
 }
+
 
 .divider::before,
 .divider::after{
   content:"";
   flex:1;
-  border-top:1px solid var(--line)
+  border-top:1px solid var(--line);
 }
 
+
 .divider span{
-  padding:0 .8rem
+  padding:0 .8rem;
 }
 
 
@@ -297,7 +282,7 @@ input:focus{
   font-size:.8rem;
   color:#6c6880;
   margin-top:1.4rem;
-  margin-bottom:0
+  margin-bottom:0;
 }
 
 
@@ -312,8 +297,9 @@ input:focus{
   border-radius:6px;
   padding:.7rem .9rem;
   font-size:.9rem;
-  margin:0 0 .5rem
+  margin:0 0 .5rem;
 }
+
 
 .form-success{
   background:#eaf6ec;
@@ -322,12 +308,12 @@ input:focus{
   border-radius:6px;
   padding:.7rem .9rem;
   font-size:.9rem;
-  margin:0 0 .5rem
+  margin:0 0 .5rem;
 }
 
 
 /* ==========================================================
-   FORGOT PASSWORD PANEL
+   FORGOT PASSWORD
    ========================================================== */
 
 .forgot-card{
@@ -337,17 +323,20 @@ input:focus{
   height:fit-content;
   max-height:90vh;
   overflow-y:auto;
-  display:none
+  display:none;
 }
 
+
 .forgot-card.show{
-  display:block
+  display:block;
 }
+
 
 .forgot-card h2{
   font-family:var(--head);
-  margin-top:0
+  margin-top:0;
 }
+
 
 .close-forgot{
   position:absolute;
@@ -358,24 +347,26 @@ input:focus{
   font-size:1.6rem;
   line-height:1;
   color:#9a97ab;
-  cursor:pointer
+  cursor:pointer;
 }
 
+
 .close-forgot:hover{
-  color:var(--ink)
+  color:var(--ink);
 }
 
 
 /* ==========================================================
-   LOGIN / SIGNUP TABS
+   LOGIN / SIGN UP TABS
    ========================================================== */
 
 .auth-tabs{
   display:grid;
   grid-template-columns:1fr 1fr;
   border-bottom:2px solid var(--line);
-  margin-bottom:1.2rem
+  margin-bottom:1.2rem;
 }
+
 
 .auth-tabs button{
   background:none;
@@ -385,39 +376,38 @@ input:focus{
   color:#8b87a0;
   cursor:pointer;
   border-bottom:3px solid transparent;
-  margin-bottom:-2px
+  margin-bottom:-2px;
 }
+
 
 .auth-tabs button.on{
   color:var(--navy);
-  border-bottom-color:var(--gold)
+  border-bottom-color:var(--gold);
 }
 
-
-/* ==========================================================
-   HIDDEN
-   ========================================================== */
 
 [hidden]{
-  display:none!important
+  display:none!important;
 }
 
 
 /* ==========================================================
-   SIGNUP STEPS
+   SIGN UP STEPS
    ========================================================== */
 
 .step-title{
   font:700 1.15rem var(--head);
   margin:0 0 .4rem;
-  color:var(--navy)
+  color:var(--navy);
 }
+
 
 .step-help{
   margin:0 0 .6rem;
   font-size:.85rem;
-  color:#6c6880
+  color:#6c6880;
 }
+
 
 .back-link{
   background:none;
@@ -426,12 +416,14 @@ input:focus{
   font:600 .85rem var(--body);
   cursor:pointer;
   padding:0;
-  margin-bottom:.8rem
+  margin-bottom:.8rem;
 }
 
+
 .back-link:hover{
-  text-decoration:underline
+  text-decoration:underline;
 }
+
 
 .role-chip{
   display:inline-block;
@@ -441,29 +433,28 @@ input:focus{
   background:#e9e3f5;
   color:var(--purple);
   font-size:.8rem;
-  font-weight:600
+  font-weight:600;
 }
 
-
-/* ==========================================================
-   ROLE BUTTONS
-   ========================================================== */
 
 .role-group{
-  margin-top:1rem
+  margin-top:1rem;
 }
+
 
 .role-group h3{
   margin:0 0 .4rem;
   font:600 .8rem var(--body);
-  color:#6c6880
+  color:#6c6880;
 }
+
 
 .role-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:.5rem
+  gap:.5rem;
 }
+
 
 .role-btn{
   padding:.65rem .5rem;
@@ -473,22 +464,31 @@ input:focus{
   font:600 .85rem var(--body);
   color:var(--ink);
   cursor:pointer;
-  text-align:center
+  text-align:center;
 }
+
 
 .role-btn:hover,
 .role-btn:focus-visible{
   border-color:var(--gold);
-  outline:none
+  outline:none;
 }
 
+
 .role-btn:active{
-  background:var(--ivory)
+  background:var(--ivory);
 }
+
 
 #code-form .btn,
 #signup-form .btn{
-  margin-top:1.1rem
+  margin-top:1.1rem;
+}
+
+
+#access-code{
+  letter-spacing:.08em;
+  text-transform:uppercase;
 }
 
 
@@ -499,48 +499,7 @@ input:focus{
 @media (max-width:420px){
 
   .login-card{
-    padding:2rem 1.4rem
+    padding:2rem 1.4rem;
   }
-
-  .role-grid{
-    grid-template-columns:1fr
-  }
-  /* ==========================================================
-   PASSWORD STATUS COLORS
-   ========================================================== */
-
-#su-password.password-empty,
-#su-password2.password-empty{
-  border-color:#aaa;
-  box-shadow:0 0 0 2px rgba(100,100,100,.10);
-}
-
-#su-password.password-weak,
-#su-password2.password-weak{
-  border-color:#d9a521;
-  box-shadow:0 0 0 2px rgba(217,165,33,.16);
-}
-
-#su-password.password-strong,
-#su-password2.password-strong{
-  border-color:#249447 !important;
-  box-shadow:0 0 0 2px rgba(36,148,71,.16) !important;
-}
-
-.field-error-glow{
-  border-color:#b3122a !important;
-  box-shadow:
-    0 0 0 2px rgba(179,18,42,.18),
-    0 0 10px rgba(179,18,42,.22) !important;
-  animation:login-error-shake .22s ease-in-out;
-}
-
-@keyframes login-error-shake{
-  0%{transform:translateX(0)}
-  25%{transform:translateX(-4px)}
-  50%{transform:translateX(4px)}
-  75%{transform:translateX(-3px)}
-  100%{transform:translateX(0)}
-}
 
 }

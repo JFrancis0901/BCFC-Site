@@ -1,17 +1,15 @@
 /* ==========================================================
    calendar.js
 
-   Calendar with:
-   - Date
-   - Place
-   - Start Time
-   - End Time
-   - Category
-   - Preacher
-   - Notes
+   Calendar + dashboard name setup.
 
-   Activities are stored in Firestore collection:
-   "events"
+   Google signup users arrive here with:
+
+   sessionStorage:
+     bcfc-needs-name = "1"
+
+   The dashboard opens, but the name overlay blocks
+   interaction until the user saves their full name.
    ========================================================== */
 
 import {
@@ -19,6 +17,8 @@ import {
   addDoc,
   deleteDoc,
   doc,
+  getDoc,
+  updateDoc,
   onSnapshot,
   query,
   where,
@@ -32,179 +32,447 @@ import {
 } from "./firebase-config.js";
 
 
-/* ----------------------------------------------------------
+/* ==========================================================
    MODULES
-   ---------------------------------------------------------- */
+   ========================================================== */
 
 const MODULE_COLORS = {
 
   sunday: {
-    label: 'Sunday Service',
-    dot: 'dot-sunday'
+    label: "Sunday Service",
+    dot: "dot-sunday"
   },
 
   nurture: {
-    label: 'Family Nurture',
-    dot: 'dot-nurture'
+    label: "Family Nurture",
+    dot: "dot-nurture"
   },
 
   prayer: {
-    label: 'Abound in Prayer',
-    dot: 'dot-prayer'
+    label: "Abound in Prayer",
+    dot: "dot-prayer"
   },
 
   childrens: {
     label: "Children's Church",
-    dot: 'dot-childrens'
+    dot: "dot-childrens"
   },
 
   ufy: {
-    label: 'UFY',
-    dot: 'dot-ufy'
+    label: "UFY",
+    dot: "dot-ufy"
   },
 
   ufw: {
-    label: 'UFW',
-    dot: 'dot-ufw'
+    label: "UFW",
+    dot: "dot-ufw"
   },
 
   ufm: {
-    label: 'UFM',
-    dot: 'dot-ufm'
+    label: "UFM",
+    dot: "dot-ufm"
   },
 
   production: {
-    label: 'Production',
-    dot: 'dot-production'
+    label: "Production",
+    dot: "dot-production"
   },
 
   creatives: {
-    label: 'Creatives',
-    dot: 'dot-creatives'
+    label: "Creatives",
+    dot: "dot-creatives"
   },
 
   other: {
-    label: 'Other',
-    dot: 'dot-other'
+    label: "Other",
+    dot: "dot-other"
   }
 
 };
 
 
-/* ----------------------------------------------------------
-   PREACHING CATEGORIES
-   ---------------------------------------------------------- */
-
 const PREACHING = [
-  'sunday',
-  'nurture',
-  'prayer'
+  "sunday",
+  "nurture",
+  "prayer"
 ];
 
 
-/* ----------------------------------------------------------
-   WHO CAN ADD / DELETE
-   ---------------------------------------------------------- */
+/* ==========================================================
+   ROLE PERMISSIONS
+   ========================================================== */
 
-const ALL = Object.keys(MODULE_COLORS);
+const ALL =
+  Object.keys(MODULE_COLORS);
+
 
 const CAN_MANAGE = {
 
-  admin: ALL,
+  admin:
+    ALL,
 
-  pastor: [
-    ...PREACHING,
-    'other'
-  ],
+  pastor:
+    [
+      ...PREACHING,
+      "other"
+    ],
 
-  'childrens-lead': [
-    'childrens'
-  ],
+  "childrens-lead":
+    ["childrens"],
 
-  'ufy-lead': [
-    'ufy'
-  ],
+  "ufy-lead":
+    ["ufy"],
 
-  'ufw-lead': [
-    'ufw'
-  ],
+  "ufw-lead":
+    ["ufw"],
 
-  'ufm-lead': [
-    'ufm'
-  ],
+  "ufm-lead":
+    ["ufm"],
 
-  'production-lead': [
-    'production'
-  ],
+  "production-lead":
+    ["production"],
 
-  'creatives-lead': [
-    'creatives'
-  ]
+  "creatives-lead":
+    ["creatives"]
 
 };
 
 
-const myModules = () => {
+const myModules = () =>
+  CAN_MANAGE[
+    window.currentRole
+  ] || [];
 
-  return CAN_MANAGE[window.currentRole] || [];
 
-};
-
-
-/* ----------------------------------------------------------
+/* ==========================================================
    HELPERS
-   ---------------------------------------------------------- */
+   ========================================================== */
 
-const esc = s =>
-  String(s ?? '').replace(
-    /[&<>"']/g,
-    c => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[c])
-  );
-
-
-const pad = n =>
-  String(n).padStart(2, '0');
+const esc = value =>
+  String(value ?? "")
+    .replace(
+      /[&<>\"']/g,
+      char =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "\"": "&quot;",
+          "'": "&#39;"
+        }[char])
+    );
 
 
-const iso = (y, m, d) =>
-  `${y}-${pad(m + 1)}-${pad(d)}`;
+const pad = number =>
+  String(number)
+    .padStart(2, "0");
+
+
+const iso = (
+  year,
+  month,
+  day
+) =>
+  `${year}-${pad(month + 1)}-${pad(day)}`;
 
 
 const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
 ];
 
 
-/* ----------------------------------------------------------
-   CALENDAR STATE
-   ---------------------------------------------------------- */
+/* ==========================================================
+   NAME SETUP
+   ========================================================== */
 
-const today = new Date();
+const profileOverlay =
+  document.getElementById(
+    "profile-setup-overlay"
+  );
+
+const profileForm =
+  document.getElementById(
+    "profile-setup-form"
+  );
+
+const profileName =
+  document.getElementById(
+    "profile-setup-name"
+  );
+
+const profileError =
+  document.getElementById(
+    "profile-setup-error"
+  );
+
+const profileButton =
+  document.getElementById(
+    "profile-setup-btn"
+  );
+
+
+function showProfileSetup() {
+
+  if (!profileOverlay) return;
+
+  profileError.hidden =
+    true;
+
+  profileOverlay.hidden =
+    false;
+
+  document.body.style.overflow =
+    "hidden";
+
+  setTimeout(
+    () => profileName?.focus(),
+    100
+  );
+
+}
+
+
+function hideProfileSetup() {
+
+  if (!profileOverlay) return;
+
+  profileOverlay.hidden =
+    true;
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+async function checkProfileSetup() {
+
+  await auth.authStateReady();
+
+
+  const user =
+    auth.currentUser;
+
+
+  if (!user) {
+    return;
+  }
+
+
+  let needsName =
+    sessionStorage.getItem(
+      "bcfc-needs-name"
+    ) === "1";
+
+
+  /*
+    Also check Firestore.
+
+    This makes the name prompt appear even
+    if the browser session flag disappeared.
+  */
+
+  try {
+
+    const userDoc =
+      await getDoc(
+        doc(
+          db,
+          "users",
+          user.uid
+        )
+      );
+
+
+    if (
+      userDoc.exists() &&
+      !(userDoc.data().name || "").trim()
+    ) {
+
+      needsName = true;
+
+    }
+
+  } catch (err) {
+
+    console.warn(
+      "Could not check profile name:",
+      err
+    );
+
+  }
+
+
+  if (needsName) {
+
+    sessionStorage.setItem(
+      "bcfc-needs-name",
+      "1"
+    );
+
+    showProfileSetup();
+
+  }
+
+}
+
+
+profileForm?.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+
+    profileError.hidden =
+      true;
+
+
+    const name =
+      profileName.value
+        .trim();
+
+
+    if (!name) {
+
+      profileError.textContent =
+        "Please enter your full name.";
+
+      profileError.hidden =
+        false;
+
+      profileName.focus();
+
+      return;
+
+    }
+
+
+    if (name.length < 2) {
+
+      profileError.textContent =
+        "Please enter your full name.";
+
+      profileError.hidden =
+        false;
+
+      profileName.focus();
+
+      return;
+
+    }
+
+
+    if (!auth.currentUser) {
+
+      profileError.textContent =
+        "Your login session has expired. Please log in again.";
+
+      profileError.hidden =
+        false;
+
+      return;
+
+    }
+
+
+    profileButton.disabled =
+      true;
+
+    profileButton.textContent =
+      "Saving...";
+
+
+    try {
+
+      await updateDoc(
+        doc(
+          db,
+          "users",
+          auth.currentUser.uid
+        ),
+        {
+          name
+        }
+      );
+
+
+      sessionStorage.setItem(
+        "bcfc-name",
+        name
+      );
+
+
+      sessionStorage.removeItem(
+        "bcfc-needs-name"
+      );
+
+
+      /*
+        Reload so the shared portal header,
+        navigation and every dashboard component
+        receive the completed profile.
+      */
+
+      window.location.reload();
+
+
+    } catch (err) {
+
+      console.error(
+        "Could not save name:",
+        err
+      );
+
+
+      profileError.textContent =
+        `Could not save your name (${err.code || "unknown error"}). Please try again.`;
+
+      profileError.hidden =
+        false;
+
+
+      profileButton.disabled =
+        false;
+
+      profileButton.textContent =
+        "Continue";
+
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   CALENDAR DATA
+   ========================================================== */
+
+const today =
+  new Date();
+
 
 let events = [];
+
 
 let viewYear =
   today.getFullYear();
 
+
 let viewMonth =
   today.getMonth();
+
 
 let selectedDate =
   iso(
@@ -214,132 +482,86 @@ let selectedDate =
   );
 
 
-/* ----------------------------------------------------------
-   ELEMENTS
-   ---------------------------------------------------------- */
-
 const grid =
   document.getElementById(
-    'calendar-grid'
+    "calendar-grid"
   );
 
 const monthLabel =
   document.getElementById(
-    'month-label'
+    "month-label"
   );
 
 const panelTitle =
   document.getElementById(
-    'day-panel-title'
+    "day-panel-title"
   );
 
 const panelList =
   document.getElementById(
-    'day-panel-list'
+    "day-panel-list"
   );
 
 const addBtn =
   document.getElementById(
-    'add-event-btn'
+    "add-event-btn"
   );
 
 const dialog =
   document.getElementById(
-    'event-dialog'
+    "event-dialog"
   );
 
 const form =
   document.getElementById(
-    'event-form'
+    "event-form"
   );
 
 const errBox =
   document.getElementById(
-    'event-error'
+    "event-error"
   );
 
 const modSel =
   document.getElementById(
-    'evt-module'
+    "evt-module"
   );
 
 const preacherRow =
   document.getElementById(
-    'preacher-row'
+    "preacher-row"
   );
 
 
-/* ----------------------------------------------------------
-   EVENTS FOR A DAY
-   ---------------------------------------------------------- */
-
-const eventsOn = d => {
-
-  return events
-    .filter(e => e.date === d)
-    .sort((a, b) =>
-      (a.time || '')
-        .localeCompare(
-          b.time || ''
-        )
-    );
-
-};
+const eventsOn =
+  date =>
+    events
+      .filter(
+        event =>
+          event.date === date
+      )
+      .sort(
+        (a, b) =>
+          (a.time || "")
+            .localeCompare(
+              b.time || ""
+            )
+      );
 
 
-/* ----------------------------------------------------------
-   FIRESTORE LIVE DATA
-   ---------------------------------------------------------- */
-
-auth.authStateReady().then(() => {
-
-  onSnapshot(
-    collection(db, "events"),
-
-    snap => {
-
-      events =
-        snap.docs.map(d => ({
-          id: d.id,
-          ...d.data()
-        }));
-
-      refresh();
-
-    },
-
-    err => {
-
-      console.error(err);
-
-      panelList.innerHTML = `
-        <li
-          class="day-panel-empty"
-          style="border:0;background:none;padding:0">
-
-          Couldn't load events
-          (${esc(err.code || err.message)}).
-
-        </li>
-      `;
-
-    }
-
-  );
-
-});
-
-
-/* ----------------------------------------------------------
-   CALENDAR DISPLAY
-   ---------------------------------------------------------- */
+/* ==========================================================
+   RENDER CALENDAR
+   ========================================================== */
 
 function renderCalendar() {
 
   monthLabel.textContent =
     `${MONTH_NAMES[viewMonth]} ${viewYear}`;
 
-  grid.innerHTML = '';
+
+  grid.innerHTML =
+    "";
+
 
   const startWeekday =
     new Date(
@@ -348,6 +570,7 @@ function renderCalendar() {
       1
     ).getDay();
 
+
   const daysInMonth =
     new Date(
       viewYear,
@@ -355,10 +578,15 @@ function renderCalendar() {
       0
     ).getDate();
 
+
   const totalCells =
     Math.ceil(
-      (startWeekday + daysInMonth) / 7
+      (
+        startWeekday +
+        daysInMonth
+      ) / 7
     ) * 7;
+
 
   const todayStr =
     iso(
@@ -381,8 +609,11 @@ function renderCalendar() {
         i - startWeekday + 1
       );
 
+
     const other =
-      cellDate.getMonth() !== viewMonth;
+      cellDate.getMonth() !==
+      viewMonth;
+
 
     const dateStr =
       iso(
@@ -394,36 +625,54 @@ function renderCalendar() {
 
     const dots =
       eventsOn(dateStr)
-        .map(e => {
+        .map(
+          event => {
 
-          const module =
-            MODULE_COLORS[e.module] ||
-            MODULE_COLORS.other;
+            const module =
+              MODULE_COLORS[
+                event.module
+              ] ||
+              MODULE_COLORS.other;
 
-          return `
-            <i
-              class="dot ${module.dot}">
-            </i>
-          `;
 
-        })
-        .join('');
+            return `
+              <i
+                class="dot ${module.dot}">
+              </i>
+            `;
+
+          }
+        )
+        .join("");
 
 
     const cell =
-      document.createElement('button');
+      document.createElement(
+        "button"
+      );
 
-    cell.type = 'button';
+
+    cell.type =
+      "button";
+
 
     cell.className =
-      'day-cell' +
-      (other ? ' other-month' : '') +
-      (dateStr === todayStr
-        ? ' today'
-        : '') +
-      (dateStr === selectedDate
-        ? ' selected'
-        : '');
+      "day-cell" +
+      (
+        other
+          ? " other-month"
+          : ""
+      ) +
+      (
+        dateStr === todayStr
+          ? " today"
+          : ""
+      ) +
+      (
+        dateStr === selectedDate
+          ? " selected"
+          : ""
+      );
 
 
     cell.innerHTML = `
@@ -438,7 +687,7 @@ function renderCalendar() {
 
 
     cell.addEventListener(
-      'click',
+      "click",
       () => {
 
         selectedDate =
@@ -450,38 +699,44 @@ function renderCalendar() {
     );
 
 
-    grid.appendChild(cell);
+    grid.appendChild(
+      cell
+    );
 
   }
 
 }
 
 
-/* ----------------------------------------------------------
-   SELECTED DAY PANEL
-   ---------------------------------------------------------- */
+/* ==========================================================
+   RENDER DAY PANEL
+   ========================================================== */
 
 function renderPanel() {
 
-  const d =
+  const date =
     new Date(
       selectedDate +
-      'T00:00:00'
+      "T00:00:00"
     );
 
+
   panelTitle.textContent =
-    d.toLocaleDateString(
+    date.toLocaleDateString(
       undefined,
       {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric'
+        weekday: "long",
+        month: "long",
+        day: "numeric"
       }
     );
 
 
   const list =
-    eventsOn(selectedDate);
+    eventsOn(
+      selectedDate
+    );
+
 
   const manage =
     myModules();
@@ -490,99 +745,89 @@ function renderPanel() {
   panelList.innerHTML =
     list.length
 
-      ? list.map(e => {
+      ? list
+          .map(
+            event => {
 
-          const m =
-            MODULE_COLORS[e.module] ||
-            MODULE_COLORS.other;
-
-
-          const timeText =
-            e.time && e.endTime
-              ? `${e.time} - ${e.endTime}`
-              : e.time || e.endTime || '';
+              const module =
+                MODULE_COLORS[
+                  event.module
+                ] ||
+                MODULE_COLORS.other;
 
 
-          const meta = [
-
-            timeText,
-
-            e.place
-              ? `Place: ${e.place}`
-              : '',
-
-            e.kind,
-
-            e.assignee,
-
-            e.preacher
-              ? `Preacher: ${e.preacher}`
-              : ''
-
-          ]
-            .filter(Boolean)
-            .map(esc)
-            .join(' · ');
+              const meta = [
+                event.kind,
+                event.time,
+                event.assignee,
+                event.preacher &&
+                  `Preacher: ${event.preacher}`
+              ]
+                .filter(Boolean)
+                .map(esc)
+                .join(" · ");
 
 
-          return `
-            <li>
+              return `
+                <li>
 
-              <span class="evt-title">
-                ${esc(e.title)}
-              </span>
+                  <span class="evt-title">
+                    ${esc(event.title)}
+                  </span>
 
-              <span class="evt-module">
-                ${esc(m.label)}
-              </span>
+                  <span class="evt-module">
+                    ${esc(module.label)}
+                  </span>
 
-              ${
-                meta
-                  ? `
-                    <span class="evt-meta">
-                      ${meta}
-                    </span>
-                  `
-                  : ''
-              }
+                  ${
+                    meta
+                      ? `
+                        <span class="evt-meta">
+                          ${meta}
+                        </span>
+                      `
+                      : ""
+                  }
 
-              ${
-                e.notes
-                  ? `
-                    <span class="evt-meta">
-                      ${esc(e.notes)}
-                    </span>
-                  `
-                  : ''
-              }
+                  ${
+                    event.notes
+                      ? `
+                        <span class="evt-meta">
+                          ${esc(event.notes)}
+                        </span>
+                      `
+                      : ""
+                  }
 
-              ${
-                manage.includes(e.module)
-                  ? `
-                    <button
-                      class="evt-del"
-                      data-id="${esc(e.id)}"
-                      aria-label="Delete activity">
-                      &times;
-                    </button>
-                  `
-                  : ''
-              }
+                  ${
+                    manage.includes(
+                      event.module
+                    )
+                      ? `
+                        <button
+                          class="evt-del"
+                          data-id="${esc(event.id)}"
+                          aria-label="Delete activity">
+                          &times;
+                        </button>
+                      `
+                      : ""
+                  }
 
-            </li>
-          `;
+                </li>
+              `;
 
-        }).join('')
+            }
+          )
+          .join("")
 
       : `
-        <li
-          class="day-panel-empty"
-          style="border:0;background:none;padding:0">
-
-          No activities scheduled.
-
-        </li>
-      `;
+          <li
+            class="day-panel-empty"
+            style="border:0;background:none;padding:0">
+            No activities scheduled.
+          </li>
+        `;
 
 
   addBtn.hidden =
@@ -591,9 +836,9 @@ function renderPanel() {
 }
 
 
-/* ----------------------------------------------------------
+/* ==========================================================
    REFRESH
-   ---------------------------------------------------------- */
+   ========================================================== */
 
 function refresh() {
 
@@ -604,14 +849,87 @@ function refresh() {
 }
 
 
-/* ----------------------------------------------------------
+window.addEventListener(
+  "rolechange",
+  refresh
+);
+
+
+/* ==========================================================
+   FIRESTORE EVENTS
+   ========================================================== */
+
+auth.authStateReady()
+  .then(
+    async () => {
+
+      /*
+        Check the Google signup name requirement.
+      */
+
+      await checkProfileSetup();
+
+
+      /*
+        Load events.
+      */
+
+      onSnapshot(
+        collection(
+          db,
+          "events"
+        ),
+
+        snap => {
+
+          events =
+            snap.docs.map(
+              d => ({
+                id: d.id,
+                ...d.data()
+              })
+            );
+
+          refresh();
+
+        },
+
+        err => {
+
+          console.error(err);
+
+
+          panelList.innerHTML = `
+            <li
+              class="day-panel-empty"
+              style="border:0;background:none;padding:0">
+
+              Couldn't load events
+              (${esc(
+                err.code ||
+                err.message
+              )}).
+
+            </li>
+          `;
+
+        }
+      );
+
+    }
+  );
+
+
+/* ==========================================================
    MONTH NAVIGATION
-   ---------------------------------------------------------- */
+   ========================================================== */
 
 document
-  .getElementById('prev-month')
+  .getElementById(
+    "prev-month"
+  )
   .addEventListener(
-    'click',
+    "click",
     () => {
 
       viewMonth--;
@@ -619,6 +937,7 @@ document
       if (viewMonth < 0) {
 
         viewMonth = 11;
+
         viewYear--;
 
       }
@@ -630,19 +949,24 @@ document
 
 
 document
-  .getElementById('next-month')
+  .getElementById(
+    "next-month"
+  )
   .addEventListener(
-    'click',
+    "click",
     () => {
 
       viewMonth++;
 
+
       if (viewMonth > 11) {
 
         viewMonth = 0;
+
         viewYear++;
 
       }
+
 
       renderCalendar();
 
@@ -651,9 +975,11 @@ document
 
 
 document
-  .getElementById('today-btn')
+  .getElementById(
+    "today-btn"
+  )
   .addEventListener(
-    'click',
+    "click",
     () => {
 
       viewYear =
@@ -675,24 +1001,29 @@ document
   );
 
 
-/* ----------------------------------------------------------
-   DELETE ACTIVITY
-   ---------------------------------------------------------- */
+/* ==========================================================
+   DELETE EVENT
+   ========================================================== */
 
 panelList.addEventListener(
-  'click',
+  "click",
   async e => {
 
-    const btn =
-      e.target.closest('.evt-del');
+    const button =
+      e.target.closest(
+        ".evt-del"
+      );
+
 
     if (
-      !btn ||
+      !button ||
       !confirm(
-        'Delete this activity?'
+        "Delete this activity?"
       )
     ) {
+
       return;
+
     }
 
 
@@ -702,7 +1033,7 @@ panelList.addEventListener(
         doc(
           db,
           "events",
-          btn.dataset.id
+          button.dataset.id
         )
       );
 
@@ -720,9 +1051,9 @@ panelList.addEventListener(
 );
 
 
-/* ----------------------------------------------------------
-   LOAD PREACHERS
-   ---------------------------------------------------------- */
+/* ==========================================================
+   PREACHER LIST
+   ========================================================== */
 
 async function loadPreachers() {
 
@@ -745,22 +1076,24 @@ async function loadPreachers() {
 
 
     document
-      .getElementById('preacher-list')
+      .getElementById(
+        "preacher-list"
+      )
       .innerHTML =
-
-      snap.docs
-        .map(d =>
-          `<option value="${
-            esc(d.data().name || '')
-          }">`
-        )
-        .join('');
+        snap.docs
+          .map(
+            d =>
+              `<option value="${esc(
+                d.data().name || ""
+              )}">`
+          )
+          .join("");
 
 
   } catch (err) {
 
     console.warn(
-      'Preacher list unavailable:',
+      "Preacher list unavailable:",
       err.code
     );
 
@@ -769,36 +1102,42 @@ async function loadPreachers() {
 }
 
 
-/* ----------------------------------------------------------
-   OPEN ADD ACTIVITY
-   ---------------------------------------------------------- */
+/* ==========================================================
+   ADD ACTIVITY
+   ========================================================== */
 
 addBtn.addEventListener(
-  'click',
+  "click",
   () => {
 
     form.reset();
 
-    errBox.hidden = true;
+    errBox.hidden =
+      true;
+
 
     modSel.innerHTML =
       myModules()
-        .map(k =>
-          `
-            <option value="${k}">
-              ${esc(
-                MODULE_COLORS[k].label
-              )}
-            </option>
-          `
+        .map(
+          key =>
+            `
+              <option
+                value="${key}">
+                ${esc(
+                  MODULE_COLORS[key].label
+                )}
+              </option>
+            `
         )
-        .join('');
+        .join("");
 
 
     document
-      .getElementById('evt-date')
+      .getElementById(
+        "evt-date"
+      )
       .value =
-      selectedDate;
+        selectedDate;
 
 
     preacherRow.hidden =
@@ -809,18 +1148,15 @@ addBtn.addEventListener(
 
     loadPreachers();
 
+
     dialog.showModal();
 
   }
 );
 
 
-/* ----------------------------------------------------------
-   CATEGORY CHANGE
-   ---------------------------------------------------------- */
-
 modSel.addEventListener(
-  'change',
+  "change",
   () => {
 
     preacherRow.hidden =
@@ -832,24 +1168,26 @@ modSel.addEventListener(
 );
 
 
-/* ----------------------------------------------------------
-   CANCEL
-   ---------------------------------------------------------- */
-
 document
-  .getElementById('evt-cancel')
+  .getElementById(
+    "evt-cancel"
+  )
   .addEventListener(
-    'click',
-    () => dialog.close()
+    "click",
+    () => {
+
+      dialog.close();
+
+    }
   );
 
 
-/* ----------------------------------------------------------
+/* ==========================================================
    SAVE ACTIVITY
-   ---------------------------------------------------------- */
+   ========================================================== */
 
 form.addEventListener(
-  'submit',
+  "submit",
   async e => {
 
     e.preventDefault();
@@ -860,121 +1198,15 @@ form.addEventListener(
 
 
     if (
-      !myModules().includes(module)
+      !myModules()
+        .includes(module)
     ) {
 
       errBox.textContent =
         "You can't add that type of activity.";
 
-      errBox.hidden = false;
-
-      return;
-
-    }
-
-
-    const title =
-      document
-        .getElementById('evt-title')
-        .value
-        .trim();
-
-
-    const date =
-      document
-        .getElementById('evt-date')
-        .value;
-
-
-    const place =
-      document
-        .getElementById('evt-place')
-        .value
-        .trim();
-
-
-    const startTime =
-      document
-        .getElementById('evt-time')
-        .value;
-
-
-    const endTime =
-      document
-        .getElementById('evt-end-time')
-        .value;
-
-
-    /* ------------------------------------------------------
-       VALIDATION
-       ------------------------------------------------------ */
-
-    if (!title) {
-
-      errBox.textContent =
-        "Please enter an activity title.";
-
-      errBox.hidden = false;
-
-      return;
-
-    }
-
-
-    if (!date) {
-
-      errBox.textContent =
-        "Please choose a date.";
-
-      errBox.hidden = false;
-
-      return;
-
-    }
-
-
-    if (!place) {
-
-      errBox.textContent =
-        "Please enter the place.";
-
-      errBox.hidden = false;
-
-      return;
-
-    }
-
-
-    if (!startTime) {
-
-      errBox.textContent =
-        "Please enter the start time.";
-
-      errBox.hidden = false;
-
-      return;
-
-    }
-
-
-    if (!endTime) {
-
-      errBox.textContent =
-        "Please enter the end time.";
-
-      errBox.hidden = false;
-
-      return;
-
-    }
-
-
-    if (endTime <= startTime) {
-
-      errBox.textContent =
-        "The end time must be later than the start time.";
-
-      errBox.hidden = false;
+      errBox.hidden =
+        false;
 
       return;
 
@@ -983,55 +1215,73 @@ form.addEventListener(
 
     const saveBtn =
       document.getElementById(
-        'evt-save'
+        "evt-save"
       );
 
-    saveBtn.disabled = true;
+
+    saveBtn.disabled =
+      true;
 
 
     try {
 
       await addDoc(
-        collection(db, "events"),
+        collection(
+          db,
+          "events"
+        ),
         {
 
-          title,
+          title:
+            document
+              .getElementById(
+                "evt-title"
+              )
+              .value
+              .trim(),
 
           module,
 
-          date,
+          date:
+            document
+              .getElementById(
+                "evt-date"
+              )
+              .value,
 
-          place,
-
-          time: startTime,
-
-          endTime,
+          time:
+            document
+              .getElementById(
+                "evt-time"
+              )
+              .value,
 
           preacher:
             PREACHING.includes(module)
               ? document
                   .getElementById(
-                    'evt-preacher'
+                    "evt-preacher"
                   )
                   .value
                   .trim()
-              : '',
+              : "",
 
           notes:
             document
               .getElementById(
-                'evt-notes'
+                "evt-notes"
               )
               .value
               .trim(),
 
           createdBy:
-            auth.currentUser?.uid || '',
+            auth.currentUser?.uid ||
+            "",
 
           createdByName:
             sessionStorage.getItem(
-              'bcfc-name'
-            ) || '',
+              "bcfc-name"
+            ) || "",
 
           createdAt:
             serverTimestamp()
@@ -1041,19 +1291,27 @@ form.addEventListener(
 
 
       selectedDate =
-        date;
+        document
+          .getElementById(
+            "evt-date"
+          )
+          .value;
 
 
-      const [y, m] =
+      const [
+        year,
+        month
+      ] =
         selectedDate
-          .split('-')
+          .split("-")
           .map(Number);
 
 
-      viewYear = y;
+      viewYear =
+        year;
 
       viewMonth =
-        m - 1;
+        month - 1;
 
 
       dialog.close();
@@ -1063,25 +1321,23 @@ form.addEventListener(
 
       console.error(err);
 
-      errBox.textContent =
-        `Couldn't save (${
-          err.code ||
-          err.message
-        }). You may not have permission, or the connection failed.`;
 
-      errBox.hidden = false;
+      errBox.textContent =
+        `Couldn't save (${err.code || err.message}). You may not have permission, or the connection failed.`;
+
+      errBox.hidden =
+        false;
 
     }
 
 
-    saveBtn.disabled = false;
+    saveBtn.disabled =
+      false;
 
   }
 );
 
 
-/* ----------------------------------------------------------
-   START
-   ---------------------------------------------------------- */
+/* Initial render */
 
 refresh();
