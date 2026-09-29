@@ -1,0 +1,70 @@
+/* ==========================================================
+   login.css = look of the login page only.
+   Reuses the BCFC color names so it matches the public site.
+   ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600&display=swap');
+
+:root{
+  --scarlet:#b3122a; --blue:#1c3f94; --navy:#101a3d; --gold:#d9a521; --purple:#4a2b7a;
+  --ivory:#f8f5ef; --ink:#1c1a2b; --line:#e2dfe8;
+  --head:'Playfair Display',Georgia,serif; --body:'Poppins',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--navy);min-height:100vh}
+
+/* Centers the login card in the middle of the screen */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative}
+
+.login-card{
+  background:#fff;width:100%;max-width:380px;padding:2.4rem 2rem;border-radius:8px;
+  border-top:6px solid var(--gold);box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+/* ---------- Brand / logo area ---------- */
+.brand{text-align:center;margin-bottom:1.6rem}
+.brand-mark{font:900 2rem var(--head);color:var(--navy)}       /* EDIT: swap for <img> if you add a logo file */
+.brand p{margin:.2rem 0 0;color:var(--purple);font-weight:600;letter-spacing:.03em}
+
+/* ---------- Form fields ---------- */
+label{display:block;font-weight:600;font-size:.9rem;margin:1rem 0 .35rem}
+input{width:100%;padding:.75rem .9rem;border:2px solid var(--line);border-radius:6px;font:inherit;font-size:1rem}
+input:focus{outline:none;border-color:var(--gold)}
+.password-field{position:relative}
+.password-field input{padding-right:3.6rem}
+#toggle-password{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--blue);font-weight:600;font-size:.85rem;cursor:pointer;padding:.4rem}
+
+.forgot-link{display:block;text-align:right;font-size:.85rem;color:var(--blue);text-decoration:none;margin:.6rem 0 0}
+.forgot-link:hover{text-decoration:underline}
+
+/* ---------- Buttons ---------- */
+.btn{width:100%;padding:.85rem;margin-top:1.3rem;font:600 1rem inherit;border-radius:6px;cursor:pointer;border:2px solid transparent}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--purple)}
+.btn-guest{background:#fff;color:var(--navy);border-color:var(--navy)}
+.btn-guest:hover{background:var(--ivory)}
+
+.divider{display:flex;align-items:center;text-align:center;color:#9a97ab;font-size:.8rem;margin:1.4rem 0}
+.divider::before,.divider::after{content:"";flex:1;border-top:1px solid var(--line)}
+.divider span{padding:0 .8rem}
+
+.portal-note{text-align:center;font-size:.8rem;color:#6c6880;margin-top:1.4rem;margin-bottom:0}
+
+/* ---------- Error / success messages ---------- */
+.form-error{background:#fdeceb;color:var(--scarlet);border:1px solid #f5c6c2;border-radius:6px;padding:.7rem .9rem;font-size:.9rem;margin:0 0 .5rem}
+.form-success{background:#eaf6ec;color:#1e6b34;border:1px solid #bfe6c7;border-radius:6px;padding:.7rem .9rem;font-size:.9rem;margin:0 0 .5rem}
+
+/* ---------- Forgot password panel ---------- */
+/* Hidden by default; login.js adds/removes the "show" class */
+.forgot-card{
+  position:fixed;inset:0;margin:auto;height:fit-content;max-height:90vh;overflow-y:auto;
+  display:none;
+}
+.forgot-card.show{display:block}
+.forgot-card h2{font-family:var(--head);margin-top:0}
+.close-forgot{position:absolute;top:1rem;right:1.2rem;background:none;border:0;font-size:1.6rem;line-height:1;color:#9a97ab;cursor:pointer}
+.close-forgot:hover{color:var(--ink)}
+
+/* ---------- Small screens ---------- */
+@media (max-width:420px){
+  .login-card{padding:2rem 1.4rem}
+}
