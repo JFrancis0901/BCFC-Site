@@ -19,7 +19,6 @@
   rel="stylesheet"
   href="board.css">
 
-
 <style>
 
 /* ==========================================================
@@ -33,7 +32,6 @@
   margin-bottom:1rem;
 }
 
-
 .chat-tabs button{
   border:1px solid var(--line);
   background:#fff;
@@ -44,11 +42,9 @@
   font:600 .8rem var(--body);
 }
 
-
 .chat-tabs button:hover{
   border-color:var(--gold);
 }
-
 
 .chat-tabs button.on{
   background:var(--navy);
@@ -58,7 +54,7 @@
 
 
 /* ==========================================================
-   ADMIN CHAT CONTROLS
+   ADMIN TOOLS
    ========================================================== */
 
 .chat-admin-tools{
@@ -66,7 +62,6 @@
   justify-content:flex-end;
   margin-bottom:1rem;
 }
-
 
 .btn-clear-chat{
   border:0;
@@ -78,11 +73,9 @@
   cursor:pointer;
 }
 
-
 .btn-clear-chat:hover{
   background:#8f0e21;
 }
-
 
 .btn-clear-chat:disabled{
   opacity:.6;
@@ -128,30 +121,22 @@
   position:relative;
 }
 
-
 .msg.mine{
   align-self:flex-end;
   background:#e8edf9;
 }
 
-
 .msg small{
   display:block;
-
   font-size:.72rem;
   font-weight:600;
-
   color:#6c6880;
-
   margin-bottom:.2rem;
 }
 
-
 .msg span{
   display:block;
-
   word-break:break-word;
-
   white-space:pre-wrap;
 }
 
@@ -162,36 +147,26 @@
 
 .msg-actions{
   display:flex;
-
   gap:.4rem;
-
   margin-top:.45rem;
 }
-
 
 .msg-actions button{
   border:0;
   background:none;
-
   padding:.15rem .3rem;
-
   cursor:pointer;
-
   font:600 .72rem var(--body);
-
   color:#6c6880;
 }
-
 
 .msg-actions button:hover{
   color:var(--navy);
 }
 
-
 .msg-actions .msg-delete:hover{
   color:var(--scarlet);
 }
-
 
 .msg-actions .msg-edit:hover{
   color:var(--blue);
@@ -204,50 +179,33 @@
 
 .msg-edit-box{
   width:100%;
-
   margin-top:.4rem;
-
   padding:.5rem .6rem;
-
   border:2px solid var(--gold);
-
   border-radius:6px;
-
   font:inherit;
-
   resize:vertical;
-
   min-height:70px;
 }
 
-
 .msg-edit-actions{
   display:flex;
-
   gap:.4rem;
-
   margin-top:.4rem;
 }
 
-
 .msg-edit-actions button{
   border:0;
-
   border-radius:5px;
-
   padding:.35rem .6rem;
-
   cursor:pointer;
-
   font:600 .72rem var(--body);
 }
-
 
 .msg-save{
   background:var(--navy);
   color:#fff;
 }
-
 
 .msg-cancel{
   background:#fff;
@@ -262,51 +220,33 @@
 
 .chat-form{
   display:flex;
-
   gap:.6rem;
-
   margin-top:1rem;
 }
 
-
 .chat-form input{
   flex:1;
-
   min-width:0;
-
   padding:.75rem .9rem;
-
   border:2px solid var(--line);
-
   border-radius:6px;
-
   font:inherit;
 }
 
-
 .chat-form input:focus{
   outline:none;
-
   border-color:var(--gold);
 }
 
-
 .chat-form button{
   padding:.75rem 1.2rem;
-
   border:0;
-
   border-radius:6px;
-
   background:var(--navy);
-
   color:#fff;
-
   font:600 .9rem var(--body);
-
   cursor:pointer;
 }
-
 
 .chat-form button:hover{
   background:var(--purple);
@@ -362,9 +302,7 @@
   </p>
 
 
-  <!-- ======================================================
-       ADMIN CLEAR CHAT
-       ====================================================== -->
+  <!-- ADMIN CLEAR BUTTON -->
 
   <div
     id="chat-admin-tools"
@@ -383,9 +321,7 @@
   </div>
 
 
-  <!-- ======================================================
-       CHANNEL TABS
-       ====================================================== -->
+  <!-- CHANNELS -->
 
   <div
     id="chat-tabs"
@@ -393,9 +329,7 @@
   </div>
 
 
-  <!-- ======================================================
-       CHAT
-       ====================================================== -->
+  <!-- MESSAGES -->
 
   <div
     id="chat-box"
@@ -403,9 +337,7 @@
   </div>
 
 
-  <!-- ======================================================
-       SEND
-       ====================================================== -->
+  <!-- SEND -->
 
   <form
     id="chat-form"
@@ -419,7 +351,9 @@
 
     <button
       type="submit">
+
       Send
+
     </button>
 
   </form>
@@ -431,7 +365,7 @@
 <script type="module">
 
 /* ==========================================================
-   IMPORT SHARED PORTAL
+   PORTAL
    ========================================================== */
 
 import "./portal.js";
@@ -444,29 +378,19 @@ import "./portal.js";
 import {
 
   collection,
-
   addDoc,
-
   updateDoc,
-
   deleteDoc,
-
   doc,
-
   getDocs,
-
   onSnapshot,
-
   query,
-
   where,
-
   serverTimestamp,
-
   writeBatch
 
 } from
-  "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+"https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 
 /* ==========================================================
@@ -506,32 +430,23 @@ function esc(value){
 
 const CH = {
 
-  general:
-    "General",
+  general:"General",
 
-  leads:
-    "Department Leads",
+  leads:"Department Leads",
 
-  preaching:
-    "Preaching Team",
+  preaching:"Preaching Team",
 
-  childrens:
-    "Children's Church",
+  childrens:"Children's Church",
 
-  ufy:
-    "UFY",
+  ufy:"UFY",
 
-  ufw:
-    "UFW",
+  ufw:"UFW",
 
-  ufm:
-    "UFM",
+  ufm:"UFM",
 
-  production:
-    "Production",
+  production:"Production",
 
-  creatives:
-    "Creatives"
+  creatives:"Creatives"
 
 };
 
@@ -540,7 +455,7 @@ const CH = {
    CHANNEL ACCESS
    ========================================================== */
 
-const allowed = role => {
+function allowed(role){
 
   if(role === "admin"){
 
@@ -557,10 +472,10 @@ const allowed = role => {
       ||
 
       channel ===
-        role?.replace(
-          "-lead",
-          ""
-        )
+      role?.replace(
+        "-lead",
+        ""
+      )
 
       ||
 
@@ -570,12 +485,8 @@ const allowed = role => {
         &&
 
         (
-          role?.endsWith(
-            "-lead"
-          )
-
+          role?.endsWith("-lead")
           ||
-
           role === "pastor"
         )
       )
@@ -587,15 +498,16 @@ const allowed = role => {
 
         &&
 
-        [
-          "pastor",
-          "preaching"
-        ].includes(role)
+        (
+          role === "pastor"
+          ||
+          role === "preaching"
+        )
       )
 
   );
 
-};
+}
 
 
 /* ==========================================================
@@ -607,30 +519,25 @@ const tabs =
     "chat-tabs"
   );
 
-
 const box =
   document.getElementById(
     "chat-box"
   );
-
 
 const form =
   document.getElementById(
     "chat-form"
   );
 
-
 const input =
   document.getElementById(
     "chat-input"
   );
 
-
 const clearChatBtn =
   document.getElementById(
     "clear-chat-btn"
   );
-
 
 const adminTools =
   document.getElementById(
@@ -643,27 +550,25 @@ const me = () =>
 
 
 /* ==========================================================
-   CURRENT CHANNEL
+   STATE
    ========================================================== */
 
 let currentChannel =
   "general";
-
 
 let unsubscribe =
   null;
 
 
 /* ==========================================================
-   UPDATE ADMIN CONTROLS
+   ADMIN BUTTON
    ========================================================== */
 
-function updateAdminControls(){
+function updateAdminButton(){
 
   const isAdmin =
     window.currentRole ===
     "admin";
-
 
   adminTools.hidden =
     !isAdmin;
@@ -717,24 +622,24 @@ function openChannel(channel){
 
   tabs.innerHTML =
     channels
-      .map(
-        key => `
+    .map(
+      key => `
 
-          <button
-            type="button"
-            data-channel="${key}"
-            class="${key === currentChannel ? "on" : ""}">
+        <button
+          type="button"
+          data-channel="${key}"
+          class="${key === currentChannel ? "on" : ""}">
 
-            ${esc(CH[key])}
+          ${esc(CH[key])}
 
-          </button>
+        </button>
 
-        `
-      )
-      .join("");
+      `
+    )
+    .join("");
 
 
-  updateAdminControls();
+  updateAdminButton();
 
 
   if(!currentChannel){
@@ -756,7 +661,6 @@ function openChannel(channel){
         db,
         "messages"
       ),
-
       where(
         "channel",
         "==",
@@ -770,39 +674,34 @@ function openChannel(channel){
 
       chatQuery,
 
-
       snapshot => {
 
         const messages =
           snapshot.docs
+          .map(
+            messageDoc => ({
 
-            .map(
-              messageDoc => ({
+              id:
+                messageDoc.id,
 
-                id:
-                  messageDoc.id,
+              ...messageDoc.data()
 
-                ...messageDoc.data()
-
-              })
-            )
-
-            .sort(
-              (a,b) =>
-                (
-                  a.createdAt?.seconds
-                  ??
-                  0
-                )
-
-                -
-
-                (
-                  b.createdAt?.seconds
-                  ??
-                  0
-                )
-            );
+            })
+          )
+          .sort(
+            (a,b) =>
+              (
+                a.createdAt?.seconds
+                ??
+                0
+              )
+              -
+              (
+                b.createdAt?.seconds
+                ??
+                0
+              )
+          );
 
 
         if(!messages.length){
@@ -820,124 +719,120 @@ function openChannel(channel){
 
         box.innerHTML =
           messages
-            .map(
-              message => {
+          .map(
+            message => {
 
-                const isMine =
-                  message.uid ===
-                  me();
+              const mine =
+                message.uid ===
+                me();
 
-
-                const isAdmin =
-                  window.currentRole ===
-                  "admin";
-
-
-                const canEdit =
-                  isMine;
+              const admin =
+                window.currentRole ===
+                "admin";
 
 
-                const canDelete =
-                  isMine ||
-                  isAdmin;
+              const canEdit =
+                mine;
 
 
-                return `
-
-                  <div
-                    class="msg${isMine ? " mine" : ""}"
-                    data-message-id="${esc(message.id)}">
-
-                    <small>
-                      ${esc(
-                        message.name ||
-                        "Worker"
-                      )}
-                    </small>
+              const canDelete =
+                mine ||
+                admin;
 
 
-                    <span
-                      class="msg-text">
+              return `
 
-                      ${esc(
-                        message.text ||
-                        ""
-                      )}
+                <div
+                  class="msg${mine ? " mine" : ""}"
+                  data-id="${esc(message.id)}">
 
-                    </span>
-
-
-                    ${
-                      (
-                        canEdit ||
-                        canDelete
-                      )
-
-                      ?
-
-                      `
-                        <div
-                          class="msg-actions">
-
-                          ${
-                            canEdit
-
-                            ?
-
-                            `
-                              <button
-                                type="button"
-                                class="msg-edit"
-                                data-edit="${esc(message.id)}">
-
-                                Edit
-
-                              </button>
-                            `
-
-                            :
-
-                            ""
-                          }
+                  <small>
+                    ${esc(
+                      message.name ||
+                      "Worker"
+                    )}
+                  </small>
 
 
-                          ${
-                            canDelete
-
-                            ?
-
-                            `
-                              <button
-                                type="button"
-                                class="msg-delete"
-                                data-delete="${esc(message.id)}">
-
-                                Delete
-
-                              </button>
-                            `
-
-                            :
-
-                            ""
-                          }
-
-                        </div>
-                      `
-
-                      :
-
+                  <span class="msg-text">
+                    ${esc(
+                      message.text ||
                       ""
+                    )}
+                  </span>
 
-                    }
 
-                  </div>
+                  ${
+                    (
+                      canEdit ||
+                      canDelete
+                    )
 
-                `;
+                    ?
 
-              }
-            )
-            .join("");
+                    `
+                      <div
+                        class="msg-actions">
+
+                        ${
+                          canEdit
+
+                          ?
+
+                          `
+                            <button
+                              type="button"
+                              class="msg-edit"
+                              data-edit="${esc(message.id)}">
+
+                              Edit
+
+                            </button>
+                          `
+
+                          :
+
+                          ""
+                        }
+
+
+                        ${
+                          canDelete
+
+                          ?
+
+                          `
+                            <button
+                              type="button"
+                              class="msg-delete"
+                              data-delete="${esc(message.id)}">
+
+                              Delete
+
+                            </button>
+                          `
+
+                          :
+
+                          ""
+                        }
+
+                      </div>
+                    `
+
+                    :
+
+                    ""
+
+                  }
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("");
 
 
         box.scrollTop =
@@ -945,11 +840,10 @@ function openChannel(channel){
 
       },
 
-
       error => {
 
         console.error(
-          "Chat load error:",
+          "Chat error:",
           error
         );
 
@@ -1048,7 +942,6 @@ box.addEventListener(
     button.disabled =
       true;
 
-
     button.textContent =
       "Deleting...";
 
@@ -1062,7 +955,6 @@ box.addEventListener(
           messageId
         )
       );
-
 
     }catch(error){
 
@@ -1080,7 +972,6 @@ box.addEventListener(
       button.disabled =
         false;
 
-
       button.textContent =
         "Delete";
 
@@ -1091,7 +982,7 @@ box.addEventListener(
 
 
 /* ==========================================================
-   CLEAR ENTIRE CHAT
+   ADMIN CLEAR ENTIRE CHAT
    ========================================================== */
 
 clearChatBtn.addEventListener(
@@ -1114,7 +1005,7 @@ clearChatBtn.addEventListener(
 
     const confirmed =
       confirm(
-        "CLEAR ENTIRE CHAT?\n\nThis will permanently delete ALL messages from ALL chat channels.\n\nThis cannot be undone."
+        "CLEAR ENTIRE CHAT?\n\nThis will permanently delete every message from every channel.\n\nThis cannot be undone."
       );
 
 
@@ -1128,16 +1019,11 @@ clearChatBtn.addEventListener(
     clearChatBtn.disabled =
       true;
 
-
     clearChatBtn.textContent =
-      "Clearing Chat...";
+      "Clearing...";
 
 
     try{
-
-      /*
-        Get every message from every channel.
-      */
 
       const snapshot =
         await getDocs(
@@ -1159,37 +1045,40 @@ clearChatBtn.addEventListener(
       }
 
 
-      /*
-        Firestore batches allow up to 500 writes.
-        So we delete in groups of 500.
-      */
-
       const documents =
         snapshot.docs;
 
 
-      const batchSize =
-        500;
+      /*
+        IMPORTANT:
+        Keep this at 20 or below.
+
+        Firestore security rules have a
+        20-call limit for batched writes.
+      */
+
+      const BATCH_SIZE =
+        20;
 
 
       for(
         let start = 0;
         start < documents.length;
-        start += batchSize
+        start += BATCH_SIZE
       ){
 
         const batch =
           writeBatch(db);
 
 
-        const batchDocs =
+        const group =
           documents.slice(
             start,
-            start + batchSize
+            start + BATCH_SIZE
           );
 
 
-        batchDocs.forEach(
+        group.forEach(
           messageDoc => {
 
             batch.delete(
@@ -1223,7 +1112,7 @@ clearChatBtn.addEventListener(
 
 
       alert(
-        `Couldn't clear the chat (${error.code || error.message}). Make sure you have published the new firestore.rules.`
+        `Couldn't clear the chat (${error.code || error.message}).`
       );
 
 
@@ -1231,7 +1120,6 @@ clearChatBtn.addEventListener(
 
       clearChatBtn.disabled =
         false;
-
 
       clearChatBtn.textContent =
         "Clear Entire Chat";
@@ -1263,10 +1151,6 @@ box.addEventListener(
     }
 
 
-    const messageId =
-      button.dataset.edit;
-
-
     const message =
       button.closest(
         ".msg"
@@ -1280,6 +1164,10 @@ box.addEventListener(
     }
 
 
+    const messageId =
+      button.dataset.edit;
+
+
     const textElement =
       message.querySelector(
         ".msg-text"
@@ -1287,7 +1175,8 @@ box.addEventListener(
 
 
     const oldText =
-      textElement?.textContent || "";
+      textElement?.textContent ||
+      "";
 
 
     textElement.innerHTML = `
@@ -1351,10 +1240,6 @@ box.addEventListener(
     }
 
 
-    const messageId =
-      button.dataset.saveEdit;
-
-
     const message =
       button.closest(
         ".msg"
@@ -1395,7 +1280,6 @@ box.addEventListener(
     button.disabled =
       true;
 
-
     button.textContent =
       "Saving...";
 
@@ -1406,13 +1290,12 @@ box.addEventListener(
         doc(
           db,
           "messages",
-          messageId
+          button.dataset.saveEdit
         ),
         {
           text
         }
       );
-
 
     }catch(error){
 
@@ -1429,7 +1312,6 @@ box.addEventListener(
 
       button.disabled =
         false;
-
 
       button.textContent =
         "Save";
@@ -1571,13 +1453,13 @@ window.addEventListener(
   "rolechange",
   () => {
 
+    updateAdminButton();
+
+
     const channels =
       allowed(
         window.currentRole
       );
-
-
-    updateAdminControls();
 
 
     openChannel(
@@ -1586,13 +1468,9 @@ window.addEventListener(
         currentChannel
       )
 
-      ?
+      ? currentChannel
 
-      currentChannel
-
-      :
-
-      "general"
+      : "general"
 
     );
 
@@ -1605,39 +1483,34 @@ window.addEventListener(
    ========================================================== */
 
 auth.authStateReady()
-  .then(
-    () => {
+.then(
+  () => {
 
-      const channels =
-        allowed(
-          window.currentRole
-        );
+    updateAdminButton();
 
 
-      updateAdminControls();
-
-
-      openChannel(
-
-        channels.includes(
-          "general"
-        )
-
-        ?
-
-        "general"
-
-        :
-
-        channels[0]
-
+    const channels =
+      allowed(
+        window.currentRole
       );
 
-    }
-  );
+
+    openChannel(
+
+      channels.includes(
+        "general"
+      )
+
+      ? "general"
+
+      : channels[0]
+
+    );
+
+  }
+);
 
 </script>
-
 
 </body>
 </html>
