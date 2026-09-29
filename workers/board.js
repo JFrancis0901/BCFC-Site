@@ -58,9 +58,9 @@ export function board(parent, { title, col, filter = {}, defaults = {}, fields, 
       ? shown.map(d => `<li>${item(d)}${w ? `<button class="bd-del" data-id="${esc(d.id)}" aria-label="Delete">&times;</button>` : ''}</li>`).join('')
       : '<li class="bd-empty">Nothing here yet.</li>';
   };
-  onSnapshot(collection(db, col),
+  auth.authStateReady().then(() => onSnapshot(collection(db, col),
     snap => { items = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); },
-    e => { console.error(e); list.innerHTML = '<li class="bd-empty">Couldn\'t load. Check your Firestore rules.</li>'; });
+    e => { console.error(e); list.innerHTML = `<li class="bd-empty">Couldn't load (${esc(e.code || e.message)}). Check your Firestore rules.</li>`; }));
   window.addEventListener('rolechange', render);
 
   form.addEventListener('submit', async e => {
@@ -70,7 +70,7 @@ export function board(parent, { title, col, filter = {}, defaults = {}, fields, 
     try {
       await addDoc(collection(db, col), { ...data, ...defaults, createdBy: auth.currentUser?.uid || '', createdByName: sessionStorage.getItem('bcfc-name') || '', createdAt: serverTimestamp() });
       form.reset();
-    } catch (ex) { console.error(ex); err.textContent = "Couldn't save. You may not have permission."; err.hidden = false; }
+    } catch (ex) { console.error(ex); err.textContent = `Couldn't save (${ex.code || ex.message}). You may not have permission.`; err.hidden = false; }
   });
   list.addEventListener('click', async e => {
     const b = e.target.closest('.bd-del');

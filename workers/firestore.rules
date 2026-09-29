@@ -19,9 +19,27 @@ service cloud.firestore {
         || (c == 'preaching' && role() in ['pastor','preaching']);
     }
 
+    // ---- Sign-up with role codes ----
+    // config/roleCodes holds one field per role, e.g. pastor: "BCFC-PST-3107".
+    // Nobody can read or write it from the website; only you, in the Firebase Console.
+    match /config/{id} { allow read, write: if false; }
+
+    // At sign-up the browser writes {role, code}. It is only accepted if the code matches
+    // the one stored for that role. It can't be read back, changed or deleted afterwards.
+    match /signups/{uid} {
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['role', 'code'])
+        && request.resource.data.code == get(/databases/$(database)/documents/config/roleCodes).data[request.resource.data.role];
+    }
+
     match /users/{uid} {                       // names/roles readable so people can be assigned
       allow read: if signedIn();
-      allow write: if signedIn() && role() == 'admin';
+      // A new user may create ONLY their own profile, and only with the role whose code they just proved.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['role', 'name', 'email', 'createdAt'])
+        && exists(/databases/$(database)/documents/signups/$(uid))
+        && get(/databases/$(database)/documents/signups/$(uid)).data.role == request.resource.data.role;
+      allow update, delete: if signedIn() && role() == 'admin';
     }
     match /{coll}/{id} {
       allow read: if signedIn() && coll in ['events','projects','tasks','inventory','setlists','songs'];

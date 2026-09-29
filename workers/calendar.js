@@ -58,9 +58,9 @@ const eventsOn = d => events.filter(e => e.date === d)
   .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
 /* ---------- Live data from Firestore ---------- */
-onSnapshot(collection(db, "events"),
+auth.authStateReady().then(() => onSnapshot(collection(db, "events"),
   snap => { events = snap.docs.map(d => ({ id: d.id, ...d.data() })); refresh(); },
-  err => { console.error(err); panelList.innerHTML = '<li class="day-panel-empty" style="border:0;background:none;padding:0">Couldn\'t load events. Check your Firestore rules.</li>'; });
+  err => { console.error(err); panelList.innerHTML = `<li class="day-panel-empty" style="border:0;background:none;padding:0">Couldn't load events (${esc(err.code || err.message)}). Check your Firestore rules.</li>`; }));
 
 /* ---------- Rendering ---------- */
 function renderCalendar() {
@@ -169,7 +169,7 @@ form.addEventListener('submit', async e => {
     dialog.close();
   } catch (err) {
     console.error(err);
-    errBox.textContent = "Couldn't save. You may not have permission, or the connection failed.";
+    errBox.textContent = `Couldn't save (${err.code || err.message}). You may not have permission, or the connection failed.`;
     errBox.hidden = false;
   }
   saveBtn.disabled = false;
