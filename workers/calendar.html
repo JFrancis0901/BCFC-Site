@@ -2,45 +2,24 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Calendar | BCFC Workers</title>
 
-<link
-  rel="stylesheet"
-  href="portal.css">
-
-<link
-  rel="stylesheet"
-  href="calendar.css">
-
+<link rel="stylesheet" href="portal.css">
+<link rel="stylesheet" href="calendar.css">
 </head>
-
 
 <body>
 
-
-<!-- WORKERS HEADER -->
-
-<header
-  class="portal-header"
-  id="portal-header">
-</header>
-
-
-<!-- =====================================================
-     CALENDAR
-     ===================================================== -->
+<header class="portal-header" id="portal-header"></header>
 
 <main class="calendar-page">
 
-
-  <!-- CALENDAR GRID -->
+  <!-- =====================================================
+       CALENDAR
+       ===================================================== -->
 
   <section class="calendar-main">
 
@@ -48,7 +27,8 @@
 
       <button
         id="prev-month"
-        aria-label="Previous month">
+        aria-label="Previous month"
+      >
         &#8249;
       </button>
 
@@ -58,13 +38,15 @@
 
       <button
         id="next-month"
-        aria-label="Next month">
+        aria-label="Next month"
+      >
         &#8250;
       </button>
 
       <button
         id="today-btn"
-        class="btn-today">
+        class="btn-today"
+      >
         Today
       </button>
 
@@ -127,7 +109,6 @@
 
 
     <div class="weekday-row">
-
       <span>Sun</span>
       <span>Mon</span>
       <span>Tue</span>
@@ -135,36 +116,87 @@
       <span>Thu</span>
       <span>Fri</span>
       <span>Sat</span>
-
     </div>
 
 
     <div
       id="calendar-grid"
-      class="calendar-grid">
-    </div>
+      class="calendar-grid"
+    ></div>
 
   </section>
 
 
-  <!-- SELECTED DAY -->
+  <!-- =====================================================
+       RIGHT SIDE
+       ===================================================== -->
 
-  <aside class="day-panel">
+  <aside class="calendar-side">
 
-    <h2 id="day-panel-title">
-      Select a day
-    </h2>
+    <!-- SELECTED DAY -->
 
-    <ul
-      id="day-panel-list"
-      class="day-panel-list">
-    </ul>
+    <section class="day-panel">
 
-    <button
-      class="btn-add-event"
-      id="add-event-btn">
-      + Add Activity
-    </button>
+      <div class="side-title">
+
+        <div>
+
+          <h2 id="day-panel-title">
+            Select a day
+          </h2>
+
+          <p>
+            Activities for selected day
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <ul
+        id="day-panel-list"
+        class="day-panel-list"
+      ></ul>
+
+
+      <button
+        id="add-event-btn"
+        class="btn-add-event"
+      >
+        + Add Activity
+      </button>
+
+    </section>
+
+
+    <!-- ACTIVITY SUMMARY -->
+
+    <section class="activity-summary">
+
+      <div class="side-title">
+
+        <div>
+
+          <h2>
+            Activity Summary
+          </h2>
+
+          <p>
+            Click a department to view its activities
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="activity-summary-grid"
+        class="activity-summary-grid"
+      ></div>
+
+    </section>
 
   </aside>
 
@@ -177,22 +209,23 @@
 
 <dialog
   id="event-dialog"
-  class="event-dialog">
+  class="event-dialog"
+>
 
   <form
     id="event-form"
-    method="dialog">
+    method="dialog"
+  >
 
     <h2>
       Add Activity
     </h2>
 
-
     <p
       id="event-error"
       class="event-error"
-      hidden>
-    </p>
+      hidden
+    ></p>
 
 
     <label for="evt-title">
@@ -202,7 +235,9 @@
     <input
       id="evt-title"
       required
-      maxlength="80">
+      maxlength="80"
+      placeholder="Activity title"
+    >
 
 
     <label for="evt-module">
@@ -211,44 +246,68 @@
 
     <select
       id="evt-module"
-      required>
-    </select>
+      required
+    ></select>
+
+
+    <label for="evt-date">
+      Date
+    </label>
+
+    <input
+      type="date"
+      id="evt-date"
+      required
+    >
 
 
     <div class="row2">
 
       <div>
 
-        <label for="evt-date">
-          Date
+        <label for="evt-time">
+          Start Time
         </label>
 
         <input
-          type="date"
-          id="evt-date"
-          required>
+          type="time"
+          id="evt-time"
+        >
 
       </div>
 
 
       <div>
 
-        <label for="evt-time">
-          Time
+        <label for="evt-end-time">
+          End Time
         </label>
 
         <input
           type="time"
-          id="evt-time">
+          id="evt-end-time"
+        >
 
       </div>
 
     </div>
 
 
+    <label for="evt-place">
+      Place
+    </label>
+
+    <input
+      id="evt-place"
+      maxlength="120"
+      placeholder="Where will this activity happen?"
+    >
+
+
     <div
       id="preacher-row"
-      hidden>
+      hidden
+    >
 
       <label for="evt-preacher">
         Preacher
@@ -258,11 +317,12 @@
         id="evt-preacher"
         list="preacher-list"
         maxlength="60"
-        placeholder="Assign a preaching staff">
+        placeholder="Assign a preaching staff"
+      >
 
       <datalist
-        id="preacher-list">
-      </datalist>
+        id="preacher-list"
+      ></datalist>
 
     </div>
 
@@ -274,8 +334,9 @@
     <textarea
       id="evt-notes"
       rows="3"
-      maxlength="300">
-    </textarea>
+      maxlength="300"
+      placeholder="Additional information"
+    ></textarea>
 
 
     <div class="dialog-actions">
@@ -283,14 +344,16 @@
       <button
         type="button"
         id="evt-cancel"
-        class="btn-cancel">
+        class="btn-cancel"
+      >
         Cancel
       </button>
 
       <button
         type="submit"
         id="evt-save"
-        class="btn-add-event">
+        class="btn-add-event"
+      >
         Save
       </button>
 
@@ -302,86 +365,131 @@
 
 
 <!-- =====================================================
-     NAME SETUP OVERLAY
-     This blocks the whole dashboard until the user
-     enters their name.
+     DEPARTMENT ACTIVITIES POPUP
      ===================================================== -->
 
-<div
-  id="profile-setup-overlay"
-  class="profile-setup-overlay"
-  hidden>
+<dialog
+  id="team-activities-dialog"
+  class="team-activities-dialog"
+>
 
-  <div
-    class="profile-setup-card"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="profile-setup-title">
+  <div class="team-popup">
 
-    <div class="profile-setup-icon">
-      BCFC
-    </div>
+    <div class="team-popup-header">
 
+      <div class="team-popup-title-wrap">
 
-    <h2 id="profile-setup-title">
-      Welcome to the Workers Portal
-    </h2>
+        <div
+          id="team-popup-icon"
+          class="team-popup-icon"
+        >
+          U
+        </div>
 
+        <div>
 
-    <p class="profile-setup-text">
-      Before you can use the dashboard, please enter your full name.
-    </p>
+          <h2 id="team-popup-title">
+            UFM
+          </h2>
 
+          <p id="team-popup-count">
+            0 activities
+          </p>
 
-    <form
-      id="profile-setup-form"
-      novalidate>
+        </div>
 
-      <label for="profile-setup-name">
-        Full name
-      </label>
-
-      <input
-        type="text"
-        id="profile-setup-name"
-        maxlength="60"
-        autocomplete="name"
-        required
-        placeholder="Enter your full name">
-
-
-      <p
-        id="profile-setup-error"
-        class="profile-setup-error"
-        role="alert"
-        hidden>
-      </p>
+      </div>
 
 
       <button
-        type="submit"
-        id="profile-setup-btn"
-        class="profile-setup-btn">
-        Continue
+        type="button"
+        id="team-popup-close"
+        class="team-popup-close"
+        aria-label="Close"
+      >
+        &times;
       </button>
 
-    </form>
+    </div>
+
+
+    <div
+      id="team-popup-list"
+      class="team-popup-list"
+    ></div>
 
   </div>
 
-</div>
+</dialog>
+
+
+<!-- =====================================================
+     BCFC NOTIFICATION POPUP
+     ===================================================== -->
+
+<dialog
+  id="calendar-notify-dialog"
+  class="calendar-notify-dialog"
+>
+
+  <div class="calendar-notify-card">
+
+    <div
+      id="calendar-notify-icon"
+      class="calendar-notify-icon"
+    >
+      ✓
+    </div>
+
+
+    <h2
+      id="calendar-notify-title"
+      class="calendar-notify-title"
+    >
+      BCFC
+    </h2>
+
+
+    <p
+      id="calendar-notify-text"
+      class="calendar-notify-text"
+    ></p>
+
+
+    <div class="calendar-notify-actions">
+
+      <button
+        type="button"
+        id="calendar-notify-cancel"
+        class="calendar-notify-cancel"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        id="calendar-notify-ok"
+        class="calendar-notify-ok"
+      >
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</dialog>
 
 
 <script
   type="module"
-  src="portal.js">
-</script>
+  src="portal.js"
+></script>
 
 <script
   type="module"
-  src="calendar.js">
-</script>
-
+  src="calendar.js"
+></script>
 
 </body>
 </html>
