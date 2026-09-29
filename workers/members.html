@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1">
+
+<title>Members | BCFC Workers</title>
+
+<link
+  rel="stylesheet"
+  href="portal.css">
+
+<style>
+
+.members-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.members-page h1 {
+  margin-bottom: 8px;
+}
+
+.members-description {
+  margin-bottom: 25px;
+  color: #666;
+}
+
+.members-table-wrap {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.members-table th,
+.members-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.members-table th {
+  font-weight: 700;
+  background: #f7f7f7;
+}
+
+.members-table tr:last-child td {
+  border-bottom: none;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #eee;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.members-empty {
+  padding: 30px;
+  text-align: center;
+  color: #777;
+}
+
+.members-error {
+  padding: 15px;
+  background: #fdeceb;
+  color: #b3122a;
+  border-radius: 8px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<header
+  class="portal-header"
+  id="portal-header">
+</header>
+
+
+<main class="members-page">
+
+  <h1>
+    All Members
+  </h1>
+
+  <p class="members-description">
+    Everyone who has created a BCFC Workers account.
+  </p>
+
+
+  <div
+    id="members-error"
+    class="members-error"
+    hidden>
+  </div>
+
+
+  <div class="members-table-wrap">
+
+    <table class="members-table">
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Name
+          </th>
+
+          <th>
+            Email
+          </th>
+
+          <th>
+            Role
+          </th>
+
+          <th>
+            Account Created
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody id="members-list">
+
+        <tr>
+
+          <td
+            colspan="4"
+            class="members-empty">
+
+            Loading members...
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</main>
+
+
+<script
+  type="module"
+  src="portal.js">
+</script>
+
+<script
+  type="module"
+  src="members.js">
+</script>
+
+</body>
+
+</html>
