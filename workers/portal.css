@@ -38,3 +38,5 @@ body{margin:0;font-family:var(--body);color:var(--ink);background:var(--ivory)}
   .portal-nav{order:3;width:100%;overflow-x:auto;gap:1rem;padding-top:.5rem;border-top:1px solid rgba(255,255,255,.15)}
   .portal-user{order:2;margin-left:0}
 }
+
+.role-label[hidden],#role-switch[hidden]{display:none}

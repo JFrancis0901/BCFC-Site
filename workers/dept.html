@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Department | BCFC Workers</title>
+<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css"></head>
+<body>
+<header class="portal-header" id="portal-header"></header>
+<main class="board-page"><h1 id="page-title">Department</h1><p id="page-note" class="page-note"></p><div id="boards" class="boards"></div></main>
+<script type="module">
+import { board, eventFields, eventItem, byDate } from './board.js';
+const D = { childrens: "Children's Church", ufy: 'UFY', ufw: 'UFW', ufm: 'UFM' };
+const m = new URLSearchParams(location.search).get('m');
+const name = D[m] || 'Department';
+document.getElementById('page-title').textContent = name;
+document.title = name + ' | BCFC Workers';
+document.getElementById('page-note').textContent = `Activities and meetings for ${name} workers. Anything added here also shows on the Calendar. Only the ${name} lead can add or remove items.`;
+const lead = r => r === 'admin' || r === m + '-lead';
+board(document.getElementById('boards'), { title: 'Activities & Meetings', col: 'events', filter: { module: m }, defaults: { module: m },
+  fields: eventFields(['Activity', 'Meeting']), canWrite: lead, item: eventItem, sort: byDate });
+</script></body></html>

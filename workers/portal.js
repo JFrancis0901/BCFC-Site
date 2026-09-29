@@ -1,92 +1,86 @@
 /* ==========================================================
    portal.js = shared logic for EVERY workers page.
-   Reads the role that login.js saved after a real sign-in and uses it
-   to show/hide nav links. If someone lands here without having signed
-   in (no saved role), they're sent back to the login page.
-
-   TEST MODE: if you open calendar.html directly during development
-   (no bcfc-role saved yet), the old "Viewing as" dropdown still works
-   so you can keep testing nav/role logic without logging in each time.
-   Once a real role is saved, the dropdown is hidden and the real
-   role/name is shown instead.
+   - Builds the header + navbar (so links are defined in ONE place: NAV).
+   - Requires a real Firebase session, else sends you to login.
+   - Blocks pages your role isn't allowed to open.
+   - ADMINS get a "Viewing as" dropdown to act as any role (debugging).
    ========================================================== */
-
-import { signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { auth } from "./firebase-config.js";
 
-const roleSwitch  = document.getElementById('role-switch');
-const roleLabel   = document.querySelector('.role-label');
-const navLinks    = document.querySelectorAll('.portal-nav a');
-const logoutBtn   = document.querySelector('.btn-logout');
+const LEADS = 'childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead';
+// EDIT: [label, page, roles allowed]. "all" = every logged-in role.
+const NAV = [
+  ['Calendar', 'calendar.html', 'all'],
+  ['Announcements', 'announcements.html', `admin,pastor,${LEADS}`],
+  ["Children's Church", 'dept.html?m=childrens', 'admin,childrens-lead,childrens'],
+  ['UFY', 'dept.html?m=ufy', 'admin,ufy-lead,ufy'],
+  ['UFW', 'dept.html?m=ufw', 'admin,ufw-lead,ufw'],
+  ['UFM', 'dept.html?m=ufm', 'admin,ufm-lead,ufm'],
+  ['Praise & Worship', 'worship.html', 'admin,pastor,preaching'],
+  ['Production', 'projects.html?m=production', 'admin,production-lead,production'],
+  ['Creatives', 'projects.html?m=creatives', 'admin,creatives-lead,creatives'],
+  ['Chat', 'chat.html', 'all'],
+];
+const NAMES = {
+  admin: 'Admin', pastor: 'Pastor', preaching: 'Preaching Staff',
+  'childrens-lead': "Children's Church Lead", childrens: "Children's Church Worker",
+  'ufy-lead': 'UFY Lead', ufy: 'UFY Worker', 'ufw-lead': 'UFW Lead', ufw: 'UFW Worker',
+  'ufm-lead': 'UFM Lead', ufm: 'UFM Worker',
+  'production-lead': 'Production Lead', production: 'Production Worker',
+  'creatives-lead': 'Creatives Lead', creatives: 'Creatives Worker', guest: 'Guest'
+};
 
-const savedRole = sessionStorage.getItem('bcfc-role');
-const savedName = sessionStorage.getItem('bcfc-name');
-
-if (savedRole) {
-  // ---------- REAL LOGIN: use the saved role, hide the test switcher ----------
-  window.currentRole = savedRole;
-
-  if (roleSwitch) roleSwitch.hidden = true;
-  if (roleLabel) {
-    roleLabel.hidden = false;
-    roleLabel.textContent = savedName ? `${savedName} (${roleDisplayName(savedRole)})` : roleDisplayName(savedRole);
-  }
-} else {
-  // ---------- NO SAVED ROLE: no real session, send back to login ----------
-  // EDIT: comment this block out temporarily if you need to open calendar.html
-  // directly while building a new module, without logging in each time.
+const realRole = sessionStorage.getItem('bcfc-role');
+const userName = sessionStorage.getItem('bcfc-name') || '';
+function leaveToLogin() {
+  ['bcfc-role', 'bcfc-name', 'bcfc-email', 'bcfc-view-role'].forEach(k => sessionStorage.removeItem(k));
   window.location.href = "login.html";
 }
+if (!realRole) leaveToLogin();
+onAuthStateChanged(auth, user => { if (!user) leaveToLogin(); });
 
-function roleDisplayName(role) {
-  const names = {
-    admin: 'Admin', pastor: 'Pastor', preaching: 'Preaching Staff',
-    'childrens-lead': "Children's Church Lead", childrens: "Children's Church Worker",
-    'ufy-lead': 'UFY Lead', ufy: 'UFY Worker',
-    'ufw-lead': 'UFW Lead', ufw: 'UFW Worker',
-    'ufm-lead': 'UFM Lead', ufm: 'UFM Worker',
-    'production-lead': 'Production Lead', production: 'Production Worker',
-    'creatives-lead': 'Creatives Lead', creatives: 'Creatives Worker',
-    guest: 'Guest'
-  };
-  return names[role] || role;
+window.realRole = realRole;
+window.currentRole = (realRole === 'admin' && sessionStorage.getItem('bcfc-view-role')) || realRole;
+
+const here = (location.pathname.split('/').pop() || 'calendar.html') + location.search;
+const header = document.getElementById('portal-header');
+header.innerHTML = `
+  <a href="calendar.html" class="portal-logo">BCFC <span>Workers</span></a>
+  <nav class="portal-nav">${NAV.map(([t, h, r]) => `<a href="${h}" data-roles="${r}"${h === here ? ' class="active"' : ''}>${t.replace('&', '&amp;')}</a>`).join('')}</nav>
+  <div class="portal-user">
+    <span class="role-label" id="role-label"></span>
+    <select id="role-switch" hidden aria-label="Admin: view site as another role">${Object.entries(NAMES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+    <a href="login.html" class="btn-logout">Log Out</a>
+  </div>`;
+
+const roleSwitch = document.getElementById('role-switch');
+const roleLabel = document.getElementById('role-label');
+const navLinks = [...document.querySelectorAll('.portal-nav a')];
+const canSee = a => a.dataset.roles.split(',').some(r => r === 'all' || r === window.currentRole);
+
+function refresh() {
+  const viewing = window.currentRole !== realRole ? ` — viewing as ${NAMES[window.currentRole]}` : '';
+  roleLabel.textContent = `${userName ? userName + ' ' : ''}(${NAMES[realRole] || realRole})${viewing}`;
+  navLinks.forEach(a => { a.classList.toggle('locked', !canSee(a)); a.setAttribute('aria-disabled', String(!canSee(a))); });
+  const current = navLinks.find(a => a.getAttribute('href') === here);
+  if (current && !canSee(current)) window.location.replace('calendar.html');   // page guard
 }
 
-function applyRoleToNav() {
-  navLinks.forEach(link => {
-    const allowed = link.dataset.roles.split(',');
-    const canSee = allowed.includes('all') || allowed.includes(window.currentRole);
-    link.classList.toggle('locked', !canSee);
-    link.setAttribute('aria-disabled', String(!canSee));
-  });
-}
-
-if (roleSwitch && !savedRole) {
-  // Test-mode dropdown only runs when there's no real saved role.
-  window.currentRole = sessionStorage.getItem('bcfc-test-role') || 'admin';
+if (realRole === 'admin') {
+  roleSwitch.hidden = false;
   roleSwitch.value = window.currentRole;
   roleSwitch.addEventListener('change', () => {
     window.currentRole = roleSwitch.value;
-    sessionStorage.setItem('bcfc-test-role', window.currentRole);
-    applyRoleToNav();
+    sessionStorage.setItem('bcfc-view-role', window.currentRole);
+    refresh();
+    window.dispatchEvent(new Event('rolechange'));
   });
 }
+refresh();
 
-applyRoleToNav();
-
-/* ---------- LOG OUT ---------- */
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error(err);
-    }
-    sessionStorage.removeItem('bcfc-role');
-    sessionStorage.removeItem('bcfc-name');
-    sessionStorage.removeItem('bcfc-email');
-    sessionStorage.removeItem('bcfc-test-role');
-    window.location.href = "login.html";
-  });
-}
+document.querySelector('.btn-logout').addEventListener('click', async e => {
+  e.preventDefault();
+  try { await signOut(auth); } catch (err) { console.error(err); }
+  leaveToLogin();
+});

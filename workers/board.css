@@ -1,0 +1,33 @@
+.board-page{max-width:1000px;margin:1.5rem auto;padding:0 1.5rem}
+.board-page h1{font:900 1.8rem var(--head);margin:0 0 .3rem}
+.page-note{color:#6c6880;font-size:.9rem;margin:0 0 1.2rem}
+.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;align-items:start}
+.bd{background:#fff;border:1px solid var(--line);border-radius:8px;padding:1.1rem}
+.bd h2{font:700 1.1rem var(--head);margin:0 0 .7rem}
+.bd-add summary{cursor:pointer;font-weight:600;color:var(--blue);margin-bottom:.6rem}
+.bd-add[hidden]{display:none}
+.bd-add form{display:grid;gap:.6rem;margin-bottom:1rem}
+.bd-add label{display:grid;gap:.25rem;font-size:.8rem;font-weight:600}
+.bd-add input,.bd-add select,.bd-add textarea{padding:.5rem .6rem;border:2px solid var(--line);border-radius:6px;font:400 .9rem var(--body)}
+.bd-add input:focus,.bd-add select:focus,.bd-add textarea:focus{outline:none;border-color:var(--gold)}
+.bd-save{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:.6rem;font:600 .9rem var(--body);cursor:pointer}
+.bd-save:hover{background:var(--purple)}
+.bd-err{background:#fdeceb;color:var(--scarlet);border-radius:6px;padding:.5rem .7rem;font-size:.85rem;margin:0}
+.bd-list{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.bd-list li{position:relative;border-left:4px solid var(--gold);background:var(--ivory);border-radius:4px;padding:.5rem 2rem .5rem .7rem}
+.bd-list small{display:block;color:#6c6880;font-size:.75rem}
+.bd-list p,.bd-list pre{margin:.3rem 0 0;font:400 .85rem var(--body);white-space:pre-wrap}
+.bd-del{position:absolute;top:.3rem;right:.4rem;background:none;border:0;color:var(--scarlet);font-size:1.1rem;cursor:pointer}
+.bd-list li.bd-empty{border:0;background:none;color:#8b87a0;font-size:.9rem;padding:0}
+/* chat */
+.chat-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}
+.chat-tabs button{padding:.4rem .8rem;border:1px solid var(--line);background:#fff;border-radius:999px;font:600 .8rem var(--body);cursor:pointer}
+.chat-tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chat-box{background:#fff;border:1px solid var(--line);border-radius:8px;height:55vh;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.msg{max-width:75%;background:var(--ivory);border-radius:8px;padding:.45rem .7rem;align-self:flex-start}
+.msg.mine{align-self:flex-end;background:#e9e3f5}
+.msg small{display:block;color:#6c6880;font-size:.7rem}
+.msg span{white-space:pre-wrap;word-break:break-word}
+.chat-form{display:flex;gap:.6rem;margin-top:.8rem}
+.chat-form input{flex:1;padding:.7rem;border:2px solid var(--line);border-radius:6px;font:inherit}
+.chat-form button{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:0 1.2rem;font:600 .9rem var(--body);cursor:pointer}
