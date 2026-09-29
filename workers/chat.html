@@ -1,382 +1,1005 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chat | BCFC Workers</title>
 
-<link
-  rel="stylesheet"
-  href="portal.css">
-
-<link
-  rel="stylesheet"
-  href="board.css">
+<link rel="stylesheet" href="portal.css">
 
 <style>
-
-/* ==========================================================
-   CHAT TABS
-   ========================================================== */
-
-.chat-tabs{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
-  margin-bottom:1rem;
+:root{
+  --chat-bg:#f4f6fb;
+  --chat-white:#ffffff;
+  --chat-border:#e4e7ef;
+  --chat-muted:#7f8496;
+  --chat-blue:#1c5fd4;
+  --chat-blue-dark:#174fac;
+  --chat-other:#eceef4;
+  --chat-mine:#1c5fd4;
+  --chat-online:#27b36a;
+  --chat-danger:#c62828;
+  --chat-shadow:0 10px 30px rgba(16,26,61,.10);
 }
 
-.chat-tabs button{
-  border:1px solid var(--line);
+html,
+body{
+  height:100%;
+}
+
+body{
+  margin:0;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  background:var(--chat-bg);
+}
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+.chat-page{
+  flex:1;
+  min-height:0;
+  display:flex;
+  padding:14px 16px 16px;
+  overflow:hidden;
+}
+
+.chat-shell{
+  width:100%;
+  flex:1;
+  min-height:0;
+  display:flex;
+  overflow:hidden;
+  background:var(--chat-white);
+  border:1px solid var(--chat-border);
+  border-radius:18px;
+  box-shadow:var(--chat-shadow);
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.chat-sidebar{
+  width:300px;
+  min-width:300px;
+  display:flex;
+  flex-direction:column;
   background:#fff;
-  color:var(--ink);
-  padding:.45rem .7rem;
-  border-radius:6px;
-  cursor:pointer;
-  font:600 .8rem var(--body);
+  border-right:1px solid var(--chat-border);
+  min-height:0;
 }
 
-.chat-tabs button:hover{
-  border-color:var(--gold);
+.sidebar-top{
+  padding:20px 18px 14px;
+  border-bottom:1px solid var(--chat-border);
 }
 
-.chat-tabs button.on{
-  background:var(--navy);
-  color:#fff;
-  border-color:var(--navy);
-}
-
-
-/* ==========================================================
-   ADMIN TOOLS
-   ========================================================== */
-
-.chat-admin-tools{
+.sidebar-brand{
   display:flex;
-  justify-content:flex-end;
-  margin-bottom:1rem;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
 }
 
-.btn-clear-chat{
-  border:0;
-  border-radius:6px;
-  padding:.6rem .9rem;
-  background:var(--scarlet);
+.sidebar-brand h1{
+  margin:0;
+  font:700 1.7rem var(--head, Georgia, serif);
+  color:var(--navy, #101a3d);
+}
+
+.sidebar-brand span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:var(--navy, #101a3d);
   color:#fff;
-  font:600 .85rem var(--body);
+  font-weight:700;
+  font-size:.8rem;
+}
+
+.sidebar-label{
+  margin:5px 0 14px;
+  color:var(--chat-muted);
+  font-size:.8rem;
+}
+
+.chat-search-wrap{
+  position:relative;
+}
+
+.chat-search{
+  width:100%;
+  height:40px;
+  box-sizing:border-box;
+  border:1px solid var(--chat-border);
+  border-radius:12px;
+  background:#f6f7fa;
+  padding:0 13px 0 38px;
+  font:500 .88rem var(--body, Arial, sans-serif);
+  color:#222;
+  outline:none;
+}
+
+.chat-search:focus{
+  border-color:#b8c8ec;
+  background:#fff;
+}
+
+.chat-search-icon{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#8a8fa0;
+  font-size:.9rem;
+  pointer-events:none;
+}
+
+.chat-channel-list{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:10px 8px;
+}
+
+.channel-item{
+  width:100%;
+  border:0;
+  background:transparent;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:11px 10px;
+  margin:2px 0;
+  border-radius:12px;
+  cursor:pointer;
+  text-align:left;
+  font:inherit;
+  color:#292d3a;
+}
+
+.channel-item:hover{
+  background:#f4f6fb;
+}
+
+.channel-item.active{
+  background:#e9f0ff;
+  color:#174fac;
+}
+
+.channel-icon{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#eef1f6;
+  color:#616878;
+  font-weight:700;
+  font-size:.82rem;
+}
+
+.channel-item.active .channel-icon{
+  background:var(--chat-blue);
+  color:#fff;
+}
+
+.channel-text{
+  min-width:0;
+  flex:1;
+}
+
+.channel-name{
+  display:block;
+  font-weight:700;
+  font-size:.88rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.channel-sub{
+  display:block;
+  margin-top:2px;
+  color:var(--chat-muted);
+  font-size:.72rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.sidebar-bottom{
+  padding:10px;
+  border-top:1px solid var(--chat-border);
+}
+
+.clear-chat-btn{
+  width:100%;
+  border:1px solid #f0caca;
+  background:#fff7f7;
+  color:var(--chat-danger);
+  border-radius:10px;
+  padding:10px 12px;
+  font:600 .8rem var(--body, Arial, sans-serif);
   cursor:pointer;
 }
 
-.btn-clear-chat:hover{
-  background:#8f0e21;
+.clear-chat-btn:hover{
+  background:#fdeeee;
 }
 
-.btn-clear-chat:disabled{
+/* =========================================================
+   CONVERSATION
+   ========================================================= */
+
+.chat-conversation{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  background:var(--chat-bg);
+}
+
+.chat-conversation-header{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 18px;
+  background:#fff;
+  border-bottom:1px solid var(--chat-border);
+  flex-shrink:0;
+}
+
+.mobile-channel-btn{
+  display:none;
+  border:0;
+  background:#eef1f6;
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:1.1rem;
+}
+
+.conversation-icon{
+  width:44px;
+  height:44px;
+  min-width:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--chat-blue);
+  color:#fff;
+  font-weight:700;
+}
+
+.conversation-info{
+  min-width:0;
+}
+
+.conversation-info h2{
+  margin:0;
+  font-size:1rem;
+  color:#1d2230;
+  font-weight:700;
+}
+
+.conversation-status{
+  margin-top:2px;
+  color:var(--chat-muted);
+  font-size:.74rem;
+}
+
+.conversation-status::before{
+  content:"";
+  display:inline-block;
+  width:7px;
+  height:7px;
+  margin-right:5px;
+  border-radius:50%;
+  background:var(--chat-online);
+}
+
+/* =========================================================
+   MESSAGES AREA
+   ========================================================= */
+
+.chat-messages{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:18px 20px 14px;
+  scroll-behavior:smooth;
+}
+
+.empty-chat{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--chat-muted);
+}
+
+.empty-chat-icon{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e9edf5;
+  color:#7e8799;
+  font-size:1.2rem;
+  margin-bottom:10px;
+}
+
+.empty-chat strong{
+  color:#555b69;
+  margin-bottom:4px;
+}
+
+.date-divider{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:12px 0 16px;
+}
+
+.date-divider span{
+  background:#e5e8ef;
+  color:#72798a;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:.68rem;
+  font-weight:600;
+}
+
+/* message row */
+
+.message-row{
+  display:flex;
+  width:100%;
+  margin-bottom:10px;
+  align-items:flex-end;
+  gap:8px;
+}
+
+.message-row.mine{
+  justify-content:flex-end;
+}
+
+.message-avatar{
+  width:32px;
+  height:32px;
+  min-width:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#dfe4ee;
+  color:#596174;
+  font-weight:700;
+  font-size:.7rem;
+  margin-bottom:19px;
+}
+
+.message-content{
+  min-width:0;
+  max-width:min(78%, 620px);
+}
+
+.message-name{
+  font-size:.7rem;
+  color:#757b8a;
+  margin:0 0 4px 6px;
+  font-weight:600;
+}
+
+.message-bubble{
+  display:inline-block;
+  box-sizing:border-box;
+
+  /* Keep bubble close to the actual text */
+  width:max-content;
+  max-width:100%;
+
+  padding:8px 11px;
+
+  border-radius:16px;
+  background:var(--chat-other);
+  color:#252a35;
+  font-size:.87rem;
+  line-height:1.42;
+
+  /* Keep real line breaks typed by the user */
+  white-space:pre-wrap;
+
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.message-row.mine .message-content{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+}
+
+.message-row.mine .message-bubble{
+  background:var(--chat-mine);
+  color:#fff;
+  border-bottom-right-radius:5px;
+}
+
+.message-row:not(.mine) .message-bubble{
+  border-bottom-left-radius:5px;
+}
+
+.message-meta{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:4px;
+  padding:0 5px;
+  color:#9499a7;
+  font-size:.64rem;
+}
+
+.message-row.mine .message-meta{
+  justify-content:flex-end;
+}
+
+.message-actions{
+  display:none;
+  gap:5px;
+  margin-top:4px;
+}
+
+.message-row:hover .message-actions{
+  display:flex;
+}
+
+.message-action{
+  border:0;
+  background:transparent;
+  color:#777e8e;
+  padding:2px 4px;
+  font:600 .65rem var(--body, Arial, sans-serif);
+  cursor:pointer;
+}
+
+.message-action:hover{
+  color:var(--chat-blue);
+}
+
+.message-action.delete:hover{
+  color:var(--chat-danger);
+}
+
+/* =========================================================
+   COMPOSER
+   ========================================================= */
+
+.chat-composer{
+  flex-shrink:0;
+  padding:10px 14px 12px;
+  background:#fff;
+  border-top:1px solid var(--chat-border);
+}
+
+.chat-form{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  max-width:1100px;
+  margin:0 auto;
+}
+
+.chat-input-wrap{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:flex-end;
+  background:#f1f3f7;
+  border:1px solid #e4e7ee;
+  border-radius:17px;
+  padding:0 7px 0 13px;
+}
+
+.chat-input{
+  width:100%;
+  min-height:40px;
+  max-height:110px;
+  resize:none;
+  overflow-y:auto;
+  border:0;
+  outline:none;
+  background:transparent;
+  padding:10px 5px;
+  font:500 .86rem var(--body, Arial, sans-serif);
+  color:#252a35;
+  line-height:1.35;
+  box-sizing:border-box;
+}
+
+.chat-input::placeholder{
+  color:#969baa;
+}
+
+.chat-send{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border:0;
+  border-radius:50%;
+  background:var(--chat-blue);
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.95rem;
+}
+
+.chat-send:hover{
+  background:var(--chat-blue-dark);
+}
+
+.chat-send:disabled{
   opacity:.6;
   cursor:not-allowed;
 }
 
+/* =========================================================
+   POPUP
+   ========================================================= */
 
-/* ==========================================================
-   CHAT BOX
-   ========================================================== */
+.chat-popup{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(10,16,35,.52);
+}
 
-.chat-box{
-  min-height:420px;
-  max-height:65vh;
-  overflow-y:auto;
+.chat-popup.show{
+  display:flex;
+}
 
+.chat-popup-card{
+  width:min(420px, 100%);
+  background:#fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.22);
+  text-align:center;
+}
+
+.chat-popup-icon{
+  width:52px;
+  height:52px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e8efff;
+  color:var(--chat-blue);
+  font-weight:800;
+}
+
+.chat-popup-title{
+  margin:0 0 7px;
+  font:700 1.15rem var(--head, Georgia, serif);
+  color:#1d2230;
+}
+
+.chat-popup-text{
+  margin:0;
+  color:#656b7a;
+  font-size:.84rem;
+  line-height:1.5;
+}
+
+.chat-popup-actions{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-top:19px;
+}
+
+.chat-popup-actions button{
+  min-width:100px;
+  padding:10px 15px;
+  border-radius:9px;
+  border:1px solid var(--chat-border);
+  background:#fff;
+  cursor:pointer;
+  font:600 .82rem var(--body, Arial, sans-serif);
+}
+
+.chat-popup-actions .popup-ok{
+  background:var(--chat-blue);
+  border-color:var(--chat-blue);
+  color:#fff;
+}
+
+.chat-popup-actions .popup-ok:hover{
+  background:var(--chat-blue-dark);
+}
+
+.chat-popup-actions .popup-cancel:hover{
+  background:#f4f5f8;
+}
+
+/* =========================================================
+   EDIT STATE
+   ========================================================= */
+
+.editing-area{
   display:flex;
   flex-direction:column;
-  gap:.7rem;
-
-  padding:1rem;
-
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:8px;
+  gap:6px;
 }
 
-
-/* ==========================================================
-   MESSAGE
-   ========================================================== */
-
-.msg{
-  align-self:flex-start;
-  max-width:80%;
-
-  background:#f1eff6;
-
-  border-radius:8px;
-
-  padding:.65rem .8rem;
-
-  position:relative;
-}
-
-.msg.mine{
-  align-self:flex-end;
-  background:#e8edf9;
-}
-
-.msg small{
-  display:block;
-  font-size:.72rem;
-  font-weight:600;
-  color:#6c6880;
-  margin-bottom:.2rem;
-}
-
-.msg span{
-  display:block;
-  word-break:break-word;
-  white-space:pre-wrap;
-}
-
-
-/* ==========================================================
-   MESSAGE ACTIONS
-   ========================================================== */
-
-.msg-actions{
-  display:flex;
-  gap:.4rem;
-  margin-top:.45rem;
-}
-
-.msg-actions button{
-  border:0;
-  background:none;
-  padding:.15rem .3rem;
-  cursor:pointer;
-  font:600 .72rem var(--body);
-  color:#6c6880;
-}
-
-.msg-actions button:hover{
-  color:var(--navy);
-}
-
-.msg-actions .msg-delete:hover{
-  color:var(--scarlet);
-}
-
-.msg-actions .msg-edit:hover{
-  color:var(--blue);
-}
-
-
-/* ==========================================================
-   EDIT MESSAGE
-   ========================================================== */
-
-.msg-edit-box{
+.editing-area textarea{
   width:100%;
-  margin-top:.4rem;
-  padding:.5rem .6rem;
-  border:2px solid var(--gold);
-  border-radius:6px;
-  font:inherit;
-  resize:vertical;
   min-height:70px;
-}
-
-.msg-edit-actions{
-  display:flex;
-  gap:.4rem;
-  margin-top:.4rem;
-}
-
-.msg-edit-actions button{
-  border:0;
-  border-radius:5px;
-  padding:.35rem .6rem;
-  cursor:pointer;
-  font:600 .72rem var(--body);
-}
-
-.msg-save{
-  background:var(--navy);
-  color:#fff;
-}
-
-.msg-cancel{
-  background:#fff;
-  border:1px solid var(--line)!important;
-  color:var(--ink);
-}
-
-
-/* ==========================================================
-   SEND MESSAGE
-   ========================================================== */
-
-.chat-form{
-  display:flex;
-  gap:.6rem;
-  margin-top:1rem;
-}
-
-.chat-form input{
-  flex:1;
-  min-width:0;
-  padding:.75rem .9rem;
-  border:2px solid var(--line);
-  border-radius:6px;
-  font:inherit;
-}
-
-.chat-form input:focus{
+  resize:vertical;
+  border:1px solid #cbd2df;
+  border-radius:12px;
+  padding:9px 10px;
+  font:500 .84rem var(--body, Arial, sans-serif);
   outline:none;
-  border-color:var(--gold);
 }
 
-.chat-form button{
-  padding:.75rem 1.2rem;
+.editing-area textarea:focus{
+  border-color:#9db3e8;
+}
+
+.editing-buttons{
+  display:flex;
+  gap:6px;
+  justify-content:flex-end;
+}
+
+.editing-buttons button{
   border:0;
-  border-radius:6px;
-  background:var(--navy);
-  color:#fff;
-  font:600 .9rem var(--body);
+  border-radius:7px;
+  padding:6px 10px;
   cursor:pointer;
+  font:600 .68rem var(--body, Arial, sans-serif);
 }
 
-.chat-form button:hover{
-  background:var(--purple);
+.save-edit{
+  background:var(--chat-blue);
+  color:#fff;
 }
 
-
-/* ==========================================================
-   MOBILE
-   ========================================================== */
-
-@media (max-width:600px){
-
-  .chat-form{
-    flex-direction:column;
-  }
-
-  .chat-form button{
-    width:100%;
-  }
-
-  .msg{
-    max-width:90%;
-  }
-
+.cancel-edit{
+  background:#e8ebf0;
+  color:#4f5665;
 }
 
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width:900px){
+  .chat-page{
+    padding:10px;
+  }
+
+  .chat-sidebar{
+    width:270px;
+    min-width:270px;
+  }
+
+  .message-content{
+    max-width:84%;
+  }
+}
+
+@media (max-width:700px){
+
+  .chat-page{
+    padding:0;
+  }
+
+  .chat-shell{
+    border-radius:0;
+    border-left:0;
+    border-right:0;
+    box-shadow:none;
+  }
+
+  .chat-sidebar{
+    position:absolute;
+    z-index:30;
+    top:0;
+    bottom:0;
+    left:0;
+    width:290px;
+    min-width:290px;
+    box-shadow:10px 0 30px rgba(0,0,0,.12);
+    transform:translateX(-105%);
+    transition:transform .22s ease;
+  }
+
+  .chat-sidebar.open{
+    transform:translateX(0);
+  }
+
+  .mobile-channel-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .chat-messages{
+    padding:14px 12px 10px;
+  }
+
+  .message-content{
+    max-width:86%;
+  }
+
+  .message-bubble{
+    font-size:.84rem;
+    padding:8px 10px;
+  }
+
+  .chat-conversation-header{
+    min-height:62px;
+    padding:10px 12px;
+  }
+
+  .chat-composer{
+    padding:8px 9px calc(8px + env(safe-area-inset-bottom));
+  }
+}
+
+/* =========================================================
+   VERY SHORT SCREENS
+   ========================================================= */
+
+@media (max-height:700px){
+
+  .chat-conversation-header{
+    min-height:58px;
+  }
+
+  .chat-messages{
+    padding-top:10px;
+    padding-bottom:8px;
+  }
+
+  .chat-composer{
+    padding-top:7px;
+    padding-bottom:8px;
+  }
+
+  .chat-input{
+    min-height:36px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+
+  .chat-send{
+    width:38px;
+    height:38px;
+    min-width:38px;
+  }
+}
 </style>
-
 </head>
-
 
 <body>
 
+<header class="portal-header" id="portal-header"></header>
 
-<header
-  class="portal-header"
-  id="portal-header">
-</header>
+<main class="chat-page">
+  <section class="chat-shell">
 
+    <aside class="chat-sidebar" id="chat-sidebar">
 
-<main class="board-page">
+      <div class="sidebar-top">
 
+        <div class="sidebar-brand">
 
-  <h1 id="page-title">
-    Chat
-  </h1>
+          <div>
+            <h1>Messages</h1>
+            <div class="sidebar-label">BCFC Workers</div>
+          </div>
 
+          <span>BCFC</span>
 
-  <p
-    id="page-note"
-    class="page-note">
-    Chat with the workers who have access to each channel.
-  </p>
+        </div>
 
+        <div class="chat-search-wrap">
 
-  <!-- ADMIN CLEAR BUTTON -->
+          <span class="chat-search-icon">⌕</span>
 
-  <div
-    id="chat-admin-tools"
-    class="chat-admin-tools"
-    hidden>
+          <input
+            id="chat-search"
+            class="chat-search"
+            type="text"
+            placeholder="Search channels..."
+            autocomplete="off"
+          >
 
-    <button
-      type="button"
-      id="clear-chat-btn"
-      class="btn-clear-chat">
+        </div>
 
-      Clear Entire Chat
+      </div>
 
-    </button>
+      <div id="chat-channel-list" class="chat-channel-list"></div>
 
-  </div>
+      <div class="sidebar-bottom" id="sidebar-admin-area" hidden>
 
+        <button
+          type="button"
+          id="clear-chat-btn"
+          class="clear-chat-btn"
+        >
+          Clear Entire Chat
+        </button>
 
-  <!-- CHANNELS -->
+      </div>
 
-  <div
-    id="chat-tabs"
-    class="chat-tabs">
-  </div>
+    </aside>
 
+    <section class="chat-conversation">
 
-  <!-- MESSAGES -->
+      <header class="chat-conversation-header">
 
-  <div
-    id="chat-box"
-    class="chat-box">
-  </div>
+        <button
+          type="button"
+          id="mobile-channel-btn"
+          class="mobile-channel-btn"
+          aria-label="Open channels"
+        >
+          ☰
+        </button>
 
+        <div class="conversation-icon" id="conversation-icon">
+          G
+        </div>
 
-  <!-- SEND -->
+        <div class="conversation-info">
 
-  <form
-    id="chat-form"
-    class="chat-form">
+          <h2 id="conversation-title">
+            General
+          </h2>
 
-    <input
-      id="chat-input"
-      maxlength="500"
-      placeholder="Type a message"
-      autocomplete="off">
+          <div
+            id="conversation-status"
+            class="conversation-status"
+          >
+            BCFC Workers
+          </div>
 
-    <button
-      type="submit">
+        </div>
 
-      Send
+      </header>
 
-    </button>
+      <div
+        id="chat-messages"
+        class="chat-messages"
+      ></div>
 
-  </form>
+      <div class="chat-composer">
 
+        <form
+          id="chat-form"
+          class="chat-form"
+        >
 
+          <div class="chat-input-wrap">
+
+            <textarea
+              id="chat-input"
+              class="chat-input"
+              rows="1"
+              maxlength="500"
+              placeholder="Type a message..."
+              autocomplete="off"
+            ></textarea>
+
+          </div>
+
+          <button
+            type="submit"
+            id="chat-send"
+            class="chat-send"
+            aria-label="Send message"
+          >
+            ➤
+          </button>
+
+        </form>
+
+      </div>
+
+    </section>
+
+  </section>
 </main>
 
+<div
+  id="chat-popup"
+  class="chat-popup"
+  aria-hidden="true"
+>
+
+  <div
+    class="chat-popup-card"
+    id="chat-popup-card"
+  >
+
+    <div
+      class="chat-popup-icon"
+      id="chat-popup-icon"
+    >
+      !
+    </div>
+
+    <h3
+      id="chat-popup-title"
+      class="chat-popup-title"
+    >
+      BCFC
+    </h3>
+
+    <p
+      id="chat-popup-text"
+      class="chat-popup-text"
+    ></p>
+
+    <div class="chat-popup-actions">
+
+      <button
+        type="button"
+        id="chat-popup-cancel"
+        class="popup-cancel"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        id="chat-popup-ok"
+        class="popup-ok"
+      >
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 <script type="module">
 
-/* ==========================================================
-   PORTAL
-   ========================================================== */
-
 import "./portal.js";
 
-
-/* ==========================================================
-   FIRESTORE
-   ========================================================== */
-
 import {
-
   collection,
   addDoc,
   updateDoc,
@@ -388,279 +1011,672 @@ import {
   where,
   serverTimestamp,
   writeBatch
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-} from
-"https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { auth, db } from "./firebase-config.js";
 
-
-/* ==========================================================
-   FIREBASE
-   ========================================================== */
-
-import {
-  auth,
-  db
-} from "./firebase-config.js";
-
-
-/* ==========================================================
-   SAFE TEXT
-   ========================================================== */
-
-function esc(value){
-
-  return String(value ?? "")
-    .replace(
-      /[&<>\"']/g,
-      char => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        "\"":"&quot;",
-        "'":"&#39;"
-      }[char])
-    );
-
-}
-
-
-/* ==========================================================
+/* =========================================================
    CHANNELS
-   ========================================================== */
+   ========================================================= */
 
-const CH = {
-
-  general:"General",
-
-  leads:"Department Leads",
-
-  preaching:"Preaching Team",
-
-  childrens:"Children's Church",
-
-  ufy:"UFY",
-
-  ufw:"UFW",
-
-  ufm:"UFM",
-
-  production:"Production",
-
-  creatives:"Creatives"
-
+const CHANNELS = {
+  general: "General",
+  leads: "Department Leads",
+  preaching: "Preaching Team",
+  childrens: "Children's Church",
+  ufy: "UFY",
+  ufw: "UFW",
+  ufm: "UFM",
+  production: "Production",
+  creatives: "Creatives"
 };
 
+const CHANNEL_SHORT = {
+  general: "G",
+  leads: "L",
+  preaching: "PW",
+  childrens: "CC",
+  ufy: "Y",
+  ufw: "W",
+  ufm: "M",
+  production: "P",
+  creatives: "C"
+};
 
-/* ==========================================================
-   CHANNEL ACCESS
-   ========================================================== */
-
-function allowed(role){
-
-  if(role === "admin"){
-
-    return Object.keys(CH);
-
-  }
-
-
-  return Object.keys(CH).filter(
-    channel =>
-
-      channel === "general"
-
-      ||
-
-      channel ===
-      role?.replace(
-        "-lead",
-        ""
-      )
-
-      ||
-
-      (
-        channel === "leads"
-
-        &&
-
-        (
-          role?.endsWith("-lead")
-          ||
-          role === "pastor"
-        )
-      )
-
-      ||
-
-      (
-        channel === "preaching"
-
-        &&
-
-        (
-          role === "pastor"
-          ||
-          role === "preaching"
-        )
-      )
-
-  );
-
-}
-
-
-/* ==========================================================
+/* =========================================================
    ELEMENTS
-   ========================================================== */
+   ========================================================= */
 
-const tabs =
-  document.getElementById(
-    "chat-tabs"
-  );
+const sidebar =
+  document.getElementById("chat-sidebar");
 
-const box =
-  document.getElementById(
-    "chat-box"
-  );
+const channelList =
+  document.getElementById("chat-channel-list");
+
+const searchInput =
+  document.getElementById("chat-search");
+
+const conversationIcon =
+  document.getElementById("conversation-icon");
+
+const conversationTitle =
+  document.getElementById("conversation-title");
+
+const conversationStatus =
+  document.getElementById("conversation-status");
+
+const messagesBox =
+  document.getElementById("chat-messages");
 
 const form =
-  document.getElementById(
-    "chat-form"
-  );
+  document.getElementById("chat-form");
 
 const input =
-  document.getElementById(
-    "chat-input"
-  );
+  document.getElementById("chat-input");
 
-const clearChatBtn =
-  document.getElementById(
-    "clear-chat-btn"
-  );
+const sendButton =
+  document.getElementById("chat-send");
 
-const adminTools =
-  document.getElementById(
-    "chat-admin-tools"
-  );
+const clearChatButton =
+  document.getElementById("clear-chat-btn");
 
+const sidebarAdminArea =
+  document.getElementById("sidebar-admin-area");
 
-const me = () =>
-  auth.currentUser?.uid || "";
+const mobileChannelButton =
+  document.getElementById("mobile-channel-btn");
 
+const popup =
+  document.getElementById("chat-popup");
 
-/* ==========================================================
+const popupIcon =
+  document.getElementById("chat-popup-icon");
+
+const popupTitle =
+  document.getElementById("chat-popup-title");
+
+const popupText =
+  document.getElementById("chat-popup-text");
+
+const popupCancel =
+  document.getElementById("chat-popup-cancel");
+
+const popupOk =
+  document.getElementById("chat-popup-ok");
+
+/* =========================================================
    STATE
-   ========================================================== */
+   ========================================================= */
 
-let currentChannel =
-  "general";
+let currentChannel = "general";
+let unsubscribeMessages = null;
+let popupResolver = null;
+let editingMessageId = null;
 
-let unsubscribe =
-  null;
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
+function escapeHtml(value){
 
-/* ==========================================================
-   ADMIN BUTTON
-   ========================================================== */
-
-function updateAdminButton(){
-
-  const isAdmin =
-    window.currentRole ===
-    "admin";
-
-  adminTools.hidden =
-    !isAdmin;
-
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
+function currentUid(){
+  return auth.currentUser?.uid || "";
+}
 
-/* ==========================================================
-   OPEN CHANNEL
-   ========================================================== */
+function currentRole(){
+  return window.currentRole || "general";
+}
 
-function openChannel(channel){
+function currentName(){
 
-  currentChannel =
-    channel;
+  return (
+    sessionStorage.getItem("bcfc-name") ||
+    sessionStorage.getItem("bcfcName") ||
+    "Worker"
+  );
+}
 
+function initials(name){
 
-  if(unsubscribe){
+  const clean =
+    String(name || "Worker").trim();
 
-    unsubscribe();
-
-    unsubscribe =
-      null;
-
+  if(!clean){
+    return "W";
   }
 
+  const parts =
+    clean.split(/\s+/).filter(Boolean);
 
-  const channels =
-    allowed(
-      window.currentRole
-    );
+  if(parts.length === 1){
+    return parts[0]
+      .slice(0,2)
+      .toUpperCase();
+  }
 
+  return (
+    parts[0][0] +
+    parts[parts.length - 1][0]
+  ).toUpperCase();
+}
+
+function formatTime(timestamp){
 
   if(
-    !channels.includes(
-      currentChannel
-    )
+    !timestamp ||
+    typeof timestamp.toDate !== "function"
   ){
-
-    currentChannel =
-      channels.includes(
-        "general"
-      )
-
-      ? "general"
-
-      : channels[0];
-
+    return "";
   }
 
+  return timestamp.toDate().toLocaleTimeString([], {
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
 
-  tabs.innerHTML =
-    channels
-    .map(
-      key => `
+function dateKey(timestamp){
 
-        <button
-          type="button"
-          data-channel="${key}"
-          class="${key === currentChannel ? "on" : ""}">
+  if(
+    !timestamp ||
+    typeof timestamp.toDate !== "function"
+  ){
+    return "";
+  }
 
-          ${esc(CH[key])}
+  const d = timestamp.toDate();
 
-        </button>
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+}
 
-      `
-    )
-    .join("");
+function formatDate(timestamp){
 
+  if(
+    !timestamp ||
+    typeof timestamp.toDate !== "function"
+  ){
+    return "";
+  }
 
-  updateAdminButton();
+  return timestamp.toDate().toLocaleDateString([], {
+    weekday:"long",
+    month:"short",
+    day:"numeric",
+    year:"numeric"
+  });
+}
 
+function canAccessChannel(channel){
 
-  if(!currentChannel){
+  const role = currentRole();
 
-    box.innerHTML = `
-      <p class="page-note">
-        No chat channels are available.
-      </p>
+  if(role === "admin"){
+    return true;
+  }
+
+  if(channel === "general"){
+    return true;
+  }
+
+  if(channel === "leads"){
+    return (
+      role.endsWith("-lead") ||
+      role === "pastor"
+    );
+  }
+
+  if(channel === "preaching"){
+    return (
+      role === "pastor" ||
+      role === "preaching"
+    );
+  }
+
+  return channel === role.replace("-lead", "");
+}
+
+function allowedChannels(){
+
+  return Object.keys(CHANNELS)
+    .filter(canAccessChannel);
+}
+
+/* =========================================================
+   POPUP
+   ========================================================= */
+
+function showPopup({
+  title = "BCFC",
+  text = "",
+  okText = "OK",
+  cancelText = "Cancel",
+  confirm = false,
+  type = "info"
+} = {}){
+
+  if(popupResolver){
+    popupResolver(false);
+    popupResolver = null;
+  }
+
+  popupTitle.textContent = title;
+  popupText.textContent = text;
+  popupOk.textContent = okText;
+  popupCancel.textContent = cancelText;
+
+  popupCancel.hidden = !confirm;
+
+  if(type === "danger"){
+
+    popupIcon.textContent = "!";
+    popupIcon.style.background = "#fdeaea";
+    popupIcon.style.color = "#c62828";
+
+    popupOk.style.background = "#c62828";
+    popupOk.style.borderColor = "#c62828";
+
+  }else{
+
+    popupIcon.textContent = "✓";
+    popupIcon.style.background = "#e8efff";
+    popupIcon.style.color = "#1c5fd4";
+
+    popupOk.style.background = "#1c5fd4";
+    popupOk.style.borderColor = "#1c5fd4";
+  }
+
+  popup.classList.add("show");
+  popup.setAttribute("aria-hidden","false");
+
+  return new Promise(resolve => {
+    popupResolver = resolve;
+  });
+}
+
+function closePopup(result){
+
+  popup.classList.remove("show");
+  popup.setAttribute("aria-hidden","true");
+
+  if(popupResolver){
+
+    const resolve = popupResolver;
+    popupResolver = null;
+
+    resolve(result);
+  }
+}
+
+popupOk.addEventListener(
+  "click",
+  () => closePopup(true)
+);
+
+popupCancel.addEventListener(
+  "click",
+  () => closePopup(false)
+);
+
+popup.addEventListener("click", e => {
+
+  if(
+    e.target === popup &&
+    popupCancel.hidden
+  ){
+    closePopup(true);
+  }
+});
+
+/* =========================================================
+   CHANNEL LIST
+   ========================================================= */
+
+function renderChannels(){
+
+  const search =
+    searchInput.value.trim().toLowerCase();
+
+  const channels =
+    allowedChannels().filter(channel => {
+
+      return CHANNELS[channel]
+        .toLowerCase()
+        .includes(search);
+
+    });
+
+  if(!channels.length){
+
+    channelList.innerHTML = `
+      <div style="
+        padding:22px 12px;
+        text-align:center;
+        color:#8a8fa0;
+        font-size:.78rem;
+      ">
+        No channels found
+      </div>
     `;
 
     return;
-
   }
 
+  channelList.innerHTML =
+    channels.map(channel => `
 
-  const chatQuery =
+      <button
+        type="button"
+        class="channel-item ${
+          channel === currentChannel
+            ? "active"
+            : ""
+        }"
+        data-channel="${escapeHtml(channel)}"
+      >
+
+        <span class="channel-icon">
+          ${escapeHtml(
+            CHANNEL_SHORT[channel] || "?"
+          )}
+        </span>
+
+        <span class="channel-text">
+
+          <span class="channel-name">
+            ${escapeHtml(CHANNELS[channel])}
+          </span>
+
+          <span class="channel-sub">
+            BCFC Workers
+          </span>
+
+        </span>
+
+      </button>
+
+    `).join("");
+}
+
+channelList.addEventListener("click", e => {
+
+  const button =
+    e.target.closest(".channel-item");
+
+  if(!button){
+    return;
+  }
+
+  openChannel(button.dataset.channel);
+
+  if(window.innerWidth <= 700){
+    sidebar.classList.remove("open");
+  }
+});
+
+searchInput.addEventListener(
+  "input",
+  renderChannels
+);
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+function updateConversationHeader(){
+
+  conversationTitle.textContent =
+    CHANNELS[currentChannel] || "General";
+
+  conversationIcon.textContent =
+    CHANNEL_SHORT[currentChannel] || "G";
+
+  conversationStatus.textContent =
+    "BCFC Workers • " + currentName();
+}
+
+/* =========================================================
+   MESSAGE RENDERING
+   ========================================================= */
+
+function renderMessages(snapshot){
+
+  const docs =
+    snapshot.docs.map(snapshotDoc => ({
+      id:snapshotDoc.id,
+      ...snapshotDoc.data()
+    }));
+
+  docs.sort((a,b) => {
+
+    const aSeconds =
+      a.createdAt?.seconds ?? 9999999999;
+
+    const bSeconds =
+      b.createdAt?.seconds ?? 9999999999;
+
+    return aSeconds - bSeconds;
+  });
+
+  if(!docs.length){
+
+    messagesBox.innerHTML = `
+      <div class="empty-chat">
+
+        <div class="empty-chat-icon">
+          💬
+        </div>
+
+        <strong>
+          No messages yet
+        </strong>
+
+        <span>
+          Start the conversation.
+        </span>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  let previousDate = "";
+
+  messagesBox.innerHTML =
+    docs.map(message => {
+
+      const mine =
+        message.uid === currentUid();
+
+      const date =
+        dateKey(message.createdAt);
+
+      let dateHtml = "";
+
+      if(
+        date &&
+        date !== previousDate
+      ){
+
+        previousDate = date;
+
+        dateHtml = `
+          <div class="date-divider">
+            <span>
+              ${escapeHtml(
+                formatDate(message.createdAt)
+              )}
+            </span>
+          </div>
+        `;
+      }
+
+      const canEdit = mine;
+      const canDelete =
+        mine || currentRole() === "admin";
+
+      /*
+        IMPORTANT:
+        The message text is placed directly beside
+        the HTML tags. This prevents indentation spaces
+        from being displayed inside the bubble.
+      */
+
+      return `
+
+        ${dateHtml}
+
+        <div
+          class="message-row ${
+            mine ? "mine" : ""
+          }"
+          data-message-id="${escapeHtml(message.id)}"
+        >
+
+          ${
+            mine
+              ? ""
+              : `
+                <div class="message-avatar">
+                  ${escapeHtml(
+                    initials(
+                      message.name || "Worker"
+                    )
+                  )}
+                </div>
+              `
+          }
+
+          <div class="message-content">
+
+            ${
+              mine
+                ? ""
+                : `
+                  <div class="message-name">
+                    ${escapeHtml(
+                      message.name || "Worker"
+                    )}
+                  </div>
+                `
+            }
+
+            <div
+              class="message-bubble"
+              id="bubble-${escapeHtml(message.id)}"
+            >${escapeHtml(
+              String(message.text || "")
+            )}</div>
+
+            <div class="message-meta">
+              <span>
+                ${escapeHtml(
+                  formatTime(
+                    message.createdAt
+                  )
+                )}
+              </span>
+            </div>
+
+            <div class="message-actions">
+
+              ${
+                canEdit
+                  ? `
+                    <button
+                      type="button"
+                      class="message-action edit-message"
+                      data-id="${escapeHtml(message.id)}"
+                      data-text="${escapeHtml(
+                        message.text || ""
+                      )}"
+                    >
+                      Edit
+                    </button>
+                  `
+                  : ""
+              }
+
+              ${
+                canDelete
+                  ? `
+                    <button
+                      type="button"
+                      class="message-action delete delete-message"
+                      data-id="${escapeHtml(message.id)}"
+                    >
+                      Delete
+                    </button>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  requestAnimationFrame(() => {
+    messagesBox.scrollTop =
+      messagesBox.scrollHeight;
+  });
+}
+
+/* =========================================================
+   LOAD CHANNEL
+   ========================================================= */
+
+function openChannel(channel){
+
+  if(!canAccessChannel(channel)){
+    channel = "general";
+  }
+
+  currentChannel = channel;
+
+  renderChannels();
+  updateConversationHeader();
+
+  editingMessageId = null;
+
+  if(unsubscribeMessages){
+    unsubscribeMessages();
+    unsubscribeMessages = null;
+  }
+
+  messagesBox.innerHTML = `
+    <div class="empty-chat">
+
+      <div class="empty-chat-icon">
+        ⌛
+      </div>
+
+      <strong>
+        Loading messages...
+      </strong>
+
+    </div>
+  `;
+
+  const messagesQuery =
     query(
-      collection(
-        db,
-        "messages"
-      ),
+      collection(db, "messages"),
       where(
         "channel",
         "==",
@@ -668,847 +1684,568 @@ function openChannel(channel){
       )
     );
 
-
-  unsubscribe =
+  unsubscribeMessages =
     onSnapshot(
-
-      chatQuery,
-
+      messagesQuery,
       snapshot => {
-
-        const messages =
-          snapshot.docs
-          .map(
-            messageDoc => ({
-
-              id:
-                messageDoc.id,
-
-              ...messageDoc.data()
-
-            })
-          )
-          .sort(
-            (a,b) =>
-              (
-                a.createdAt?.seconds
-                ??
-                0
-              )
-              -
-              (
-                b.createdAt?.seconds
-                ??
-                0
-              )
-          );
-
-
-        if(!messages.length){
-
-          box.innerHTML = `
-            <p class="page-note">
-              No messages yet. Say hello!
-            </p>
-          `;
-
-          return;
-
-        }
-
-
-        box.innerHTML =
-          messages
-          .map(
-            message => {
-
-              const mine =
-                message.uid ===
-                me();
-
-              const admin =
-                window.currentRole ===
-                "admin";
-
-
-              const canEdit =
-                mine;
-
-
-              const canDelete =
-                mine ||
-                admin;
-
-
-              return `
-
-                <div
-                  class="msg${mine ? " mine" : ""}"
-                  data-id="${esc(message.id)}">
-
-                  <small>
-                    ${esc(
-                      message.name ||
-                      "Worker"
-                    )}
-                  </small>
-
-
-                  <span class="msg-text">
-                    ${esc(
-                      message.text ||
-                      ""
-                    )}
-                  </span>
-
-
-                  ${
-                    (
-                      canEdit ||
-                      canDelete
-                    )
-
-                    ?
-
-                    `
-                      <div
-                        class="msg-actions">
-
-                        ${
-                          canEdit
-
-                          ?
-
-                          `
-                            <button
-                              type="button"
-                              class="msg-edit"
-                              data-edit="${esc(message.id)}">
-
-                              Edit
-
-                            </button>
-                          `
-
-                          :
-
-                          ""
-                        }
-
-
-                        ${
-                          canDelete
-
-                          ?
-
-                          `
-                            <button
-                              type="button"
-                              class="msg-delete"
-                              data-delete="${esc(message.id)}">
-
-                              Delete
-
-                            </button>
-                          `
-
-                          :
-
-                          ""
-                        }
-
-                      </div>
-                    `
-
-                    :
-
-                    ""
-
-                  }
-
-                </div>
-
-              `;
-
-            }
-          )
-          .join("");
-
-
-        box.scrollTop =
-          box.scrollHeight;
-
+        renderMessages(snapshot);
       },
-
       error => {
 
-        console.error(
-          "Chat error:",
-          error
-        );
+        console.error(error);
 
+        messagesBox.innerHTML = `
+          <div class="empty-chat">
 
-        box.innerHTML = `
-          <p class="page-note">
+            <div class="empty-chat-icon">
+              !
+            </div>
 
-            Couldn't load this channel
-            (${esc(
-              error.code ||
-              error.message
-            )}).
+            <strong>
+              Couldn't load messages
+            </strong>
 
-          </p>
+            <span>
+              ${escapeHtml(
+                error.code ||
+                error.message ||
+                "Unknown error"
+              )}
+            </span>
+
+          </div>
         `;
-
       }
-
     );
-
 }
 
-
-/* ==========================================================
-   CHANNEL BUTTONS
-   ========================================================== */
-
-tabs.addEventListener(
-  "click",
-  event => {
-
-    const button =
-      event.target.closest(
-        "[data-channel]"
-      );
-
-
-    if(!button){
-
-      return;
-
-    }
-
-
-    openChannel(
-      button.dataset.channel
-    );
-
-  }
-);
-
-
-/* ==========================================================
-   DELETE ONE MESSAGE
-   ========================================================== */
-
-box.addEventListener(
-  "click",
-  async event => {
-
-    const button =
-      event.target.closest(
-        "[data-delete]"
-      );
-
-
-    if(!button){
-
-      return;
-
-    }
-
-
-    const messageId =
-      button.dataset.delete;
-
-
-    if(!messageId){
-
-      return;
-
-    }
-
-
-    if(
-      !confirm(
-        "Delete this message?"
-      )
-    ){
-
-      return;
-
-    }
-
-
-    button.disabled =
-      true;
-
-    button.textContent =
-      "Deleting...";
-
-
-    try{
-
-      await deleteDoc(
-        doc(
-          db,
-          "messages",
-          messageId
-        )
-      );
-
-    }catch(error){
-
-      console.error(
-        "Delete message error:",
-        error
-      );
-
-
-      alert(
-        `Couldn't delete message (${error.code || error.message}).`
-      );
-
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Delete";
-
-    }
-
-  }
-);
-
-
-/* ==========================================================
-   ADMIN CLEAR ENTIRE CHAT
-   ========================================================== */
-
-clearChatBtn.addEventListener(
-  "click",
-  async () => {
-
-    if(
-      window.currentRole !==
-      "admin"
-    ){
-
-      alert(
-        "Only an admin can clear the chat."
-      );
-
-      return;
-
-    }
-
-
-    const confirmed =
-      confirm(
-        "CLEAR ENTIRE CHAT?\n\nThis will permanently delete every message from every channel.\n\nThis cannot be undone."
-      );
-
-
-    if(!confirmed){
-
-      return;
-
-    }
-
-
-    clearChatBtn.disabled =
-      true;
-
-    clearChatBtn.textContent =
-      "Clearing...";
-
-
-    try{
-
-      const snapshot =
-        await getDocs(
-          collection(
-            db,
-            "messages"
-          )
-        );
-
-
-      if(snapshot.empty){
-
-        alert(
-          "The chat is already empty."
-        );
-
-        return;
-
-      }
-
-
-      const documents =
-        snapshot.docs;
-
-
-      /*
-        IMPORTANT:
-        Keep this at 20 or below.
-
-        Firestore security rules have a
-        20-call limit for batched writes.
-      */
-
-      const BATCH_SIZE =
-        20;
-
-
-      for(
-        let start = 0;
-        start < documents.length;
-        start += BATCH_SIZE
-      ){
-
-        const batch =
-          writeBatch(db);
-
-
-        const group =
-          documents.slice(
-            start,
-            start + BATCH_SIZE
-          );
-
-
-        group.forEach(
-          messageDoc => {
-
-            batch.delete(
-              doc(
-                db,
-                "messages",
-                messageDoc.id
-              )
-            );
-
-          }
-        );
-
-
-        await batch.commit();
-
-      }
-
-
-      alert(
-        "The entire chat has been cleared."
-      );
-
-
-    }catch(error){
-
-      console.error(
-        "Clear chat error:",
-        error
-      );
-
-
-      alert(
-        `Couldn't clear the chat (${error.code || error.message}).`
-      );
-
-
-    }finally{
-
-      clearChatBtn.disabled =
-        false;
-
-      clearChatBtn.textContent =
-        "Clear Entire Chat";
-
-    }
-
-  }
-);
-
-
-/* ==========================================================
-   EDIT MESSAGE
-   ========================================================== */
-
-box.addEventListener(
-  "click",
-  event => {
-
-    const button =
-      event.target.closest(
-        "[data-edit]"
-      );
-
-
-    if(!button){
-
-      return;
-
-    }
-
-
-    const message =
-      button.closest(
-        ".msg"
-      );
-
-
-    if(!message){
-
-      return;
-
-    }
-
-
-    const messageId =
-      button.dataset.edit;
-
-
-    const textElement =
-      message.querySelector(
-        ".msg-text"
-      );
-
-
-    const oldText =
-      textElement?.textContent ||
-      "";
-
-
-    textElement.innerHTML = `
-
-      <textarea
-        class="msg-edit-box"
-        maxlength="500">${esc(oldText)}</textarea>
-
-      <div
-        class="msg-edit-actions">
-
-        <button
-          type="button"
-          class="msg-save"
-          data-save-edit="${esc(messageId)}">
-
-          Save
-
-        </button>
-
-
-        <button
-          type="button"
-          class="msg-cancel"
-          data-cancel-edit>
-
-          Cancel
-
-        </button>
-
-      </div>
-
-    `;
-
-
-    button.style.display =
-      "none";
-
-  }
-);
-
-
-/* ==========================================================
-   SAVE EDIT
-   ========================================================== */
-
-box.addEventListener(
-  "click",
-  async event => {
-
-    const button =
-      event.target.closest(
-        "[data-save-edit]"
-      );
-
-
-    if(!button){
-
-      return;
-
-    }
-
-
-    const message =
-      button.closest(
-        ".msg"
-      );
-
-
-    const textarea =
-      message?.querySelector(
-        ".msg-edit-box"
-      );
-
-
-    if(
-      !message ||
-      !textarea
-    ){
-
-      return;
-
-    }
-
-
-    const text =
-      textarea.value.trim();
-
-
-    if(!text){
-
-      alert(
-        "Message cannot be empty."
-      );
-
-      return;
-
-    }
-
-
-    button.disabled =
-      true;
-
-    button.textContent =
-      "Saving...";
-
-
-    try{
-
-      await updateDoc(
-        doc(
-          db,
-          "messages",
-          button.dataset.saveEdit
-        ),
-        {
-          text
-        }
-      );
-
-    }catch(error){
-
-      console.error(
-        "Edit message error:",
-        error
-      );
-
-
-      alert(
-        `Couldn't edit message (${error.code || error.message}).`
-      );
-
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Save";
-
-    }
-
-  }
-);
-
-
-/* ==========================================================
-   CANCEL EDIT
-   ========================================================== */
-
-box.addEventListener(
-  "click",
-  event => {
-
-    const button =
-      event.target.closest(
-        "[data-cancel-edit]"
-      );
-
-
-    if(!button){
-
-      return;
-
-    }
-
-
-    openChannel(
-      currentChannel
-    );
-
-  }
-);
-
-
-/* ==========================================================
+/* =========================================================
    SEND MESSAGE
-   ========================================================== */
+   ========================================================= */
+
+async function sendMessage(){
+
+  const text =
+    input.value.trim();
+
+  if(!text){
+    return;
+  }
+
+  if(!auth.currentUser){
+
+    await showPopup({
+      title:"Not signed in",
+      text:
+        "Please sign in again before sending a message.",
+      okText:"OK"
+    });
+
+    return;
+  }
+
+  sendButton.disabled = true;
+
+  try{
+
+    await addDoc(
+      collection(db, "messages"),
+      {
+        channel:currentChannel,
+        text,
+        uid:currentUid(),
+        name:currentName(),
+        createdAt:serverTimestamp()
+      }
+    );
+
+    input.value = "";
+
+    autoResizeInput();
+
+    input.focus();
+
+  }catch(error){
+
+    console.error(error);
+
+    await showPopup({
+      title:"Message not sent",
+      text:
+        "The message could not be sent. " +
+        (
+          error.code ||
+          error.message ||
+          ""
+        ),
+      okText:"OK",
+      type:"danger"
+    });
+
+  }finally{
+
+    sendButton.disabled = false;
+  }
+}
 
 form.addEventListener(
   "submit",
-  async event => {
+  async e => {
 
-    event.preventDefault();
+    e.preventDefault();
 
-
-    const text =
-      input.value.trim();
-
-
-    if(!text){
-
-      return;
-
-    }
-
-
-    const uid =
-      me();
-
-
-    if(!uid){
-
-      alert(
-        "You are not signed in."
-      );
-
-      return;
-
-    }
-
-
-    const name =
-      sessionStorage.getItem(
-        "bcfc-name"
-      )
-      ||
-      "Worker";
-
-
-    try{
-
-      await addDoc(
-        collection(
-          db,
-          "messages"
-        ),
-        {
-
-          channel:
-            currentChannel,
-
-          text,
-
-          uid,
-
-          name,
-
-          createdAt:
-            serverTimestamp()
-
-        }
-      );
-
-
-      input.value =
-        "";
-
-      input.focus();
-
-
-    }catch(error){
-
-      console.error(
-        "Send message error:",
-        error
-      );
-
-
-      alert(
-        `Couldn't send message (${error.code || error.message}).`
-      );
-
-    }
-
+    await sendMessage();
   }
 );
 
+/* =========================================================
+   INPUT SIZE
+   ========================================================= */
 
-/* ==========================================================
-   ROLE CHANGE
-   ========================================================== */
+function autoResizeInput(){
+
+  input.style.height = "auto";
+
+  const maxHeight = 110;
+
+  input.style.height =
+    Math.min(
+      input.scrollHeight,
+      maxHeight
+    ) + "px";
+}
+
+input.addEventListener(
+  "input",
+  autoResizeInput
+);
+
+input.addEventListener(
+  "keydown",
+  async e => {
+
+    if(
+      e.key === "Enter" &&
+      !e.shiftKey
+    ){
+
+      e.preventDefault();
+
+      await sendMessage();
+    }
+  }
+);
+
+/* =========================================================
+   MESSAGE ACTIONS
+   ========================================================= */
+
+messagesBox.addEventListener(
+  "click",
+  async e => {
+
+    const editButton =
+      e.target.closest(".edit-message");
+
+    if(editButton){
+
+      const id =
+        editButton.dataset.id;
+
+      const bubble =
+        document.getElementById(
+          "bubble-" + id
+        );
+
+      if(!bubble){
+        return;
+      }
+
+      if(editingMessageId){
+        return;
+      }
+
+      editingMessageId = id;
+
+      const currentText =
+        bubble.textContent || "";
+
+      bubble.innerHTML = `
+        <div class="editing-area">
+
+          <textarea
+            class="edit-textarea"
+            maxlength="500"
+          >${escapeHtml(
+            currentText
+          )}</textarea>
+
+          <div class="editing-buttons">
+
+            <button
+              type="button"
+              class="cancel-edit"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="save-edit"
+            >
+              Save
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+      const textarea =
+        bubble.querySelector(
+          ".edit-textarea"
+        );
+
+      textarea.focus();
+
+      textarea.setSelectionRange(
+        textarea.value.length,
+        textarea.value.length
+      );
+
+      return;
+    }
+
+    const cancelButton =
+      e.target.closest(".cancel-edit");
+
+    if(cancelButton){
+
+      editingMessageId = null;
+
+      openChannel(
+        currentChannel
+      );
+
+      return;
+    }
+
+    const saveButton =
+      e.target.closest(".save-edit");
+
+    if(saveButton){
+
+      const row =
+        saveButton.closest(
+          ".message-row"
+        );
+
+      const id =
+        row?.dataset.messageId;
+
+      const textarea =
+        row?.querySelector(
+          ".edit-textarea"
+        );
+
+      if(!id || !textarea){
+        return;
+      }
+
+      const newText =
+        textarea.value.trim();
+
+      if(!newText){
+
+        await showPopup({
+          title:"Message is empty",
+          text:
+            "Please enter some text before saving.",
+          okText:"OK"
+        });
+
+        return;
+      }
+
+      try{
+
+        await updateDoc(
+          doc(
+            db,
+            "messages",
+            id
+          ),
+          {
+            text:newText
+          }
+        );
+
+        editingMessageId = null;
+
+      }catch(error){
+
+        console.error(error);
+
+        await showPopup({
+          title:"Edit failed",
+          text:
+            "The message could not be edited. " +
+            (
+              error.code ||
+              error.message ||
+              ""
+            ),
+          okText:"OK",
+          type:"danger"
+        });
+      }
+
+      return;
+    }
+
+    const deleteButton =
+      e.target.closest(
+        ".delete-message"
+      );
+
+    if(deleteButton){
+
+      const id =
+        deleteButton.dataset.id;
+
+      const confirmed =
+        await showPopup({
+          title:"Delete message?",
+          text:
+            "This message will be permanently deleted.",
+          okText:"Delete",
+          cancelText:"Cancel",
+          confirm:true,
+          type:"danger"
+        });
+
+      if(!confirmed){
+        return;
+      }
+
+      try{
+
+        await deleteDoc(
+          doc(
+            db,
+            "messages",
+            id
+          )
+        );
+
+      }catch(error){
+
+        console.error(error);
+
+        await showPopup({
+          title:"Delete failed",
+          text:
+            "The message could not be deleted. " +
+            (
+              error.code ||
+              error.message ||
+              ""
+            ),
+          okText:"OK",
+          type:"danger"
+        });
+      }
+    }
+  }
+);
+
+/* =========================================================
+   ADMIN CLEAR CHAT
+   ========================================================= */
+
+async function clearEntireChat(){
+
+  if(currentRole() !== "admin"){
+    return;
+  }
+
+  const confirmed =
+    await showPopup({
+      title:"Clear entire chat?",
+      text:
+        "This will permanently delete every message from every channel. This cannot be undone.",
+      okText:"Clear Chat",
+      cancelText:"Cancel",
+      confirm:true,
+      type:"danger"
+    });
+
+  if(!confirmed){
+    return;
+  }
+
+  clearChatButton.disabled = true;
+
+  try{
+
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "messages"
+        )
+      );
+
+    const docs =
+      snapshot.docs;
+
+    if(!docs.length){
+
+      await showPopup({
+        title:"Chat already empty",
+        text:
+          "There are no messages to delete.",
+        okText:"OK"
+      });
+
+      return;
+    }
+
+    for(
+      let i = 0;
+      i < docs.length;
+      i += 20
+    ){
+
+      const batch =
+        writeBatch(db);
+
+      const group =
+        docs.slice(
+          i,
+          i + 20
+        );
+
+      group.forEach(
+        messageDoc => {
+          batch.delete(
+            messageDoc.ref
+          );
+        }
+      );
+
+      await batch.commit();
+    }
+
+    await showPopup({
+      title:"Chat cleared",
+      text:
+        "All chat messages have been deleted.",
+      okText:"OK"
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    await showPopup({
+      title:"Clear chat failed",
+      text:
+        "The chat could not be completely cleared. " +
+        (
+          error.code ||
+          error.message ||
+          ""
+        ),
+      okText:"OK",
+      type:"danger"
+    });
+
+  }finally{
+
+    clearChatButton.disabled = false;
+  }
+}
+
+clearChatButton.addEventListener(
+  "click",
+  clearEntireChat
+);
+
+/* =========================================================
+   MOBILE SIDEBAR
+   ========================================================= */
+
+mobileChannelButton.addEventListener(
+  "click",
+  () => {
+    sidebar.classList.toggle("open");
+  }
+);
+
+/* =========================================================
+   ROLE CHANGES
+   ========================================================= */
 
 window.addEventListener(
   "rolechange",
   () => {
 
-    updateAdminButton();
+    const available =
+      allowedChannels();
 
-
-    const channels =
-      allowed(
-        window.currentRole
-      );
-
-
-    openChannel(
-
-      channels.includes(
+    if(
+      !available.includes(
         currentChannel
       )
+    ){
+      currentChannel = "general";
+    }
 
-      ? currentChannel
+    sidebarAdminArea.hidden =
+      currentRole() !== "admin";
 
-      : "general"
-
-    );
-
-  }
-);
-
-
-/* ==========================================================
-   START
-   ========================================================== */
-
-auth.authStateReady()
-.then(
-  () => {
-
-    updateAdminButton();
-
-
-    const channels =
-      allowed(
-        window.currentRole
-      );
-
+    renderChannels();
 
     openChannel(
-
-      channels.includes(
-        "general"
-      )
-
-      ? "general"
-
-      : channels[0]
-
+      currentChannel
     );
-
   }
 );
+
+/* =========================================================
+   START
+   ========================================================= */
+
+async function startChat(){
+
+  try{
+    await auth.authStateReady();
+  }catch(error){
+    console.error(error);
+  }
+
+  sidebarAdminArea.hidden =
+    currentRole() !== "admin";
+
+  renderChannels();
+
+  if(
+    !canAccessChannel(
+      currentChannel
+    )
+  ){
+    currentChannel = "general";
+  }
+
+  openChannel(
+    currentChannel
+  );
+
+  autoResizeInput();
+}
+
+startChat();
 
 </script>
 
