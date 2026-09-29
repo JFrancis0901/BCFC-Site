@@ -1,161 +1,272 @@
 /* ==========================================================
-   login.js = behavior for the login / sign-up page.
-   LOG IN : Firebase Auth email+password, then role lookup in users/{uid}.
-   SIGN UP: pick role -> enter access code -> name/email/password.
-            The code is checked by Firestore rules (signups/{uid} vs config/roleCodes),
-            so it can't be faked from the browser.
+   BCFC WORKERS PORTAL
+   LOGIN + SIGNUP
    ========================================================== */
 
-import { signInWithEmailAndPassword, sendPasswordResetEmail, createUserWithEmailAndPassword, deleteUser }
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  createUserWithEmailAndPassword,
+  deleteUser
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
 import { auth, db } from "./firebase-config.js";
 
 const $ = id => document.getElementById(id);
 
-/* ---------- Tabs: Log in / Sign up ---------- */
-const tabLogin = $('tab-login'), tabSignup = $('tab-signup');
-const loginPanel = $('login-panel'), signupPanel = $('signup-panel');
+
+/* ==========================================================
+   LOGIN / SIGNUP TABS
+   ========================================================== */
+
+const tabLogin = $("tab-login");
+const tabSignup = $("tab-signup");
+
+const loginPanel = $("login-panel");
+const signupPanel = $("signup-panel");
 
 function showTab(which) {
-  const signup = which === 'signup';
+  const signup = which === "signup";
+
   loginPanel.hidden = signup;
   signupPanel.hidden = !signup;
 
-  tabLogin.classList.toggle('on', !signup);
-  tabSignup.classList.toggle('on', signup);
+  tabLogin.classList.toggle("on", !signup);
+  tabSignup.classList.toggle("on", signup);
 
-  tabLogin.setAttribute('aria-selected', String(!signup));
-  tabSignup.setAttribute('aria-selected', String(signup));
+  tabLogin.setAttribute("aria-selected", String(!signup));
+  tabSignup.setAttribute("aria-selected", String(signup));
 
-  if (signup) showStep('role');
+  if (signup) {
+    showStep("role");
+  }
 }
 
-tabLogin.addEventListener('click', () => showTab('login'));
-tabSignup.addEventListener('click', () => showTab('signup'));
+tabLogin.addEventListener("click", () => showTab("login"));
+tabSignup.addEventListener("click", () => showTab("signup"));
+
 
 /* ==========================================================
-   LOG IN
+   LOGIN
    ========================================================== */
 
-const loginForm = $('login-form'), formError = $('form-error');
-const passwordInp = $('password'), togglePwBtn = $('toggle-password');
+const loginForm = $("login-form");
+const formError = $("form-error");
 
-togglePwBtn.addEventListener('click', () => {
-  const isHidden = passwordInp.type === 'password';
-  passwordInp.type = isHidden ? 'text' : 'password';
-  togglePwBtn.textContent = isHidden ? 'Hide' : 'Show';
-});
+const emailInput = $("email");
+const passwordInp = $("password");
+const togglePwBtn = $("toggle-password");
 
-function showError(message) {
-  formError.textContent = message;
-  formError.hidden = false;
+function clearLoginErrors() {
+  emailInput.classList.remove("field-error-glow");
+  passwordInp.classList.remove("field-error-glow");
 }
 
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  formError.hidden = true;
+function showLoginError(message, fields = []) {
+  formError.textContent = message;
+  formError.hidden = false;
 
-  const email = $('email').value.trim();
+  clearLoginErrors();
+
+  fields.forEach(id => {
+    const field = $(id);
+    if (field) {
+      field.classList.add("field-error-glow");
+    }
+  });
+}
+
+emailInput.addEventListener("input", () => {
+  emailInput.classList.remove("field-error-glow");
+});
+
+passwordInp.addEventListener("input", () => {
+  passwordInp.classList.remove("field-error-glow");
+});
+
+
+/* Show / hide password */
+
+togglePwBtn.addEventListener("click", () => {
+  const hidden = passwordInp.type === "password";
+
+  passwordInp.type = hidden ? "text" : "password";
+  togglePwBtn.textContent = hidden ? "Hide" : "Show";
+  togglePwBtn.setAttribute(
+    "aria-label",
+    hidden ? "Hide password" : "Show password"
+  );
+});
+
+
+/* Login */
+
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  formError.hidden = true;
+  clearLoginErrors();
+
+  const email = emailInput.value.trim();
   const password = passwordInp.value;
 
-  if (!email || !password) {
-    showError('Please enter your email and password.');
+  if (!email && !password) {
+    showLoginError(
+      "Please enter your email and password.",
+      ["email", "password"]
+    );
     return;
   }
 
-  const btn = $('login-btn');
+  if (!email) {
+    showLoginError("Please enter your email address.", ["email"]);
+    return;
+  }
+
+  if (!password) {
+    showLoginError("Please enter your password.", ["password"]);
+    return;
+  }
+
+  const btn = $("login-btn");
+
   btn.disabled = true;
-  btn.textContent = 'Logging in...';
+  btn.textContent = "Logging in...";
 
   try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const userDoc = await getDoc(doc(db, "users", cred.user.uid));
+    const cred = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const userDoc = await getDoc(
+      doc(db, "users", cred.user.uid)
+    );
 
     if (!userDoc.exists()) {
-      throw { code: 'no-role-doc' };
+      throw { code: "no-role-doc" };
     }
 
-    const { role, name } = userDoc.data();
+    const data = userDoc.data();
 
-    sessionStorage.setItem('bcfc-role', role || 'guest');
-    sessionStorage.setItem('bcfc-name', name || '');
-    sessionStorage.setItem('bcfc-email', email);
+    const role = data.role;
+    const name = data.name;
 
-    sessionStorage.removeItem('bcfc-test-role');
-    sessionStorage.removeItem('bcfc-view-role');
+    sessionStorage.setItem("bcfc-role", role || "guest");
+    sessionStorage.setItem("bcfc-name", name || "");
+    sessionStorage.setItem("bcfc-email", email);
+
+    sessionStorage.removeItem("bcfc-test-role");
+    sessionStorage.removeItem("bcfc-view-role");
 
     window.location.href = "calendar.html";
 
   } catch (err) {
+
     console.error(err);
 
-    if (err.code === 'no-role-doc') {
-      showError('Your account exists but has no role set up yet. Contact an admin.');
-    }
-    else if (
-      ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found']
-        .includes(err.code)
+    if (err.code === "no-role-doc") {
+
+      showLoginError(
+        "Your account exists but has no role set up yet. Contact an admin.",
+        ["email"]
+      );
+
+    } else if (
+      [
+        "auth/invalid-credential",
+        "auth/wrong-password",
+        "auth/user-not-found"
+      ].includes(err.code)
     ) {
-      showError('Wrong email or password.');
-    }
-    else if (err.code === 'auth/too-many-requests') {
-      showError('Too many attempts. Please wait a moment and try again.');
-    }
-    else if (err.code === 'auth/invalid-email') {
-      showError('That email address looks invalid.');
-    }
-    else {
-      showError('Something went wrong signing in. Please try again.');
+
+      showLoginError(
+        "Wrong email or password.",
+        ["email", "password"]
+      );
+
+    } else if (err.code === "auth/too-many-requests") {
+
+      showLoginError(
+        "Too many attempts. Please wait a moment and try again.",
+        ["email", "password"]
+      );
+
+    } else if (err.code === "auth/invalid-email") {
+
+      showLoginError(
+        "That email address looks invalid.",
+        ["email"]
+      );
+
+    } else {
+
+      showLoginError(
+        "Something went wrong signing in. Please try again.",
+        ["email", "password"]
+      );
     }
 
     btn.disabled = false;
-    btn.textContent = 'Log In';
+    btn.textContent = "Log In";
   }
 });
 
-$('guest-btn').addEventListener('click', () => {
+
+/* Guest */
+
+$("guest-btn").addEventListener("click", () => {
   window.location.href = "../index.html";
 });
 
+
 /* ==========================================================
-   SIGN UP  (role -> code -> account)
+   SIGNUP
    ========================================================== */
 
-// Role keys must match the ones used in portal.js and firestore.rules.
 const ROLE_GROUPS = [
+
   [
-    'Church leadership',
+    "Church leadership",
     [
-      ['admin', 'Admin'],
-      ['pastor', 'Pastor'],
-      ['preaching', 'Preaching Staff']
+      ["admin", "Admin"],
+      ["pastor", "Pastor"],
+      ["preaching", "Preaching Staff"]
     ]
   ],
 
   [
-    'Department leads',
+    "Department leads",
     [
-      ['childrens-lead', "Children's Church Lead"],
-      ['ufy-lead', 'UFY Lead'],
-      ['ufw-lead', 'UFW Lead'],
-      ['ufm-lead', 'UFM Lead'],
-      ['production-lead', 'Production Lead'],
-      ['creatives-lead', 'Creatives Lead']
+      ["childrens-lead", "Children's Church Lead"],
+      ["ufy-lead", "UFY Lead"],
+      ["ufw-lead", "UFW Lead"],
+      ["ufm-lead", "UFM Lead"],
+      ["production-lead", "Production Lead"],
+      ["creatives-lead", "Creatives Lead"]
     ]
   ],
 
   [
-    'Department workers',
+    "Department workers",
     [
-      ['childrens', "Children's Church Worker"],
-      ['ufy', 'UFY Worker'],
-      ['ufw', 'UFW Worker'],
-      ['ufm', 'UFM Worker'],
-      ['production', 'Production Worker'],
-      ['creatives', 'Creatives Worker']
+      ["childrens", "Children's Church Worker"],
+      ["ufy", "UFY Worker"],
+      ["ufw", "UFW Worker"],
+      ["ufm", "UFM Worker"],
+      ["production", "Production Worker"],
+      ["creatives", "Creatives Worker"]
     ]
   ]
+
 ];
 
 const ROLE_LABEL = Object.fromEntries(
@@ -163,356 +274,750 @@ const ROLE_LABEL = Object.fromEntries(
 );
 
 const steps = {
-  role: $('step-role'),
-  code: $('step-code'),
-  account: $('step-account')
+  role: $("step-role"),
+  code: $("step-code"),
+  account: $("step-account")
 };
 
-let chosenRole = '';
-let chosenCode = '';
+let chosenRole = "";
+let chosenCode = "";
+
+
+/* Signup steps */
 
 function showStep(name) {
-  Object.entries(steps).forEach(([k, el]) => {
-    el.hidden = k !== name;
+
+  Object.entries(steps).forEach(([key, element]) => {
+    element.hidden = key !== name;
   });
 
-  if (name === 'code') {
-    $('code-title').textContent =
+  if (name === "code") {
+
+    $("code-title").textContent =
       `Enter the ${ROLE_LABEL[chosenRole]} code`;
 
-    $('access-code').focus();
+    $("access-code").focus();
   }
 
-  if (name === 'account') {
-    $('role-chip').textContent =
+  if (name === "account") {
+
+    $("role-chip").textContent =
       `Signing up as ${ROLE_LABEL[chosenRole]}`;
 
-    $('su-name').focus();
+    $("su-name").focus();
+
+    updatePasswordColors();
+    updateConfirmPasswordColors();
   }
 }
 
-$('role-groups').innerHTML = ROLE_GROUPS.map(([title, list]) =>
-  `<div class="role-group">
-    <h3>${title}</h3>
-    <div class="role-grid">
-      ${
-        list.map(([k, label]) =>
-          `<button
-             type="button"
-             class="role-btn"
-             data-role="${k}">
-             ${label.replace(/&/g, '&amp;')}
-           </button>`
-        ).join('')
-      }
-    </div>
-  </div>`
-).join('');
 
-$('role-groups').addEventListener('click', e => {
-  const b = e.target.closest('.role-btn');
+/* Role buttons */
 
-  if (!b) return;
+$("role-groups").innerHTML = ROLE_GROUPS.map(
+  ([title, list]) => {
 
-  chosenRole = b.dataset.role;
+    return `
+      <div class="role-group">
 
-  $('access-code').value = '';
-  $('code-error').hidden = true;
+        <h3>${title}</h3>
 
-  showStep('code');
-});
+        <div class="role-grid">
 
-signupPanel.addEventListener('click', e => {
-  const b = e.target.closest('[data-back]');
+          ${list.map(([key, label]) => `
+            <button
+              type="button"
+              class="role-btn"
+              data-role="${key}"
+            >
+              ${label.replace(/&/g, "&amp;")}
+            </button>
+          `).join("")}
 
-  if (b) {
-    showStep(b.dataset.back);
+        </div>
+
+      </div>
+    `;
   }
+).join("");
+
+
+$("role-groups").addEventListener("click", e => {
+
+  const button = e.target.closest(".role-btn");
+
+  if (!button) return;
+
+  chosenRole = button.dataset.role;
+
+  $("access-code").value = "";
+  $("code-error").hidden = true;
+
+  showStep("code");
 });
+
+
+/* Back buttons */
+
+signupPanel.addEventListener("click", e => {
+
+  const button = e.target.closest("[data-back]");
+
+  if (!button) return;
+
+  showStep(button.dataset.back);
+});
+
 
 /* ==========================================================
    ACCESS CODE
    ========================================================== */
 
-// The code is checked by Firestore rules in step 3.
-// We convert it to uppercase so:
-//
-// bcfc-adm-4821
-//
-// also becomes:
-//
-// BCFC-ADM-4821
+$("code-form").addEventListener("submit", e => {
 
-$('code-form').addEventListener('submit', e => {
   e.preventDefault();
 
-  const code = $('access-code').value
-    .trim()
-    .toUpperCase();
+  const code = $("access-code").value.trim();
+
+  $("access-code").classList.remove("field-error-glow");
 
   if (!code) {
-    $('code-error').textContent =
-      'Enter the access code to continue.';
 
-    $('code-error').hidden = false;
+    $("code-error").textContent =
+      "Enter the access code to continue.";
+
+    $("code-error").hidden = false;
+
+    $("access-code").classList.add("field-error-glow");
+
     return;
   }
 
   chosenCode = code;
 
-  // Keep the visible input normalized
-  $('access-code').value = code;
+  $("code-error").hidden = true;
 
-  $('code-error').hidden = true;
-
-  showStep('account');
+  showStep("account");
 });
 
+
+$("access-code").addEventListener("input", () => {
+  $("access-code").classList.remove("field-error-glow");
+});
+
+
 /* ==========================================================
-   CREATE ACCOUNT
+   PASSWORD STRENGTH
    ========================================================== */
 
-const signupError = $('signup-error');
+const passwordMain = $("su-password");
+const passwordConfirm = $("su-password2");
 
-const signupErr = m => {
-  signupError.textContent = m;
-  signupError.hidden = false;
-};
 
-$('signup-form').addEventListener('submit', async e => {
-  e.preventDefault();
+function getPasswordStrength(password) {
 
-  signupError.hidden = true;
-
-  const name = $('su-name').value.trim();
-  const email = $('su-email').value.trim();
-
-  const pw = $('su-password').value;
-  const pw2 = $('su-password2').value;
-
-  if (!name || !email || !pw) {
-    return signupErr(
-      'Fill in your name, email and password.'
-    );
+  if (!password) {
+    return "empty";
   }
 
-  if (pw.length < 8) {
-    return signupErr(
-      'Use a password with at least 8 characters.'
-    );
+  let score = 0;
+
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score >= 4 && password.length >= 8) {
+    return "strong";
   }
 
-  if (pw !== pw2) {
-    return signupErr(
-      'The two passwords do not match.'
-    );
+  return "weak";
+}
+
+
+function updatePasswordColors() {
+
+  if (!passwordMain) return;
+
+  passwordMain.classList.remove(
+    "password-empty",
+    "password-weak",
+    "password-strong",
+    "field-error-glow"
+  );
+
+  const strength = getPasswordStrength(
+    passwordMain.value
+  );
+
+  if (strength === "empty") {
+    passwordMain.classList.add("password-empty");
   }
 
-  const btn = $('signup-btn');
-
-  btn.disabled = true;
-  btn.textContent = 'Creating account...';
-
-  const reset = () => {
-    btn.disabled = false;
-    btn.textContent = 'Create account';
-  };
-
-  let cred;
-
-  /* ----------------------------------------------------------
-     1. CREATE FIREBASE AUTH ACCOUNT
-     ---------------------------------------------------------- */
-
-  try {
-    cred = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      pw
-    );
-
-  } catch (err) {
-    console.error(err);
-
-    signupErr(
-      err.code === 'auth/email-already-in-use'
-        ? 'That email already has an account. Use Log in instead.'
-
-        : err.code === 'auth/invalid-email'
-        ? 'That email address looks invalid.'
-
-        : err.code === 'auth/weak-password'
-        ? 'Choose a stronger password.'
-
-        : err.code === 'auth/operation-not-allowed'
-        ? 'Email sign-up is not enabled in Firebase yet.'
-
-        : `Could not create the account (${err.code || 'unknown error'}).`
-    );
-
-    return reset();
+  if (strength === "weak") {
+    passwordMain.classList.add("password-weak");
   }
 
-  /* ----------------------------------------------------------
-     2. VERIFY ACCESS CODE THROUGH FIRESTORE RULES
-     ---------------------------------------------------------- */
+  if (strength === "strong") {
+    passwordMain.classList.add("password-strong");
+  }
+}
 
-  try {
 
-    await setDoc(
-      doc(db, 'signups', cred.user.uid),
-      {
-        role: chosenRole,
-        code: chosenCode
-      }
+/* ==========================================================
+   CONFIRM PASSWORD
+   ========================================================== */
+
+/*
+   Empty  = GRAY
+   Still typing / partial = YELLOW
+   Exact match = GREEN
+   Longer than original = RED
+   Wrong = RED
+*/
+
+function updateConfirmPasswordColors() {
+
+  if (!passwordConfirm) return;
+
+  passwordConfirm.classList.remove(
+    "password-empty",
+    "password-weak",
+    "password-strong",
+    "field-error-glow"
+  );
+
+  const original = passwordMain.value;
+  const confirm = passwordConfirm.value;
+
+  /* Empty */
+
+  if (!confirm) {
+
+    passwordConfirm.classList.add(
+      "password-empty"
     );
-
-  } catch (err) {
-
-    console.error(err);
-
-    // Delete the Firebase account if the access code failed
-    try {
-      await deleteUser(cred.user);
-    } catch (e2) {
-      console.warn('cleanup failed', e2);
-    }
-
-    reset();
-
-    if (err.code === 'permission-denied') {
-
-      $('code-error').textContent =
-        `That code isn't right for ${ROLE_LABEL[chosenRole]}. Check it and try again.`;
-
-      $('code-error').hidden = false;
-
-      showStep('code');
-
-    } else {
-
-      signupErr(
-        `Could not verify the code (${err.code || 'unknown error'}). Try again.`
-      );
-    }
 
     return;
   }
 
-  /* ----------------------------------------------------------
-     3. CODE ACCEPTED - SAVE USER PROFILE
-     ---------------------------------------------------------- */
 
-  try {
+  /* Confirm password is longer than original */
 
-    await setDoc(
-      doc(db, 'users', cred.user.uid),
-      {
-        role: chosenRole,
-        name,
-        email,
-        createdAt: serverTimestamp()
-      }
+  if (confirm.length > original.length) {
+
+    passwordConfirm.classList.add(
+      "field-error-glow"
     );
 
-  } catch (err) {
-
-    console.error(err);
-
-    signupErr(
-      `Your code was accepted but the profile could not be saved (${err.code || 'unknown error'}). Log in and contact an admin.`
-    );
-
-    return reset();
+    return;
   }
 
-  /* ----------------------------------------------------------
-     4. SAVE SESSION
-     ---------------------------------------------------------- */
 
-  sessionStorage.setItem(
-    'bcfc-role',
-    chosenRole
+  /* Exact match */
+
+  if (confirm === original) {
+
+    passwordConfirm.classList.add(
+      "password-strong"
+    );
+
+    return;
+  }
+
+
+  /* Still typing */
+
+  if (original.startsWith(confirm)) {
+
+    passwordConfirm.classList.add(
+      "password-weak"
+    );
+
+    return;
+  }
+
+
+  /* Wrong */
+
+  passwordConfirm.classList.add(
+    "field-error-glow"
   );
+}
 
-  sessionStorage.setItem(
-    'bcfc-name',
-    name
-  );
 
-  sessionStorage.setItem(
-    'bcfc-email',
-    email
-  );
-
-  sessionStorage.removeItem(
-    'bcfc-view-role'
-  );
-
-  window.location.href = 'calendar.html';
-});
-
-/* ==========================================================
-   FORGOT PASSWORD PANEL
-   ========================================================== */
-
-const forgotLink = document.querySelector('.forgot-link');
-const forgotCard = $('forgot-password');
-const forgotForm = $('forgot-form');
-const forgotSuccess = $('forgot-success');
-
-forgotLink.addEventListener('click', e => {
-  e.preventDefault();
-
-  forgotCard.classList.add('show');
-});
-
-document.querySelector('.close-forgot').addEventListener(
-  'click',
-  () => forgotCard.classList.remove('show')
+passwordMain.addEventListener(
+  "input",
+  () => {
+    updatePasswordColors();
+    updateConfirmPasswordColors();
+  }
 );
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    forgotCard.classList.remove('show');
-  }
-});
+passwordConfirm.addEventListener(
+  "input",
+  updateConfirmPasswordColors
+);
 
-forgotForm.addEventListener('submit', async e => {
-  e.preventDefault();
 
-  const email = $('forgot-email').value.trim();
+/* ==========================================================
+   SIGNUP FORM
+   ========================================================== */
 
-  if (!email) return;
+const signupError = $("signup-error");
 
-  const btn = forgotForm.querySelector('button');
+function signupErr(message, fieldIds = []) {
 
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
+  signupError.textContent = message;
+  signupError.hidden = false;
 
-  try {
+  [
+    "su-name",
+    "su-email",
+    "su-password",
+    "su-password2"
+  ].forEach(id => {
+    $(id)?.classList.remove("field-error-glow");
+  });
 
-    await sendPasswordResetEmail(
-      auth,
-      email
+  fieldIds.forEach(id => {
+    $(id)?.classList.add("field-error-glow");
+  });
+}
+
+
+[
+  "su-name",
+  "su-email",
+  "su-password",
+  "su-password2"
+].forEach(id => {
+
+  $(id).addEventListener("input", () => {
+
+    $(id).classList.remove(
+      "field-error-glow"
     );
 
-    forgotSuccess.hidden = false;
+    signupError.hidden = true;
+  });
 
-  } catch (err) {
+});
 
-    console.error(err);
 
-    if (err.code === 'auth/invalid-email') {
+$("signup-form").addEventListener(
+  "submit",
+  async e => {
 
-      btn.disabled = false;
-      btn.textContent = 'Send Reset Link';
+    e.preventDefault();
 
-      alert('That email address looks invalid.');
+    signupError.hidden = true;
+
+    const name = $("su-name").value.trim();
+    const email = $("su-email").value.trim();
+
+    const pw = passwordMain.value;
+    const pw2 = passwordConfirm.value;
+
+
+    /* Name */
+
+    if (!name) {
+
+      signupErr(
+        "Please enter your full name.",
+        ["su-name"]
+      );
 
       return;
     }
 
-    forgotSuccess.hidden = false;
+
+    /* Email */
+
+    if (!email) {
+
+      signupErr(
+        "Please enter your email address.",
+        ["su-email"]
+      );
+
+      return;
+    }
+
+
+    /* Password */
+
+    if (!pw) {
+
+      signupErr(
+        "Please enter a password.",
+        ["su-password"]
+      );
+
+      return;
+    }
+
+
+    if (pw.length < 8) {
+
+      signupErr(
+        "Use a password with at least 8 characters.",
+        ["su-password"]
+      );
+
+      return;
+    }
+
+
+    /* Confirm password */
+
+    if (!pw2) {
+
+      signupErr(
+        "Please confirm your password.",
+        ["su-password2"]
+      );
+
+      return;
+    }
+
+
+    if (pw2.length > pw.length) {
+
+      signupErr(
+        "The confirmation password is longer than your password.",
+        ["su-password2"]
+      );
+
+      return;
+    }
+
+
+    if (pw !== pw2) {
+
+      signupErr(
+        "The two passwords do not match.",
+        ["su-password2"]
+      );
+
+      return;
+    }
+
+
+    /* Create account */
+
+    const btn = $("signup-btn");
+
+    btn.disabled = true;
+    btn.textContent = "Creating account...";
+
+
+    const resetButton = () => {
+
+      btn.disabled = false;
+      btn.textContent = "Create account";
+    };
+
+
+    let cred;
+
+
+    try {
+
+      cred =
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          pw
+        );
+
+    } catch (err) {
+
+      console.error(err);
+
+      if (
+        err.code ===
+        "auth/email-already-in-use"
+      ) {
+
+        signupErr(
+          "That email already has an account. Use Log in instead.",
+          ["su-email"]
+        );
+
+      } else if (
+        err.code === "auth/invalid-email"
+      ) {
+
+        signupErr(
+          "That email address looks invalid.",
+          ["su-email"]
+        );
+
+      } else if (
+        err.code === "auth/weak-password"
+      ) {
+
+        signupErr(
+          "Choose a stronger password.",
+          ["su-password"]
+        );
+
+      } else if (
+        err.code === "auth/operation-not-allowed"
+      ) {
+
+        signupErr(
+          "Email sign-up is not enabled in Firebase yet.",
+          ["su-email"]
+        );
+
+      } else {
+
+        signupErr(
+          `Could not create the account (${err.code || "unknown error"}).`
+        );
+      }
+
+      resetButton();
+
+      return;
+    }
+
+
+    /* Verify access code */
+
+    try {
+
+      await setDoc(
+        doc(
+          db,
+          "signups",
+          cred.user.uid
+        ),
+        {
+          role: chosenRole,
+          code: chosenCode
+        }
+      );
+
+    } catch (err) {
+
+      console.error(err);
+
+      try {
+        await deleteUser(cred.user);
+      } catch (cleanupError) {
+        console.warn(
+          "Account cleanup failed",
+          cleanupError
+        );
+      }
+
+      resetButton();
+
+      if (
+        err.code === "permission-denied"
+      ) {
+
+        $("code-error").textContent =
+          `That code isn't right for ${ROLE_LABEL[chosenRole]}. Check it and try again.`;
+
+        $("code-error").hidden = false;
+
+        $("access-code").classList.add(
+          "field-error-glow"
+        );
+
+        showStep("code");
+
+      } else {
+
+        signupErr(
+          `Could not verify the code (${err.code || "unknown error"}).`
+        );
+      }
+
+      return;
+    }
+
+
+    /* Save profile */
+
+    try {
+
+      await setDoc(
+        doc(
+          db,
+          "users",
+          cred.user.uid
+        ),
+        {
+          role: chosenRole,
+          name,
+          email,
+          createdAt: serverTimestamp()
+        }
+      );
+
+    } catch (err) {
+
+      console.error(err);
+
+      signupErr(
+        `Your code was accepted but the profile could not be saved (${err.code || "unknown error"}).`
+      );
+
+      resetButton();
+
+      return;
+    }
+
+
+    /* Login session */
+
+    sessionStorage.setItem(
+      "bcfc-role",
+      chosenRole
+    );
+
+    sessionStorage.setItem(
+      "bcfc-name",
+      name
+    );
+
+    sessionStorage.setItem(
+      "bcfc-email",
+      email
+    );
+
+    sessionStorage.removeItem(
+      "bcfc-view-role"
+    );
+
+    sessionStorage.removeItem(
+      "bcfc-test-role"
+    );
+
+
+    window.location.href =
+      "calendar.html";
   }
-});
+);
+
+
+/* ==========================================================
+   FORGOT PASSWORD
+   ========================================================== */
+
+const forgotLink =
+  document.querySelector(".forgot-link");
+
+const forgotCard =
+  $("forgot-password");
+
+const forgotForm =
+  $("forgot-form");
+
+const forgotSuccess =
+  $("forgot-success");
+
+
+forgotLink.addEventListener(
+  "click",
+  e => {
+
+    e.preventDefault();
+
+    forgotCard.classList.add("show");
+  }
+);
+
+
+document
+  .querySelector(".close-forgot")
+  .addEventListener(
+    "click",
+    () => {
+      forgotCard.classList.remove("show");
+    }
+  );
+
+
+document.addEventListener(
+  "keydown",
+  e => {
+
+    if (e.key === "Escape") {
+
+      forgotCard.classList.remove(
+        "show"
+      );
+    }
+  }
+);
+
+
+forgotForm.addEventListener(
+  "submit",
+  async e => {
+
+    e.preventDefault();
+
+    const email =
+      $("forgot-email").value.trim();
+
+    if (!email) return;
+
+    const btn =
+      forgotForm.querySelector("button");
+
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+
+      await sendPasswordResetEmail(
+        auth,
+        email
+      );
+
+      forgotSuccess.hidden = false;
+
+      btn.textContent =
+        "Reset Link Sent";
+
+    } catch (err) {
+
+      console.error(err);
+
+      if (
+        err.code === "auth/invalid-email"
+      ) {
+
+        alert(
+          "That email address looks invalid."
+        );
+
+        btn.disabled = false;
+        btn.textContent =
+          "Send Reset Link";
+
+        return;
+      }
+
+      /*
+         Firebase intentionally does not reveal
+         whether an email exists.
+      */
+
+      forgotSuccess.hidden = false;
+
+      btn.textContent =
+        "Reset Link Sent";
+    }
+  }
+);

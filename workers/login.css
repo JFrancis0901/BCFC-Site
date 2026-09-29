@@ -1,92 +1,864 @@
-/* ==========================================================
-   login.css = look of the login page only.
-   Reuses the BCFC color names so it matches the public site.
-   ========================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;600&display=swap');
+/* =========================================================
+   BCFC WORKERS PORTAL - LOGIN
+   ========================================================= */
 
-:root{
-  --scarlet:#b3122a; --blue:#1c3f94; --navy:#101a3d; --gold:#d9a521; --purple:#4a2b7a;
-  --ivory:#f8f5ef; --ink:#1c1a2b; --line:#e2dfe8;
-  --head:'Playfair Display',Georgia,serif; --body:'Poppins',system-ui,sans-serif;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:var(--body);color:var(--ink);background:var(--navy);min-height:100vh}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap');
 
-/* Centers the login card in the middle of the screen */
-.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative}
+:root {
+  --navy: #101a3d;
+  --navy-light: #182654;
+  --blue: #1c3f94;
+  --scarlet: #b3122a;
+  --gold: #d9a521;
+  --purple: #4a2b7a;
 
-.login-card{
-  background:#fff;width:100%;max-width:380px;padding:2.4rem 2rem;border-radius:8px;
-  border-top:6px solid var(--gold);box-shadow:0 20px 50px rgba(0,0,0,.35);
-}
+  --white: #ffffff;
+  --ivory: #f8f5ef;
+  --text: #1c1a2b;
+  --muted: #77738a;
+  --line: #dedbe4;
 
-/* ---------- Brand / logo area ---------- */
-.brand{text-align:center;margin-bottom:1.6rem}
-.brand-mark{font:900 2rem var(--head);color:var(--navy)}       /* EDIT: swap for <img> if you add a logo file */
-.brand p{margin:.2rem 0 0;color:var(--purple);font-weight:600;letter-spacing:.03em}
-
-/* ---------- Form fields ---------- */
-label{display:block;font-weight:600;font-size:.9rem;margin:1rem 0 .35rem}
-input{width:100%;padding:.75rem .9rem;border:2px solid var(--line);border-radius:6px;font:inherit;font-size:1rem}
-input:focus{outline:none;border-color:var(--gold)}
-.password-field{position:relative}
-.password-field input{padding-right:3.6rem}
-#toggle-password{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--blue);font-weight:600;font-size:.85rem;cursor:pointer;padding:.4rem}
-
-.forgot-link{display:block;text-align:right;font-size:.85rem;color:var(--blue);text-decoration:none;margin:.6rem 0 0}
-.forgot-link:hover{text-decoration:underline}
-
-/* ---------- Buttons ---------- */
-.btn{width:100%;padding:.85rem;margin-top:1.3rem;font:600 1rem inherit;border-radius:6px;cursor:pointer;border:2px solid transparent}
-.btn-primary{background:var(--navy);color:#fff}
-.btn-primary:hover{background:var(--purple)}
-.btn-guest{background:#fff;color:var(--navy);border-color:var(--navy)}
-.btn-guest:hover{background:var(--ivory)}
-
-.divider{display:flex;align-items:center;text-align:center;color:#9a97ab;font-size:.8rem;margin:1.4rem 0}
-.divider::before,.divider::after{content:"";flex:1;border-top:1px solid var(--line)}
-.divider span{padding:0 .8rem}
-
-.portal-note{text-align:center;font-size:.8rem;color:#6c6880;margin-top:1.4rem;margin-bottom:0}
-
-/* ---------- Error / success messages ---------- */
-.form-error{background:#fdeceb;color:var(--scarlet);border:1px solid #f5c6c2;border-radius:6px;padding:.7rem .9rem;font-size:.9rem;margin:0 0 .5rem}
-.form-success{background:#eaf6ec;color:#1e6b34;border:1px solid #bfe6c7;border-radius:6px;padding:.7rem .9rem;font-size:.9rem;margin:0 0 .5rem}
-
-/* ---------- Forgot password panel ---------- */
-/* Hidden by default; login.js adds/removes the "show" class */
-.forgot-card{
-  position:fixed;inset:0;margin:auto;height:fit-content;max-height:90vh;overflow-y:auto;
-  display:none;
-}
-.forgot-card.show{display:block}
-.forgot-card h2{font-family:var(--head);margin-top:0}
-.close-forgot{position:absolute;top:1rem;right:1.2rem;background:none;border:0;font-size:1.6rem;line-height:1;color:#9a97ab;cursor:pointer}
-.close-forgot:hover{color:var(--ink)}
-
-/* ---------- Small screens ---------- */
-@media (max-width:420px){
-  .login-card{padding:2rem 1.4rem}
+  --heading: 'Playfair Display', Georgia, serif;
+  --body: 'Poppins', Arial, sans-serif;
 }
 
-/* ---------- Added: Log in / Sign up tabs and sign-up steps ---------- */
-.login-card{max-width:420px}
-.auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid var(--line);margin-bottom:1.2rem}
-.auth-tabs button{background:none;border:0;padding:.7rem;font:600 .95rem var(--body);color:#8b87a0;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
-.auth-tabs button.on{color:var(--navy);border-bottom-color:var(--gold)}
-[hidden]{display:none!important}
+* {
+  box-sizing: border-box;
+}
 
-.step-title{font:700 1.15rem var(--head);margin:0 0 .4rem;color:var(--navy)}
-.step-help{margin:0 0 .6rem;font-size:.85rem;color:#6c6880}
-.back-link{background:none;border:0;color:var(--blue);font:600 .85rem var(--body);cursor:pointer;padding:0;margin-bottom:.8rem}
-.back-link:hover{text-decoration:underline}
-.role-chip{display:inline-block;margin:0 0 .6rem;padding:.25rem .7rem;border-radius:999px;background:#e9e3f5;color:var(--purple);font-size:.8rem;font-weight:600}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
 
-.role-group{margin-top:1rem}
-.role-group h3{margin:0 0 .4rem;font:600 .8rem var(--body);color:#6c6880}
-.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-.role-btn{padding:.65rem .5rem;border:2px solid var(--line);background:#fff;border-radius:6px;font:600 .85rem var(--body);color:var(--ink);cursor:pointer;text-align:center}
-.role-btn:hover,.role-btn:focus-visible{border-color:var(--gold);outline:none}
-.role-btn:active{background:var(--ivory)}
-#code-form .btn,#signup-form .btn{margin-top:1.1rem}
-#access-code{letter-spacing:.08em;text-transform:uppercase}
+body {
+  font-family: var(--body);
+  color: var(--text);
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(217, 165, 33, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(74, 43, 122, 0.18),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      #0b1330 0%,
+      #101a3d 45%,
+      #16204a 100%
+    );
+
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 20px;
+
+  position: relative;
+}
+
+.login-page::before {
+  content: "";
+
+  position: fixed;
+
+  width: 420px;
+  height: 420px;
+
+  border-radius: 50%;
+
+  background: rgba(217, 165, 33, 0.08);
+
+  filter: blur(80px);
+
+  top: -160px;
+  left: -140px;
+
+  pointer-events: none;
+}
+
+.login-page::after {
+  content: "";
+
+  position: fixed;
+
+  width: 420px;
+  height: 420px;
+
+  border-radius: 50%;
+
+  background: rgba(74, 43, 122, 0.14);
+
+  filter: blur(90px);
+
+  bottom: -180px;
+  right: -120px;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+
+  background: rgba(255, 255, 255, 0.98);
+
+  border-radius: 16px;
+
+  border-top: 6px solid var(--gold);
+
+  padding: 34px 34px 28px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.40),
+    0 8px 25px rgba(0, 0, 0, 0.15);
+
+  position: relative;
+
+  z-index: 2;
+
+  animation: cardIn 0.45s ease;
+}
+
+@keyframes cardIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brand {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.brand-mark {
+  display: block;
+
+  font-family: var(--heading);
+
+  font-size: 42px;
+
+  font-weight: 900;
+
+  letter-spacing: 2px;
+
+  color: var(--navy);
+
+  line-height: 1;
+}
+
+.brand p {
+  margin: 8px 0 0;
+
+  color: var(--purple);
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.auth-tabs {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  border-bottom: 2px solid var(--line);
+
+  margin-bottom: 24px;
+}
+
+.auth-tabs button {
+  appearance: none;
+
+  background: transparent;
+
+  border: 0;
+
+  padding: 12px 8px;
+
+  font-family: var(--body);
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #9692a4;
+
+  cursor: pointer;
+
+  border-bottom: 3px solid transparent;
+
+  margin-bottom: -2px;
+
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.auth-tabs button:hover {
+  color: var(--navy);
+}
+
+.auth-tabs button.on {
+  color: var(--navy);
+
+  border-bottom-color: var(--gold);
+}
+
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+label {
+  display: block;
+
+  margin: 17px 0 7px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: var(--navy);
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+input {
+  width: 100%;
+
+  padding: 12px 13px;
+
+  border: 2px solid var(--line);
+
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: var(--text);
+
+  font-family: var(--body);
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+input::placeholder {
+  color: #aaa7b3;
+}
+
+input:hover {
+  border-color: #c9c5d0;
+}
+
+input:focus {
+  border-color: var(--gold);
+
+  box-shadow:
+    0 0 0 3px rgba(217, 165, 33, 0.13);
+}
+
+
+/* =========================================================
+   PASSWORD
+   ========================================================= */
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 65px;
+}
+
+#toggle-password {
+  position: absolute;
+
+  right: 7px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--blue);
+
+  font-family: var(--body);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  padding: 7px;
+}
+
+
+/* =========================================================
+   PASSWORD COLORS
+   ========================================================= */
+
+#su-password.password-empty,
+#su-password2.password-empty {
+  border-color: #b8b8b8;
+
+  background: #f4f4f4;
+}
+
+#su-password.password-weak,
+#su-password2.password-weak {
+  border-color: #d7a600;
+
+  background: #fff9df;
+
+  box-shadow:
+    0 0 0 3px rgba(217, 165, 33, 0.10);
+}
+
+#su-password.password-strong,
+#su-password2.password-strong {
+  border-color: #299447;
+
+  background: #effaf2;
+
+  box-shadow:
+    0 0 0 3px rgba(41, 148, 71, 0.10);
+}
+
+
+/* =========================================================
+   RED ERROR GLOW
+   ========================================================= */
+
+.field-error-glow {
+  border-color: var(--scarlet) !important;
+
+  background: #fff5f4 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(179, 18, 42, 0.14),
+    0 0 13px rgba(179, 18, 42, 0.20) !important;
+
+  animation: errorShake 0.25s ease;
+}
+
+@keyframes errorShake {
+
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn {
+  width: 100%;
+
+  padding: 12px 15px;
+
+  margin-top: 20px;
+
+  border-radius: 8px;
+
+  font-family: var(--body);
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  border: 2px solid transparent;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--navy);
+
+  color: white;
+
+  border-color: var(--navy);
+
+  box-shadow:
+    0 5px 14px rgba(16, 26, 61, 0.20);
+}
+
+.btn-primary:hover {
+  background: var(--purple);
+
+  border-color: var(--purple);
+
+  box-shadow:
+    0 7px 18px rgba(74, 43, 122, 0.25);
+}
+
+.btn-guest {
+  background: white;
+
+  color: var(--navy);
+
+  border-color: var(--navy);
+}
+
+.btn-guest:hover {
+  background: var(--ivory);
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD
+   ========================================================= */
+
+.forgot-link {
+  display: block;
+
+  text-align: right;
+
+  margin-top: 9px;
+
+  color: var(--blue);
+
+  font-size: 12px;
+
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.forgot-card {
+  position: fixed;
+
+  inset: 0;
+
+  margin: auto;
+
+  width: calc(100% - 40px);
+
+  max-width: 430px;
+
+  height: fit-content;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  display: none;
+
+  z-index: 20;
+}
+
+.forgot-card.show {
+  display: block;
+}
+
+.forgot-card h2 {
+  margin: 0 35px 8px 0;
+
+  font-family: var(--heading);
+
+  color: var(--navy);
+}
+
+.forgot-card p {
+  color: var(--muted);
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+.close-forgot {
+  position: absolute;
+
+  top: 14px;
+  right: 17px;
+
+  width: 35px;
+  height: 35px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #999;
+
+  font-size: 25px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.divider {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 21px 0;
+
+  color: #aaa7b3;
+
+  font-size: 11px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+
+  flex: 1;
+
+  border-top: 1px solid var(--line);
+}
+
+
+/* =========================================================
+   ERROR / SUCCESS
+   ========================================================= */
+
+.form-error {
+  margin: 0 0 10px;
+
+  padding: 10px 12px;
+
+  background: #fff0ef;
+
+  color: var(--scarlet);
+
+  border: 1px solid #f2c3bf;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+.form-success {
+  margin: 0 0 10px;
+
+  padding: 10px 12px;
+
+  background: #edf9f0;
+
+  color: #24733a;
+
+  border: 1px solid #bde5c7;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   SIGNUP
+   ========================================================= */
+
+.step-title {
+  margin: 0 0 7px;
+
+  font-family: var(--heading);
+
+  font-size: 21px;
+
+  color: var(--navy);
+}
+
+.step-help {
+  margin: 0 0 16px;
+
+  font-size: 13px;
+
+  color: var(--muted);
+
+  line-height: 1.6;
+}
+
+.back-link {
+  display: inline-block;
+
+  border: 0;
+
+  background: transparent;
+
+  padding: 0;
+
+  margin: 0 0 14px;
+
+  color: var(--blue);
+
+  font-family: var(--body);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================================================
+   ROLE BUTTONS
+   ========================================================= */
+
+.role-group {
+  margin-top: 17px;
+}
+
+.role-group h3 {
+  margin: 0 0 8px;
+
+  color: var(--muted);
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.8px;
+}
+
+.role-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 7px;
+}
+
+.role-btn {
+  min-height: 44px;
+
+  padding: 9px 7px;
+
+  border: 2px solid var(--line);
+
+  border-radius: 8px;
+
+  background: white;
+
+  color: var(--text);
+
+  font-family: var(--body);
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.role-btn:hover {
+  border-color: var(--gold);
+
+  background: #fffdf5;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ROLE CHIP
+   ========================================================= */
+
+.role-chip {
+  display: inline-block;
+
+  margin: 0 0 5px;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  background: #eee8f8;
+
+  color: var(--purple);
+
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   ACCESS CODE
+   ========================================================= */
+
+#access-code {
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PORTAL NOTE
+   ========================================================= */
+
+.portal-note {
+  margin: 22px 0 0;
+
+  text-align: center;
+
+  color: #85818f;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   HIDDEN
+   ========================================================= */
+
+[hidden] {
+  display: none !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+  .login-page {
+    padding: 20px 12px;
+  }
+
+  .login-card {
+    padding: 28px 20px 23px;
+
+    border-radius: 14px;
+  }
+
+  .brand-mark {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 350px) {
+
+  .login-card {
+    padding: 25px 16px 20px;
+  }
+
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+}

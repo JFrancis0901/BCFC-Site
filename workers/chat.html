@@ -1,41 +1,1272 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chat | BCFC Workers</title>
-<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css"></head>
-<body>
-<header class="portal-header" id="portal-header"></header>
-<main class="board-page"><h1 id="page-title">Chat</h1><p id="page-note" class="page-note"></p><div id="chat-tabs" class="chat-tabs"></div><div id="chat-box" class="chat-box"></div><form id="chat-form" class="chat-form"><input id="chat-input" maxlength="500" placeholder="Type a message" autocomplete="off"><button>Send</button></form></main>
-<script type="module">
-import "./portal.js";
-import { collection, addDoc, onSnapshot, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { auth, db } from "./firebase-config.js";
-import { esc } from "./board.js";
-const CH = { general: 'General', leads: 'Department Leads', preaching: 'Preaching Team', childrens: "Children's Church",
-  ufy: 'UFY', ufw: 'UFW', ufm: 'UFM', production: 'Production', creatives: 'Creatives' };
-const allowed = r => r === 'admin' ? Object.keys(CH) : Object.keys(CH).filter(c => c === 'general' || c === r.replace('-lead', '')
-  || (c === 'leads' && (r.endsWith('-lead') || r === 'pastor')) || (c === 'preaching' && ['pastor', 'preaching'].includes(r)));
-let ch = 'general', unsub = null;
-const tabs = document.getElementById('chat-tabs'), box = document.getElementById('chat-box'), form = document.getElementById('chat-form'), input = document.getElementById('chat-input');
-const me = () => auth.currentUser?.uid;
+<html lang="en">
 
-function open(c) {
-  ch = c; unsub && unsub();
-  tabs.innerHTML = allowed(window.currentRole).map(k => `<button data-c="${k}" class="${k === ch ? 'on' : ''}">${esc(CH[k])}</button>`).join('');
-  unsub = onSnapshot(query(collection(db, 'messages'), where('channel', '==', ch)), snap => {
-    const msgs = snap.docs.map(d => d.data()).sort((a, b) => (a.createdAt?.seconds ?? 9e9) - (b.createdAt?.seconds ?? 9e9));
-    box.innerHTML = msgs.length ? msgs.map(m => `<div class="msg${m.uid === me() ? ' mine' : ''}"><small>${esc(m.name || 'Worker')}</small><span>${esc(m.text)}</span></div>`).join('')
-      : '<p class="page-note">No messages yet. Say hello!</p>';
-    box.scrollTop = box.scrollHeight;
-  }, e => { console.error(e); box.innerHTML = `<p class="page-note">Couldn't load this channel (${esc(e.code || e.message)}). Publish the latest firestore.rules and make sure your account has a users document.</p>`; });
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Chat | BCFC Workers</title>
+
+  <link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="board.css">
+
+  <style>
+
+    .chat-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .chat-tabs {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .chat-tabs button {
+      border: 1px solid #ddd;
+      background: white;
+      padding: 8px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .chat-tabs button.on {
+      background: #101a3d;
+      color: white;
+    }
+
+    .clear-chat-btn {
+      background: #b3122a;
+      color: white;
+      border: 0;
+      border-radius: 7px;
+      padding: 9px 13px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .clear-chat-btn:hover {
+      opacity: .9;
+    }
+
+    .chat-box {
+      min-height: 420px;
+      max-height: 560px;
+      overflow-y: auto;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    .msg {
+      position: relative;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: #f4f4f7;
+      border-radius: 10px;
+      max-width: 85%;
+    }
+
+    .msg.mine {
+      margin-left: auto;
+      background: #e8edf9;
+    }
+
+    .msg-name {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .message-text {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+    }
+
+    .mention {
+      color: #1c3f94;
+      font-weight: 700;
+    }
+
+    .edited-label {
+      font-size: 10px;
+      color: #888;
+      margin-left: 5px;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .message-actions button {
+      border: 0;
+      background: transparent;
+      color: #555;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 3px 5px;
+    }
+
+    .message-actions button:hover {
+      color: #101a3d;
+      text-decoration: underline;
+    }
+
+    .chat-form {
+      position: relative;
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chat-form input {
+      flex: 1;
+    }
+
+    .chat-form button {
+      border: 0;
+      background: #101a3d;
+      color: white;
+      border-radius: 7px;
+      padding: 0 18px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .mention-box {
+      position: absolute;
+      left: 0;
+      right: 75px;
+      bottom: 52px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.15);
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .mention-item {
+      padding: 9px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+
+    .mention-item:hover {
+      background: #f4f5f8;
+    }
+
+    .mention-item strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .mention-item small {
+      color: #888;
+    }
+
+    .edit-area {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .edit-area input {
+      flex: 1;
+    }
+
+    .edit-area button {
+      border: 0;
+      border-radius: 6px;
+      padding: 7px 10px;
+      cursor: pointer;
+    }
+
+    .save-edit {
+      background: #101a3d;
+      color: white;
+    }
+
+    .cancel-edit {
+      background: #eee;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header
+  class="portal-header"
+  id="portal-header"
+></header>
+
+
+<main class="board-page">
+
+  <div class="chat-toolbar">
+
+    <div>
+
+      <h1 id="page-title">
+        Chat
+      </h1>
+
+      <p
+        id="page-note"
+        class="page-note"
+      >
+        Talk with other BCFC workers.
+      </p>
+
+    </div>
+
+    <button
+      id="clear-chat"
+      class="clear-chat-btn"
+      type="button"
+      hidden
+    >
+      🗑 Clear Current Chat
+    </button>
+
+  </div>
+
+
+  <div
+    id="chat-tabs"
+    class="chat-tabs"
+  ></div>
+
+
+  <div
+    id="chat-box"
+    class="chat-box"
+  ></div>
+
+
+  <form
+    id="chat-form"
+    class="chat-form"
+  >
+
+    <div
+      id="mention-box"
+      class="mention-box"
+      hidden
+    ></div>
+
+    <input
+      id="chat-input"
+      maxlength="500"
+      placeholder="Type a message... Use @ to mention someone"
+      autocomplete="off"
+    >
+
+    <button type="submit">
+      Send
+    </button>
+
+  </form>
+
+</main>
+
+
+<script type="module">
+
+import "./portal.js";
+
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  serverTimestamp,
+  getDocs,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+import {
+  auth,
+  db
+} from "./firebase-config.js";
+
+import {
+  esc
+} from "./board.js";
+
+
+/* ==========================================================
+   CHANNELS
+   ========================================================== */
+
+const CHANNELS = {
+
+  general: "General",
+
+  leads: "Department Leads",
+
+  preaching: "Preaching Team",
+
+  childrens: "Children's Church",
+
+  ufy: "UFY",
+
+  ufw: "UFW",
+
+  ufm: "UFM",
+
+  production: "Production",
+
+  creatives: "Creatives"
+
+};
+
+
+/* ==========================================================
+   ELEMENTS
+   ========================================================== */
+
+const tabs =
+  document.getElementById("chat-tabs");
+
+const box =
+  document.getElementById("chat-box");
+
+const form =
+  document.getElementById("chat-form");
+
+const input =
+  document.getElementById("chat-input");
+
+const mentionBox =
+  document.getElementById("mention-box");
+
+const clearButton =
+  document.getElementById("clear-chat");
+
+
+/* ==========================================================
+   STATE
+   ========================================================== */
+
+let currentChannel = "general";
+
+let unsubscribe = null;
+
+let members = [];
+
+let editingMessageId = null;
+
+
+/* ==========================================================
+   CURRENT USER
+   ========================================================== */
+
+function currentUid() {
+  return auth.currentUser?.uid || "";
 }
-tabs.addEventListener('click', e => { const b = e.target.closest('button'); if (b) open(b.dataset.c); });
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  const text = input.value.trim(); if (!text) return;
-  input.value = '';
-  try { await addDoc(collection(db, 'messages'), { channel: ch, text, uid: me() || '', name: sessionStorage.getItem('bcfc-name') || 'Worker', createdAt: serverTimestamp() }); }
-  catch (err) { console.error(err); alert(`Couldn't send (${err.code || err.message}). You may not have access to this channel.`); }
-});
-window.addEventListener('rolechange', () => open(allowed(window.currentRole).includes(ch) ? ch : 'general'));
-auth.authStateReady().then(() => open('general'));   // wait until Firebase knows who is signed in
-</script></body></html>
+
+
+/* ==========================================================
+   ALLOWED CHANNELS
+   ========================================================== */
+
+function allowedChannels(role) {
+
+  if (!role) {
+    return ["general"];
+  }
+
+  if (role === "admin") {
+    return Object.keys(CHANNELS);
+  }
+
+  const result = ["general"];
+
+  const department =
+    role.replace("-lead", "");
+
+  if (CHANNELS[department]) {
+    result.push(department);
+  }
+
+  if (
+    role.endsWith("-lead") ||
+    role === "pastor"
+  ) {
+    result.push("leads");
+  }
+
+  if (
+    role === "pastor" ||
+    role === "preaching"
+  ) {
+    result.push("preaching");
+  }
+
+  return [...new Set(result)];
+}
+
+
+/* ==========================================================
+   LOAD MEMBERS
+   ========================================================== */
+
+async function loadMembers() {
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        collection(db, "users")
+      );
+
+    members =
+      snapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+      }));
+
+  } catch (error) {
+
+    console.error(
+      "Could not load members:",
+      error
+    );
+
+    members = [];
+  }
+}
+
+
+/* ==========================================================
+   MENTION RENDERING
+   ========================================================== */
+
+function renderMessageText(text) {
+
+  const safe =
+    esc(text || "");
+
+  return safe.replace(
+    /@([A-Za-z0-9._-]+)/g,
+    '<span class="mention">@$1</span>'
+  );
+}
+
+
+/* ==========================================================
+   CHANNEL TABS
+   ========================================================== */
+
+function renderTabs() {
+
+  const role =
+    window.currentRole || "guest";
+
+  const channels =
+    allowedChannels(role);
+
+  tabs.innerHTML =
+    channels.map(channel => {
+
+      return `
+        <button
+          type="button"
+          data-channel="${channel}"
+          class="${channel === currentChannel ? "on" : ""}"
+        >
+          ${esc(CHANNELS[channel])}
+        </button>
+      `;
+
+    }).join("");
+
+
+  clearButton.hidden =
+    role !== "admin";
+}
+
+
+/* ==========================================================
+   DISPLAY MESSAGES
+   ========================================================== */
+
+function displayMessages(snapshot) {
+
+  const messages =
+    snapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      .sort(
+        (a, b) =>
+          (a.createdAt?.seconds || 9999999999) -
+          (b.createdAt?.seconds || 9999999999)
+      );
+
+
+  if (!messages.length) {
+
+    box.innerHTML = `
+      <p class="page-note">
+        No messages yet. Say hello!
+      </p>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    messages.map(message => {
+
+      const mine =
+        message.uid === currentUid();
+
+      const admin =
+        window.currentRole === "admin";
+
+      const canEdit =
+        mine || admin;
+
+      const canDelete =
+        mine || admin;
+
+
+      return `
+        <div
+          class="msg ${mine ? "mine" : ""}"
+          data-message-id="${message.id}"
+        >
+
+          <span class="msg-name">
+            ${esc(message.name || "Worker")}
+          </span>
+
+          <div class="message-text">
+            ${renderMessageText(message.text)}
+            ${
+              message.edited
+                ? '<span class="edited-label">(edited)</span>'
+                : ""
+            }
+          </div>
+
+
+          ${
+            canEdit || canDelete
+              ? `
+                <div class="message-actions">
+
+                  ${
+                    canEdit
+                      ? `
+                        <button
+                          type="button"
+                          data-action="edit"
+                          data-id="${message.id}"
+                        >
+                          Edit
+                        </button>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    canDelete
+                      ? `
+                        <button
+                          type="button"
+                          data-action="delete"
+                          data-id="${message.id}"
+                        >
+                          Delete
+                        </button>
+                      `
+                      : ""
+                  }
+
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+
+    }).join("");
+
+
+  box.scrollTop =
+    box.scrollHeight;
+}
+
+
+/* ==========================================================
+   OPEN CHANNEL
+   ========================================================== */
+
+function openChannel(channel) {
+
+  const role =
+    window.currentRole || "guest";
+
+  if (
+    !allowedChannels(role).includes(channel)
+  ) {
+    channel = "general";
+  }
+
+
+  currentChannel = channel;
+
+  renderTabs();
+
+
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+
+
+  const channelQuery =
+    query(
+      collection(db, "messages"),
+      where(
+        "channel",
+        "==",
+        currentChannel
+      )
+    );
+
+
+  unsubscribe =
+    onSnapshot(
+      channelQuery,
+
+      snapshot => {
+
+        displayMessages(snapshot);
+
+      },
+
+      error => {
+
+        console.error(error);
+
+        box.innerHTML = `
+          <p class="page-note">
+            Couldn't load this chat.
+            (${esc(error.code || error.message)})
+          </p>
+        `;
+      }
+    );
+}
+
+
+/* ==========================================================
+   CHANNEL CLICK
+   ========================================================== */
+
+tabs.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        "button[data-channel]"
+      );
+
+    if (!button) return;
+
+    openChannel(
+      button.dataset.channel
+    );
+  }
+);
+
+
+/* ==========================================================
+   SEND MESSAGE
+   ========================================================== */
+
+form.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    const text =
+      input.value.trim();
+
+    if (!text) return;
+
+
+    const uid =
+      currentUid();
+
+    if (!uid) {
+
+      alert(
+        "You are not signed in."
+      );
+
+      return;
+    }
+
+
+    const name =
+      sessionStorage.getItem(
+        "bcfc-name"
+      ) || "Worker";
+
+
+    try {
+
+      await addDoc(
+        collection(db, "messages"),
+        {
+          channel: currentChannel,
+          text,
+          uid,
+          name,
+          createdAt:
+            serverTimestamp()
+        }
+      );
+
+      input.value = "";
+
+      mentionBox.hidden = true;
+
+      input.focus();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        `Couldn't send the message.\n\n${error.code || error.message}`
+      );
+    }
+  }
+);
+
+
+/* ==========================================================
+   @ MENTION SUGGESTIONS
+   ========================================================== */
+
+input.addEventListener(
+  "input",
+  () => {
+
+    const value =
+      input.value;
+
+    const match =
+      value.match(
+        /@([A-Za-z0-9._-]*)$/
+      );
+
+
+    if (!match) {
+
+      mentionBox.hidden = true;
+
+      return;
+    }
+
+
+    const search =
+      match[1].toLowerCase();
+
+
+    const results =
+      members
+        .filter(member =>
+          String(member.name || "")
+            .toLowerCase()
+            .includes(search)
+        )
+        .slice(0, 8);
+
+
+    if (!results.length) {
+
+      mentionBox.hidden = true;
+
+      return;
+    }
+
+
+    mentionBox.innerHTML =
+      results.map(member => {
+
+        return `
+          <div
+            class="mention-item"
+            data-name="${esc(member.name || "Worker")}"
+          >
+
+            <strong>
+              ${esc(member.name || "Worker")}
+            </strong>
+
+            <small>
+              ${esc(member.role || "")}
+            </small>
+
+          </div>
+        `;
+
+      }).join("");
+
+
+    mentionBox.hidden = false;
+  }
+);
+
+
+/* ==========================================================
+   SELECT MENTION
+   ========================================================== */
+
+mentionBox.addEventListener(
+  "click",
+  event => {
+
+    const item =
+      event.target.closest(
+        ".mention-item"
+      );
+
+    if (!item) return;
+
+
+    const name =
+      item.dataset.name;
+
+
+    input.value =
+      input.value.replace(
+        /@([A-Za-z0-9._-]*)$/,
+        `@${name} `
+      );
+
+
+    mentionBox.hidden = true;
+
+    input.focus();
+  }
+);
+
+
+/* ==========================================================
+   HIDE MENTION BOX
+   ========================================================== */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if (
+      !event.target.closest(
+        ".chat-form"
+      )
+    ) {
+
+      mentionBox.hidden = true;
+    }
+  }
+);
+
+
+/* ==========================================================
+   EDIT MESSAGE
+   ========================================================== */
+
+async function editMessage(
+  messageId,
+  messageElement
+) {
+
+  if (editingMessageId) {
+    return;
+  }
+
+  editingMessageId =
+    messageId;
+
+
+  const textElement =
+    messageElement.querySelector(
+      ".message-text"
+    );
+
+  const originalText =
+    textElement.textContent
+      .replace("(edited)", "")
+      .trim();
+
+
+  textElement.innerHTML = `
+    <div class="edit-area">
+
+      <input
+        class="edit-input"
+        maxlength="500"
+        value="${esc(originalText)}"
+      >
+
+      <button
+        type="button"
+        class="save-edit"
+      >
+        Save
+      </button>
+
+      <button
+        type="button"
+        class="cancel-edit"
+      >
+        Cancel
+      </button>
+
+    </div>
+  `;
+
+
+  const editInput =
+    messageElement.querySelector(
+      ".edit-input"
+    );
+
+  editInput.focus();
+
+
+  messageElement
+    .querySelector(".save-edit")
+    .addEventListener(
+      "click",
+      async () => {
+
+        const newText =
+          editInput.value.trim();
+
+        if (!newText) return;
+
+
+        try {
+
+          await updateDoc(
+            doc(
+              db,
+              "messages",
+              messageId
+            ),
+            {
+              text: newText,
+              edited: true
+            }
+          );
+
+          editingMessageId = null;
+
+        } catch (error) {
+
+          console.error(error);
+
+          alert(
+            `Couldn't edit the message.\n\n${error.code || error.message}`
+          );
+
+          editingMessageId = null;
+        }
+      }
+    );
+
+
+  messageElement
+    .querySelector(".cancel-edit")
+    .addEventListener(
+      "click",
+      () => {
+
+        editingMessageId = null;
+
+        openChannel(
+          currentChannel
+        );
+      }
+    );
+}
+
+
+/* ==========================================================
+   MESSAGE ACTIONS
+   ========================================================== */
+
+box.addEventListener(
+  "click",
+  async event => {
+
+    const button =
+      event.target.closest(
+        "[data-action]"
+      );
+
+    if (!button) return;
+
+
+    const messageId =
+      button.dataset.id;
+
+    const messageElement =
+      button.closest(".msg");
+
+
+    if (
+      button.dataset.action === "edit"
+    ) {
+
+      await editMessage(
+        messageId,
+        messageElement
+      );
+
+      return;
+    }
+
+
+    if (
+      button.dataset.action === "delete"
+    ) {
+
+      const confirmed =
+        confirm(
+          "Delete this message?"
+        );
+
+      if (!confirmed) return;
+
+
+      try {
+
+        await deleteDoc(
+          doc(
+            db,
+            "messages",
+            messageId
+          )
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          `Couldn't delete the message.\n\n${error.code || error.message}`
+        );
+      }
+    }
+  }
+);
+
+
+/* ==========================================================
+   ADMIN: CLEAR CURRENT CHAT
+   ========================================================== */
+
+clearButton.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      window.currentRole !== "admin"
+    ) {
+
+      alert(
+        "Only an admin can clear chats."
+      );
+
+      return;
+    }
+
+
+    const confirmed =
+      confirm(
+        `Clear ALL messages in "${CHANNELS[currentChannel]}"?\n\nThis cannot be undone.`
+      );
+
+    if (!confirmed) return;
+
+
+    clearButton.disabled = true;
+
+    clearButton.textContent =
+      "Clearing...";
+
+
+    try {
+
+      const snapshot =
+        await getDocs(
+          query(
+            collection(db, "messages"),
+            where(
+              "channel",
+              "==",
+              currentChannel
+            )
+          )
+        );
+
+
+      if (snapshot.empty) {
+
+        alert(
+          "This chat is already empty."
+        );
+
+        return;
+      }
+
+
+      /*
+         Firestore batches can contain up to 500 writes.
+         Split the messages into batches.
+      */
+
+      const docs =
+        snapshot.docs;
+
+
+      for (
+        let i = 0;
+        i < docs.length;
+        i += 450
+      ) {
+
+        const batch =
+          writeBatch(db);
+
+        const chunk =
+          docs.slice(
+            i,
+            i + 450
+          );
+
+
+        chunk.forEach(messageDoc => {
+
+          batch.delete(
+            messageDoc.ref
+          );
+
+        });
+
+
+        await batch.commit();
+      }
+
+
+      alert(
+        "The current chat has been cleared."
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Clear chat error:",
+        error
+      );
+
+      alert(
+        `Couldn't clear the chat.\n\n${error.code || error.message}\n\nMake sure the latest Firestore rules have been published.`
+      );
+
+    } finally {
+
+      clearButton.disabled = false;
+
+      clearButton.textContent =
+        "🗑 Clear Current Chat";
+    }
+  }
+);
+
+
+/* ==========================================================
+   ROLE CHANGE
+   ========================================================== */
+
+window.addEventListener(
+  "rolechange",
+  () => {
+
+    const role =
+      window.currentRole || "guest";
+
+    const allowed =
+      allowedChannels(role);
+
+
+    if (!allowed.includes(currentChannel)) {
+
+      currentChannel =
+        "general";
+    }
+
+
+    openChannel(
+      currentChannel
+    );
+  }
+);
+
+
+/* ==========================================================
+   START
+   ========================================================== */
+
+auth.authStateReady()
+  .then(async () => {
+
+    await loadMembers();
+
+    openChannel("general");
+
+  });
+  
+</script>
+
+</body>
+</html>

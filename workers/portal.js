@@ -1,81 +1,60 @@
 /* ==========================================================
-   portal.js = shared logic for EVERY workers page.
-   - Requires a real Firebase session.
-   - Firebase users/{uid}.role is the user's REAL role.
-   - NO role-switching/debug dropdown.
-   - Admins get access to the Members page.
+   portal.js
+   Shared logic for every BCFC Workers page.
+
+   IMPORTANT:
+   - Users cannot change their role after login.
+   - The role comes from Firebase users/{uid}.
+   - Admin no longer has a "Viewing as" dropdown.
+   - Admin can access the Members page.
    ========================================================== */
 
-import { signOut, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-
-import { doc, getDoc }
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { auth, db } from "./firebase-config.js";
-
-
-/* ==========================================================
-   ROLES
-   ========================================================== */
 
 const LEADS =
   'childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead';
 
-
-/* ==========================================================
+/* ----------------------------------------------------------
    NAVIGATION
-   ========================================================== */
+   ---------------------------------------------------------- */
 
 const NAV = [
   ['Calendar', 'calendar.html', 'all'],
 
-  ['Announcements',
-    'announcements.html',
-    `admin,pastor,${LEADS}`],
+  ['Announcements', 'announcements.html', `admin,pastor,${LEADS}`],
 
-  ["Children's Church",
-    'dept.html?m=childrens',
+  ["Children's Church", 'dept.html?m=childrens',
     'admin,childrens-lead,childrens'],
 
-  ['UFY',
-    'dept.html?m=ufy',
+  ['UFY', 'dept.html?m=ufy',
     'admin,ufy-lead,ufy'],
 
-  ['UFW',
-    'dept.html?m=ufw',
+  ['UFW', 'dept.html?m=ufw',
     'admin,ufw-lead,ufw'],
 
-  ['UFM',
-    'dept.html?m=ufm',
+  ['UFM', 'dept.html?m=ufm',
     'admin,ufm-lead,ufm'],
 
-  ['Praise & Worship',
-    'worship.html',
+  ['Praise & Worship', 'worship.html',
     'admin,pastor,preaching'],
 
-  ['Production',
-    'projects.html?m=production',
+  ['Production', 'projects.html?m=production',
     'admin,production-lead,production'],
 
-  ['Creatives',
-    'projects.html?m=creatives',
+  ['Creatives', 'projects.html?m=creatives',
     'admin,creatives-lead,creatives'],
 
-  // ADMIN ONLY
-  ['Members',
-    'members.html',
+  ['Members', 'members.html',
     'admin'],
 
-  ['Chat',
-    'chat.html',
-    'all']
+  ['Chat', 'chat.html', 'all'],
 ];
 
-
-/* ==========================================================
+/* ----------------------------------------------------------
    ROLE NAMES
-   ========================================================== */
+   ---------------------------------------------------------- */
 
 const NAMES = {
   admin: 'Admin',
@@ -103,198 +82,155 @@ const NAMES = {
   guest: 'Guest'
 };
 
+/* ----------------------------------------------------------
+   REAL ROLE
+   ---------------------------------------------------------- */
 
-/* ==========================================================
-   REAL USER ROLE
-   ========================================================== */
+let realRole = sessionStorage.getItem('bcfc-role');
+let userName = sessionStorage.getItem('bcfc-name') || '';
 
-const realRole =
-  sessionStorage.getItem('bcfc-role');
-
-const userName =
-  sessionStorage.getItem('bcfc-name') || '';
-
-
-/* ==========================================================
-   LOGOUT
-   ========================================================== */
+/*
+   Remove old role-switching information.
+   This makes sure an old "Viewing as" role cannot remain.
+*/
+sessionStorage.removeItem('bcfc-view-role');
+sessionStorage.removeItem('bcfc-test-role');
 
 function leaveToLogin() {
-
   [
     'bcfc-role',
     'bcfc-name',
     'bcfc-email',
-
-    // Remove old role-switching values
     'bcfc-view-role',
     'bcfc-test-role'
-
   ].forEach(k => sessionStorage.removeItem(k));
 
   window.location.href = "login.html";
 }
 
-
 if (!realRole) {
   leaveToLogin();
 }
 
-
-/* ==========================================================
-   VERIFY FIREBASE SESSION + REAL ROLE
-   ========================================================== */
+/* ----------------------------------------------------------
+   CHECK FIREBASE LOGIN + REAL ROLE
+   ---------------------------------------------------------- */
 
 onAuthStateChanged(auth, async user => {
-
   if (!user) {
-    return leaveToLogin();
+    leaveToLogin();
+    return;
   }
 
   try {
-
-    const snap = await getDoc(
-      doc(db, 'users', user.uid)
-    );
+    const snap = await getDoc(doc(db, 'users', user.uid));
 
     if (!snap.exists()) {
-      return warn(
-        `No user profile found for ${user.uid}.`
+      warn(
+        `No document at users/${user.uid} in Firestore. ` +
+        `Create the user profile first.`
       );
+      return;
     }
 
-    const dbRole = snap.data().role;
+    const data = snap.data();
+    const dbRole = data.role;
 
     /*
-      The Firestore role is the authority.
-
-      If the browser's session somehow differs,
-      replace it with the database role.
+       Firebase is the source of truth.
+       The role saved in Firebase is the role the user gets.
     */
+    if (dbRole && dbRole !== realRole) {
+      realRole = dbRole;
 
-    if (dbRole !== realRole) {
+      sessionStorage.setItem('bcfc-role', dbRole);
+      sessionStorage.setItem('bcfc-name', data.name || '');
 
-      sessionStorage.setItem(
-        'bcfc-role',
-        dbRole || 'guest'
-      );
+      userName = data.name || '';
 
-      sessionStorage.setItem(
-        'bcfc-name',
-        snap.data().name || ''
-      );
-
-      location.reload();
+      refresh();
     }
 
-  } catch (err) {
-
-    console.error(err);
-
+  } catch (e) {
     warn(
-      `Could not verify your account role (${err.code || err.message}).`
+      `Could not read your users document ` +
+      `(${e.code || e.message}).`
     );
   }
 });
 
-
-/* ==========================================================
+/* ----------------------------------------------------------
    WARNING
-   ========================================================== */
+   ---------------------------------------------------------- */
 
-function warn(message) {
+function warn(msg) {
+  console.warn(msg);
 
-  console.warn(message);
+  const b = document.createElement('div');
 
-  const box =
-    document.createElement('div');
+  b.style.cssText =
+    'background:#fdeceb;color:#b3122a;padding:.6rem 1rem;' +
+    'font:600 .85rem sans-serif;text-align:center';
 
-  box.style.cssText =
-    'background:#fdeceb;' +
-    'color:#b3122a;' +
-    'padding:.6rem 1rem;' +
-    'font:600 .85rem sans-serif;' +
-    'text-align:center';
+  b.textContent = msg;
 
-  box.textContent = message;
-
-  document.body.prepend(box);
+  document.body.prepend(b);
 }
 
-
-/* ==========================================================
-   IMPORTANT
-   ========================================================== */
-
-window.realRole = realRole;
+/* ----------------------------------------------------------
+   GLOBAL ROLE
+   ---------------------------------------------------------- */
 
 /*
-  There is NO longer a separate "viewing role".
-
-  currentRole is ALWAYS the actual Firebase role.
+   IMPORTANT:
+   currentRole is ALWAYS the real Firebase role.
+   There is no role switching anymore.
 */
-
+window.realRole = realRole;
 window.currentRole = realRole;
 
-
-/* ==========================================================
-   CURRENT PAGE
-   ========================================================== */
+/* ----------------------------------------------------------
+   BUILD HEADER
+   ---------------------------------------------------------- */
 
 const here =
-  (location.pathname.split('/').pop() || 'calendar.html')
-  + location.search;
+  (location.pathname.split('/').pop() || 'calendar.html') +
+  location.search;
 
+const header = document.getElementById('portal-header');
 
-/* ==========================================================
-   BUILD HEADER
-   ========================================================== */
+if (header) {
 
-const header =
-  document.getElementById('portal-header');
-
-header.innerHTML = `
-
-  <a href="calendar.html" class="portal-logo">
-    BCFC <span>Workers</span>
-  </a>
-
-  <nav class="portal-nav">
-
-    ${NAV.map(([title, href, roles]) => `
-
-      <a
-        href="${href}"
-        data-roles="${roles}"
-        ${href === here ? 'class="active"' : ''}
-      >
-        ${title.replace('&', '&amp;')}
-      </a>
-
-    `).join('')}
-
-  </nav>
-
-  <div class="portal-user">
-
-    <span
-      class="role-label"
-      id="role-label">
-    </span>
-
-    <a
-      href="login.html"
-      class="btn-logout">
-      Log Out
+  header.innerHTML = `
+    <a href="calendar.html" class="portal-logo">
+      BCFC <span>Workers</span>
     </a>
 
-  </div>
-`;
+    <nav class="portal-nav">
+      ${NAV.map(([t, h, r]) => `
+        <a
+          href="${h}"
+          data-roles="${r}"
+          ${h === here ? 'class="active"' : ''}
+        >
+          ${t.replace('&', '&amp;')}
+        </a>
+      `).join('')}
+    </nav>
 
+    <div class="portal-user">
+      <span class="role-label" id="role-label"></span>
 
-/* ==========================================================
-   ELEMENTS
-   ========================================================== */
+      <a href="login.html" class="btn-logout">
+        Log Out
+      </a>
+    </div>
+  `;
+}
+
+/* ----------------------------------------------------------
+   NAVIGATION PERMISSIONS
+   ---------------------------------------------------------- */
 
 const roleLabel =
   document.getElementById('role-label');
@@ -302,108 +238,79 @@ const roleLabel =
 const navLinks =
   [...document.querySelectorAll('.portal-nav a')];
 
-
-/* ==========================================================
-   PERMISSION CHECK
-   ========================================================== */
-
-const canSee = link => {
-
-  return link.dataset.roles
+const canSee = a => {
+  return a.dataset.roles
     .split(',')
-    .some(role =>
-      role === 'all' ||
-      role === window.currentRole
-    );
-
+    .some(r => r === 'all' || r === window.currentRole);
 };
 
-
-/* ==========================================================
-   REFRESH NAVIGATION
-   ========================================================== */
+/* ----------------------------------------------------------
+   REFRESH HEADER
+   ---------------------------------------------------------- */
 
 function refresh() {
 
-  /*
-    Display the REAL role only.
-  */
+  window.currentRole = realRole;
 
-  roleLabel.textContent =
-    `${userName ? userName + ' ' : ''}` +
-    `(${NAMES[realRole] || realRole})`;
+  if (roleLabel) {
+    roleLabel.textContent =
+      `${userName ? userName + ' ' : ''}` +
+      `(${NAMES[realRole] || realRole})`;
+  }
 
+  navLinks.forEach(a => {
 
-  /*
-    Show/hide navigation based on real role.
-  */
+    const allowed = canSee(a);
 
-  navLinks.forEach(link => {
+    a.classList.toggle('locked', !allowed);
 
-    const allowed =
-      canSee(link);
-
-    link.classList.toggle(
-      'locked',
-      !allowed
-    );
-
-    link.setAttribute(
+    a.setAttribute(
       'aria-disabled',
       String(!allowed)
     );
 
+    /*
+       Hide navigation links the role cannot use.
+    */
+    a.style.display = allowed ? '' : 'none';
   });
 
-
   /*
-    Page protection.
-
-    If someone manually types a URL they don't
-    have access to, send them to Calendar.
+     Page protection.
+     If the current page is not allowed for this role,
+     send the user back to Calendar.
   */
 
-  const current =
-    navLinks.find(
-      link =>
-        link.getAttribute('href') === here
-    );
+  const current = navLinks.find(
+    a => a.getAttribute('href') === here
+  );
 
-  if (
-    current &&
-    !canSee(current)
-  ) {
-
-    window.location.replace(
-      'calendar.html'
-    );
+  if (current && !canSee(current)) {
+    window.location.replace('calendar.html');
   }
 }
 
-
 refresh();
 
-
-/* ==========================================================
+/* ----------------------------------------------------------
    LOG OUT
-   ========================================================== */
+   ---------------------------------------------------------- */
 
-document
-  .querySelector('.btn-logout')
-  .addEventListener('click', async e => {
+const logoutButton =
+  document.querySelector('.btn-logout');
+
+if (logoutButton) {
+
+  logoutButton.addEventListener('click', async e => {
 
     e.preventDefault();
 
     try {
-
       await signOut(auth);
-
     } catch (err) {
-
       console.error(err);
-
     }
 
     leaveToLogin();
-
   });
+}

@@ -18,7 +18,7 @@
 <style>
 
 .members-page {
-  max-width: 1100px;
+  max-width: 1150px;
   margin: 0 auto;
   padding: 30px 20px;
 }
@@ -70,8 +70,8 @@
 }
 
 .members-empty {
-  padding: 30px;
-  text-align: center;
+  padding: 30px !important;
+  text-align: center !important;
   color: #777;
 }
 
@@ -80,6 +80,31 @@
   background: #fdeceb;
   color: #b3122a;
   border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.remove-member-btn {
+  border: 0;
+  background: #c62828;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.remove-member-btn:hover {
+  background: #a91f1f;
+}
+
+.remove-member-btn:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.cannot-remove {
+  color: #888;
+  font-size: 12px;
 }
 
 </style>
@@ -121,21 +146,15 @@
 
         <tr>
 
-          <th>
-            Name
-          </th>
+          <th>Name</th>
 
-          <th>
-            Email
-          </th>
+          <th>Email</th>
 
-          <th>
-            Role
-          </th>
+          <th>Role</th>
 
-          <th>
-            Account Created
-          </th>
+          <th>Account Created</th>
+
+          <th>Action</th>
 
         </tr>
 
@@ -147,7 +166,7 @@
         <tr>
 
           <td
-            colspan="4"
+            colspan="5"
             class="members-empty">
 
             Loading members...
