@@ -34,6 +34,17 @@ service cloud.firestore {
     }
 
 
+    function isAdmin() {
+
+      return signedIn()
+        &&
+        get(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        ).data.role == 'admin';
+
+    }
+
+
     function canManage(mod) {
 
       return role() == 'admin'
@@ -120,7 +131,7 @@ service cloud.firestore {
 
 
     /* ======================================================
-       ROLE CODE CONFIG
+       CONFIG
        ====================================================== */
 
     match /config/{id} {
@@ -168,11 +179,8 @@ service cloud.firestore {
     match /users/{uid} {
 
       allow read:
-
         if signedIn();
 
-
-      /* New user */
 
       allow create:
 
@@ -198,13 +206,6 @@ service cloud.firestore {
         ).data.role ==
            request.resource.data.role;
 
-
-      /*
-        Admin can update anyone.
-
-        Normal worker can only update
-        their own name.
-      */
 
       allow update:
 
@@ -247,15 +248,9 @@ service cloud.firestore {
         );
 
 
-      /*
-        Only admin can delete
-        worker profiles.
-      */
-
       allow delete:
 
-        if signedIn()
-        && role() == 'admin';
+        if isAdmin();
 
     }
 
@@ -417,33 +412,23 @@ service cloud.firestore {
 
 
     /* ======================================================
-       CHAT MESSAGES
+       CHAT
        ====================================================== */
 
     match /messages/{id} {
 
 
-      /*
-        READ
-
-        Users can only see channels they are
-        allowed to access.
-      */
+      /* READ */
 
       allow read:
 
         if signedIn()
-
         && chanOk(
           resource.data.channel
         );
 
 
-      /*
-        CREATE
-
-        Users can create their own messages.
-      */
+      /* CREATE */
 
       allow create:
 
@@ -457,14 +442,7 @@ service cloud.firestore {
         );
 
 
-      /*
-        UPDATE
-
-        Admin can edit any message.
-
-        Regular users can edit only
-        their own message.
-      */
+      /* UPDATE */
 
       allow update:
 
@@ -472,7 +450,7 @@ service cloud.firestore {
 
         && (
 
-          role() == 'admin'
+          isAdmin()
 
           ||
 
@@ -504,15 +482,7 @@ service cloud.firestore {
         );
 
 
-      /*
-        DELETE
-
-        ADMIN:
-        can delete ANY message.
-
-        NORMAL USER:
-        can delete only their own message.
-      */
+      /* DELETE */
 
       allow delete:
 
@@ -520,7 +490,7 @@ service cloud.firestore {
 
         && (
 
-          role() == 'admin'
+          isAdmin()
 
           ||
 
