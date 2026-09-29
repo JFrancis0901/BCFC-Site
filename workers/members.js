@@ -1,145 +1,89 @@
 /* ==========================================================
    members.js
-
-   Admin-only page showing everyone who created an account.
+   Admin member management
    ========================================================== */
 
 import {
   collection,
   getDocs,
+  deleteDoc,
+  doc,
   query,
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 import {
+  auth,
   db
 } from "./firebase-config.js";
 
 
-/* ----------------------------------------------------------
-   ROLE NAMES
-   ---------------------------------------------------------- */
-
 const NAMES = {
-
   admin: 'Admin',
-
   pastor: 'Pastor',
-
   preaching: 'Preaching Staff',
 
-  'childrens-lead':
-    "Children's Church Lead",
+  'childrens-lead': "Children's Church Lead",
+  childrens: "Children's Church Worker",
 
-  childrens:
-    "Children's Church Worker",
+  'ufy-lead': 'UFY Lead',
+  ufy: 'UFY Worker',
 
-  'ufy-lead':
-    'UFY Lead',
+  'ufw-lead': 'UFW Lead',
+  ufw: 'UFW Worker',
 
-  ufy:
-    'UFY Worker',
+  'ufm-lead': 'UFM Lead',
+  ufm: 'UFM Worker',
 
-  'ufw-lead':
-    'UFW Lead',
+  'production-lead': 'Production Lead',
+  production: 'Production Worker',
 
-  ufw:
-    'UFW Worker',
-
-  'ufm-lead':
-    'UFM Lead',
-
-  ufm:
-    'UFM Worker',
-
-  'production-lead':
-    'Production Lead',
-
-  production:
-    'Production Worker',
-
-  'creatives-lead':
-    'Creatives Lead',
-
-  creatives:
-    'Creatives Worker',
-
-  guest:
-    'Guest'
-
+  'creatives-lead': 'Creatives Lead',
+  creatives: 'Creatives Worker'
 };
 
 
-/* ----------------------------------------------------------
-   ELEMENTS
-   ---------------------------------------------------------- */
-
 const list =
-  document.getElementById(
-    'members-list'
-  );
+  document.getElementById('members-list');
 
 const errorBox =
-  document.getElementById(
-    'members-error'
-  );
+  document.getElementById('members-error');
 
-
-/* ----------------------------------------------------------
-   ESCAPE HTML
-   ---------------------------------------------------------- */
 
 function esc(value) {
 
   return String(value ?? '')
     .replace(
       /[&<>"']/g,
-      c =>
-        ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        }[c])
+      c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[c])
     );
 
 }
 
 
-/* ----------------------------------------------------------
-   FORMAT DATE
-   ---------------------------------------------------------- */
-
 function formatDate(timestamp) {
 
-  if (!timestamp) {
-    return '—';
-  }
-
+  if (!timestamp) return '—';
 
   let date;
-
 
   if (
     typeof timestamp.toDate === 'function'
   ) {
-
-    date =
-      timestamp.toDate();
-
+    date = timestamp.toDate();
   } else {
-
-    date =
-      new Date(timestamp);
-
+    date = new Date(timestamp);
   }
-
 
   if (Number.isNaN(date.getTime())) {
     return '—';
   }
-
 
   return date.toLocaleString(
     undefined,
@@ -155,9 +99,9 @@ function formatDate(timestamp) {
 }
 
 
-/* ----------------------------------------------------------
+/* ==========================================================
    LOAD MEMBERS
-   ---------------------------------------------------------- */
+   ========================================================== */
 
 async function loadMembers() {
 
@@ -166,17 +110,11 @@ async function loadMembers() {
     const membersQuery =
       query(
         collection(db, 'users'),
-        orderBy(
-          'createdAt',
-          'desc'
-        )
+        orderBy('createdAt', 'desc')
       );
-
 
     const snapshot =
-      await getDocs(
-        membersQuery
-      );
+      await getDocs(membersQuery);
 
 
     if (snapshot.empty) {
@@ -184,7 +122,7 @@ async function loadMembers() {
       list.innerHTML = `
         <tr>
           <td
-            colspan="4"
+            colspan="5"
             class="members-empty">
 
             No members found.
@@ -194,7 +132,6 @@ async function loadMembers() {
       `;
 
       return;
-
     }
 
 
@@ -205,9 +142,12 @@ async function loadMembers() {
           const member =
             memberDoc.data();
 
-
           const role =
             member.role || 'guest';
+
+          const isMe =
+            memberDoc.id ===
+            auth.currentUser?.uid;
 
 
           return `
@@ -226,13 +166,11 @@ async function loadMembers() {
               </td>
 
               <td>
-
                 <span class="role-badge">
                   ${esc(
                     NAMES[role] || role
                   )}
                 </span>
-
               </td>
 
               <td>
@@ -241,6 +179,31 @@ async function loadMembers() {
                     member.createdAt
                   )
                 )}
+              </td>
+
+              <td>
+
+                ${
+                  isMe
+                    ? `
+                      <span
+                        class="cannot-remove">
+                        Current account
+                      </span>
+                    `
+                    : `
+                      <button
+                        type="button"
+                        class="remove-member-btn"
+                        data-id="${esc(memberDoc.id)}"
+                        data-name="${esc(member.name || member.email || 'this member')}">
+
+                        Remove
+
+                      </button>
+                    `
+                }
+
               </td>
 
             </tr>
@@ -256,34 +219,112 @@ async function loadMembers() {
 
     list.innerHTML = `
       <tr>
-
         <td
-          colspan="4"
+          colspan="5"
           class="members-empty">
 
           Unable to load members.
 
         </td>
-
       </tr>
     `;
 
-
     errorBox.textContent =
       `Couldn't load members. ${
-        err.code ||
-        err.message
+        err.code || err.message
       }`;
 
     errorBox.hidden = false;
-
   }
 
 }
 
 
-/* ----------------------------------------------------------
-   START
-   ---------------------------------------------------------- */
+/* ==========================================================
+   REMOVE MEMBER
+   ========================================================== */
 
-loadMembers();
+list.addEventListener(
+  'click',
+  async e => {
+
+    const button =
+      e.target.closest(
+        '.remove-member-btn'
+      );
+
+    if (!button) return;
+
+
+    const uid =
+      button.dataset.id;
+
+    const name =
+      button.dataset.name;
+
+
+    const confirmed =
+      confirm(
+        `Remove ${name} from the BCFC Workers member list?\n\n` +
+        `This removes their worker profile and prevents the portal from loading their account.`
+      );
+
+
+    if (!confirmed) return;
+
+
+    button.disabled = true;
+
+    button.textContent =
+      'Removing...';
+
+
+    try {
+
+      await deleteDoc(
+        doc(
+          db,
+          'users',
+          uid
+        )
+      );
+
+
+      await loadMembers();
+
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert(
+        `Could not remove the member. ${
+          err.code || err.message
+        }`
+      );
+
+      button.disabled = false;
+
+      button.textContent =
+        'Remove';
+    }
+
+  }
+);
+
+
+/* ==========================================================
+   START
+   ========================================================== */
+
+auth.authStateReady().then(() => {
+
+  if (
+    window.currentRole !== 'admin'
+  ) {
+    return;
+  }
+
+  loadMembers();
+
+});
