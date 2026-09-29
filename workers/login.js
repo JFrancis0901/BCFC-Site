@@ -1,10 +1,13 @@
 /* ==========================================================
    login.js = behavior for the login page.
-   Right now this ONLY runs the on-screen form logic (show/hide
-   password, open/close the forgot-password panel, basic checks).
-   It does NOT actually verify a password against a real account yet.
-   Every spot that needs a real backend is marked "TODO: BACKEND".
+   Handles the on-screen form (show/hide password, forgot-password panel)
+   AND the real sign-in: Firebase Authentication + a Firestore lookup
+   for the signed-in user's role, then redirects into the portal.
    ========================================================== */
+
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { auth, db } from "./firebase-config.js";
 
 const loginForm   = document.getElementById('login-form');
 const formError   = document.getElementById('form-error');
@@ -37,22 +40,43 @@ loginForm.addEventListener('submit', async (e) => {
   btn.textContent = 'Logging in...';
 
   try {
-    // TODO: BACKEND — replace this block with a real sign-in call.
-    // Example using Firebase Authentication (recommended):
-    //
-    //   import { signInWithEmailAndPassword } from "firebase/auth";
-    //   import { auth } from "./firebase-config.js";
-    //   const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    //   // Then look up the user's ROLE (Admin, Pastor, Department Lead, etc.)
-    //   // in your database and redirect them to the Calendar page:
-    //   window.location.href = "calendar.html";
-    //
-    // For now, this just simulates a failed login so the page is testable:
-    await new Promise(r => setTimeout(r, 600));
-    throw new Error('placeholder');
+    // Sign in with Firebase Authentication.
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const uid = userCredential.user.uid;
+
+    // Look up this person's role from Firestore: users/{uid} -> { role: "admin", ... }
+    const userDoc = await getDoc(doc(db, "users", uid));
+
+    if (!userDoc.exists()) {
+      // Account exists in Firebase Auth but has no matching Firestore document yet.
+      // EDIT: change this message if you want a different behavior for brand-new accounts.
+      throw { code: 'no-role-doc' };
+    }
+
+    const { role, name } = userDoc.data();
+
+    // Save role + basic info for this tab session, so portal.js and other
+    // pages can read it without hitting Firestore again on every click.
+    sessionStorage.setItem('bcfc-role', role || 'guest');
+    sessionStorage.setItem('bcfc-name', name || '');
+    sessionStorage.setItem('bcfc-email', email);
+    sessionStorage.removeItem('bcfc-test-role'); // clear any leftover test-mode role
+
+    window.location.href = "calendar.html";
 
   } catch (err) {
-    showError('This form is not connected to an account system yet.');
+    console.error(err);
+    if (err.code === 'no-role-doc') {
+      showError('Your account exists but has no role set up yet. Contact an admin.');
+    } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+      showError('Wrong email or password.');
+    } else if (err.code === 'auth/too-many-requests') {
+      showError('Too many attempts. Please wait a moment and try again.');
+    } else if (err.code === 'auth/invalid-email') {
+      showError('That email address looks invalid.');
+    } else {
+      showError('Something went wrong signing in. Please try again.');
+    }
     btn.disabled = false;
     btn.textContent = 'Log In';
   }
@@ -92,12 +116,24 @@ forgotForm.addEventListener('submit', async (e) => {
   const email = document.getElementById('forgot-email').value.trim();
   if (!email) return;
 
-  // TODO: BACKEND — replace with a real password-reset email call.
-  // Example using Firebase Authentication:
-  //
-  //   import { sendPasswordResetEmail } from "firebase/auth";
-  //   await sendPasswordResetEmail(auth, email);
-  //
-  forgotSuccess.hidden = false;
-  forgotForm.querySelector('button').disabled = true;
+  const btn = forgotForm.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    forgotSuccess.hidden = false;
+  } catch (err) {
+    console.error(err);
+    // Firebase intentionally doesn't reveal whether the email exists, so we
+    // show the same success message either way — this avoids leaking which
+    // emails have accounts. Only a clearly malformed email gets its own message.
+    if (err.code === 'auth/invalid-email') {
+      btn.disabled = false;
+      btn.textContent = 'Send Reset Link';
+      alert('That email address looks invalid.');
+      return;
+    }
+    forgotSuccess.hidden = false;
+  }
 });
