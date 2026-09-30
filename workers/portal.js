@@ -15,9 +15,46 @@ let requestedRole='';
 window.realRole=realRole; window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
 
 function leaveToLogin(){['bcfc-role','bcfc-name','bcfc-email','bcfc-role-status','bcfc-view-role','bcfc-test-role'].forEach(k=>sessionStorage.removeItem(k)); location.href='login.html';}
-function popup(message,title='Access Pending'){
-  if(window.showCalendarPopup){ window.showCalendarPopup({title,text:message,okText:'OK',type:'danger'}); return; }
-  alert(`${title}\n\n${message}`);
+function popup(message,title='Access Pending',type='danger') {
+  // Always use an in-page notification. Never use browser alerts/notifications.
+  let overlay = document.getElementById('portal-notification');
+
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'portal-notification';
+    overlay.className = 'portal-notification';
+    overlay.innerHTML = `
+      <div class="portal-notification-card" role="dialog" aria-modal="true" aria-labelledby="portal-notification-title">
+        <button type="button" class="portal-notification-close" aria-label="Close">&times;</button>
+        <div class="portal-notification-icon" id="portal-notification-icon">!</div>
+        <h2 id="portal-notification-title"></h2>
+        <p id="portal-notification-text"></p>
+        <button type="button" class="portal-notification-ok">OK</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const close = () => {
+      overlay.classList.remove('show');
+    };
+    overlay.querySelector('.portal-notification-close').addEventListener('click', close);
+    overlay.querySelector('.portal-notification-ok').addEventListener('click', close);
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) close();
+    });
+  }
+
+  const icon = overlay.querySelector('#portal-notification-icon');
+  const titleEl = overlay.querySelector('#portal-notification-title');
+  const textEl = overlay.querySelector('#portal-notification-text');
+  const card = overlay.querySelector('.portal-notification-card');
+
+  icon.textContent = type === 'success' ? '✓' : type === 'info' ? 'i' : '!';
+  titleEl.textContent = title;
+  textEl.textContent = message;
+  card.dataset.type = type;
+
+  requestAnimationFrame(() => overlay.classList.add('show'));
 }
 function applyUser(data, notify=false){
   const oldApproved=window.isApproved;
@@ -39,7 +76,12 @@ onAuthStateChanged(auth,async user=>{
   }catch(e){console.error(e); alert(`Could not load your worker profile (${e.code||e.message}).`);}
 });
 
-const here=(location.pathname.split('/').pop()||'calendar.html')+location.search;
+function currentPage(){
+  const last = location.pathname.split('/').filter(Boolean).pop() || 'calendar';
+  return last.replace(/\.html$/i, '').toLowerCase();
+}
+
+const here = currentPage();
 const header=document.getElementById('portal-header');
 if(header){header.innerHTML=`<a href="calendar.html" class="portal-logo">BCFC <span>Workers</span></a><nav class="portal-nav">${NAV.map(([t,h,r])=>`<a href="${h}" data-roles="${r}">${t.replace('&','&amp;')}</a>`).join('')}</nav><div class="portal-user"><span class="role-label" id="role-label"></span><a href="login.html" class="btn-logout">Log Out</a></div>`;}
 const roleLabel=document.getElementById('role-label'); const navLinks=[...document.querySelectorAll('.portal-nav a')];
@@ -52,9 +94,41 @@ function refresh(){
     const visible=window.isApproved ? canSee(a) : true;
     a.style.display=visible?'':'none'; a.classList.toggle('locked',!allowed); a.setAttribute('aria-disabled',String(!allowed));
   });
-  if(!window.isApproved && here!=='calendar.html') location.replace('calendar.html');
-  else {const current=navLinks.find(a=>a.getAttribute('href')===here); if(current && !window.isApproved && here!=='calendar.html') location.replace('calendar.html'); else if(current && window.isApproved && !canSee(current)) location.replace('calendar.html');}
+  // Pending users stay on the calendar. The clean URL is /calendar, while
+  // the physical file is calendar.html, so compare normalized page names.
+  if(!window.isApproved && here !== 'calendar') {
+    location.replace('calendar');
+    return;
+  }
+
+  if(window.isApproved && !canSeePage(here)) {
+    location.replace('calendar');
+  }
 }
+
+function linkPage(link){
+  const raw = link.getAttribute('href') || '';
+  return raw.split('?')[0].split('#')[0].replace(/\.html$/i, '').replace(/^\//, '').split('/').pop().toLowerCase();
+}
+
+function canSeePage(page){
+  const link = navLinks.find(a => linkPage(a) === page);
+  return !link || canSee(link);
+}
+
 refresh();
-navLinks.forEach(a=>a.addEventListener('click',e=>{if(!window.isApproved && a.getAttribute('href')!=='calendar.html'){e.preventDefault();popup('Please wait for the admin to confirm your role before using this feature.');return;} if(window.isApproved&&!canSee(a)){e.preventDefault();popup('You do not have permission to use this feature.','No Permission');}}));
+navLinks.forEach(a=>a.addEventListener('click',e=>{
+  const page = linkPage(a);
+
+  if(!window.isApproved && page !== 'calendar') {
+    e.preventDefault();
+    popup('Please wait for the admin to confirm your role before using this feature.');
+    return;
+  }
+
+  if(window.isApproved && !canSee(a)) {
+    e.preventDefault();
+    popup('You do not have permission to use this feature.','No Permission');
+  }
+}));
 const logoutButton=document.querySelector('.btn-logout'); if(logoutButton) logoutButton.onclick=async e=>{e.preventDefault();try{await signOut(auth);}finally{leaveToLogin();}};
