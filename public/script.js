@@ -8,7 +8,7 @@
 // moreTitle + more = the small links in the right-hand panel
 const MENU = [
   { label: 'About Us', href: 'about.html', color: 'var(--purple)',
-    items: [['Our vision', 'about.html#vision', 'See our vision.'], ['Our mission', 'about-mission.html', 'Discover our mission.'], ['Our history', 'about-history.html', 'Explore our history.'], ['What we believe', 'about-beliefs.html', 'What do we believe?'], ['Our leadership', 'about-leadership.html', 'Meet our leadership team.'], ['Our workers', 'workers.html', 'Meet the people behind the ministry.']],
+    items: [['Mission and Vision', 'about.html#mission-vision', 'Our mission and vision.'], ['Our history', 'about-history.html', 'Explore our history.'], ['Organizational Chart', 'about-organization.html', 'See the current ministry structure.']],
     moreTitle: 'More about BCFC', more: [['Find a church', 'find-church.html'], ['Contact us', 'contact.html'], ['Upcoming events', 'events.html']] },
   { label: 'Get Involved', href: 'get-involved.html', color: 'var(--blue)',
     items: [['Find your place', 'get-involved.html', 'Welcome! We have just the place for you.'], ['Become a minister', 'minister.html', 'Become a BCFC minister.'], ['Plant a church', 'plant-church.html', 'Plant a church or bring your church into BCFC.'], ['Water baptism', 'water-baptism.html', 'Take the step of water baptism.']],
@@ -30,12 +30,9 @@ const MENU = [
 const PAGES = [
   { title: 'Home', url: 'index.html', desc: 'Welcome to BCFC.', keys: 'home welcome church family newcomers' },
   { title: 'About Us', url: 'about.html', desc: 'Who we are.', keys: 'about who we are' },
-  { title: 'Our Vision', url: 'about.html#vision', desc: 'Our vision for national and global transformation.', keys: 'vision empowered missional healthy holistic harvesting churches transformation' },
-  { title: 'Our Mission', url: 'about-mission.html', desc: 'Why we exist.', keys: 'mission purpose evangelism discipleship church planting leadership development social engagement transformation' },
-  { title: 'Our History', url: 'about-history.html', desc: 'How we got here.', keys: 'history timeline story founded years' },
-  { title: 'What We Believe', url: 'about-beliefs.html', desc: 'Our core beliefs.', keys: 'beliefs believe doctrine faith statement' },
-  { title: 'Our Leadership', url: 'about-leadership.html', desc: 'Meet our leadership team.', keys: 'leadership leaders team board elders' },
-  { title: 'Our Workers', url: 'workers.html', desc: 'The people behind the ministry.', keys: 'workers pastor staff volunteers music worship production sound lights video ushers greeters welcome children nursery kids youth prayer team' },
+  { title: 'Mission and Vision', url: 'about.html#mission-vision', desc: 'Our mission and vision.', keys: 'mission vision purpose evangelism discipleship church planting leadership development social engagement transformation empowered missional healthy holistic harvesting churches' },
+  { title: 'Our History', url: 'about-history.html', desc: 'How we got here.', keys: 'history timeline story founded years Foursquare BCFC' },
+  { title: 'Organizational Chart', url: 'about-organization.html', desc: 'Current ministry structure.', keys: 'organization organizational chart hierarchy workers staff pastor ministry structure' },
   { title: 'Get Involved', url: 'get-involved.html', desc: 'Find your place.', keys: 'get involved volunteer serve join' },
   { title: 'Become a Minister', url: 'minister.html', desc: 'Answer the call to ministry.', keys: 'minister ministry calling ordination credential apply train commissioned' },
   { title: 'Plant a Church', url: 'plant-church.html', desc: 'Start something new in your city.', keys: 'plant church planting start new coaching funding' },

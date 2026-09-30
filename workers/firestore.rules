@@ -22,6 +22,11 @@ service cloud.firestore {
     }
 
     match /config/{id} { allow read, write: if false; }
+    // Public organizational chart contains only approved names and ministry roles.
+    match /orgChart/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
 
     match /users/{uid} {
       allow read: if signedIn();
