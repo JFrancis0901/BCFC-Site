@@ -576,8 +576,9 @@ $("guest-btn").addEventListener(
   "click",
   () => {
 
+    // Public church site now lives in /public/, not at site root.
     window.location.href =
-      "../index.html";
+      "../public/index.html";
 
   }
 );
