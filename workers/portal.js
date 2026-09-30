@@ -12,7 +12,7 @@ let realRole=sessionStorage.getItem('bcfc-role')||'';
 let userName=sessionStorage.getItem('bcfc-name')||'';
 let roleStatus=sessionStorage.getItem('bcfc-role-status') || (realRole ? 'approved' : 'pending');
 let requestedRole='';
-window.realRole=realRole; window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
+window.realRole=realRole; window.currentRole=''; window.roleStatus=roleStatus; window.isApproved=false; window.roleReady=false;
 
 function leaveToLogin(){['bcfc-role','bcfc-name','bcfc-email','bcfc-role-status','bcfc-view-role','bcfc-test-role'].forEach(k=>sessionStorage.removeItem(k)); location.href='login.html';}
 function popup(message,title='Access Pending',type='danger') {
@@ -59,7 +59,7 @@ function popup(message,title='Access Pending',type='danger') {
 function applyUser(data, notify=false){
   const oldApproved=window.isApproved;
   realRole=data.role||''; userName=(data.name||`${data.firstName||''} ${data.lastName||''}`).trim(); roleStatus=data.roleStatus || (data.role ? 'approved' : 'pending'); requestedRole=data.requestedRole||'';
-  window.realRole=realRole; window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
+  window.realRole=realRole; window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole; window.roleReady=true;
   sessionStorage.setItem('bcfc-role',realRole); sessionStorage.setItem('bcfc-name',userName); sessionStorage.setItem('bcfc-role-status',roleStatus);
   refresh();
   if(notify && !oldApproved && window.isApproved) popup('Your role has been confirmed by an administrator. You now have full access to the BCFC Workers system.','Role Approved');
@@ -87,15 +87,24 @@ if(header){header.innerHTML=`<a href="calendar.html" class="portal-logo">BCFC <s
 const roleLabel=document.getElementById('role-label'); const navLinks=[...document.querySelectorAll('.portal-nav a')];
 const canSee=a=>a.dataset.roles.split(',').some(r=>r==='all'||r===window.currentRole);
 function refresh(){
-  window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
+  window.currentRole=window.roleReady ? realRole : ''; window.roleStatus=roleStatus; window.isApproved=window.roleReady && roleStatus==='approved'&&!!realRole;
   if(roleLabel){roleLabel.textContent=`${userName?userName+' ':''}(${window.isApproved?(NAMES[realRole]||realRole):'Role Pending'})`;}
   navLinks.forEach(a=>{
-    const isCalendar=a.getAttribute('href')==='calendar.html'; const allowed=window.isApproved&&canSee(a);
-    const visible=window.isApproved ? canSee(a) : true;
+    const isCalendar=a.getAttribute('href')==='calendar.html';
+    const allowed=window.roleReady && window.isApproved && canSee(a);
+    const visible=window.roleReady && (isCalendar || (window.isApproved && canSee(a)));
     a.style.display=visible?'':'none'; a.classList.toggle('locked',!allowed); a.setAttribute('aria-disabled',String(!allowed));
   });
   // Pending users stay on the calendar. The clean URL is /calendar, while
   // the physical file is calendar.html, so compare normalized page names.
+  // Do not redirect while Firebase is still loading the user's profile.
+  // Otherwise pages such as Production and Chat briefly see the default
+  // pending state and get sent back to Calendar before the real role arrives.
+  if(!window.roleReady) {
+    window.dispatchEvent(new CustomEvent('rolechange'));
+    return;
+  }
+
   if(!window.isApproved && here !== 'calendar') {
     location.replace('calendar');
     return;
@@ -103,7 +112,9 @@ function refresh(){
 
   if(window.isApproved && !canSeePage(here)) {
     location.replace('calendar');
+    return;
   }
+  window.dispatchEvent(new CustomEvent('rolechange'));
 }
 
 function linkPage(link){
