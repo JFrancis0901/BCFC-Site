@@ -12,3 +12,6 @@ Recommended routes:
 - `/login` — BCFC Workers login
 
 When a custom domain is purchased later, the same routes can be used on that domain.
+
+## Public About BCFC
+The public About BCFC page now includes the supplied Vision and Mission statements and links to the official Foursquare history page. The About navigation/search also includes the Vision.
