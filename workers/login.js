@@ -19,6 +19,7 @@ const ROLE_GROUPS = [
 ];
 const ROLE_LABEL = Object.fromEntries(ROLE_GROUPS.flatMap(([, list]) => list));
 let pendingSignup = null;
+let pendingGoogleSignup = null;
 
 function saveSession(data, email="") {
   sessionStorage.setItem("bcfc-role", data.role || "");
@@ -79,9 +80,23 @@ $("google-btn").onclick=async()=>{
 };
 $("guest-btn").onclick=()=>{ window.location.href="../public/index.html"; };
 
-// Signup step 1: account
-function showAccountStep(){ $("step-account").hidden=false; $("step-role").hidden=true; }
-function showRoleStep(){ $("step-account").hidden=true; $("step-role").hidden=false; }
+// Signup steps
+function showAccountStep(){
+  $("step-account").hidden=false;
+  $("step-google-name").hidden=true;
+  $("step-role").hidden=true;
+}
+function showGoogleNameStep(){
+  $("step-account").hidden=true;
+  $("step-google-name").hidden=false;
+  $("step-role").hidden=true;
+  setTimeout(() => $("google-first-name")?.focus(), 0);
+}
+function showRoleStep(){
+  $("step-account").hidden=true;
+  $("step-google-name").hidden=true;
+  $("step-role").hidden=false;
+}
 const signupForm=$("signup-form"), signupError=$("signup-error");
 signupForm.addEventListener("submit",async e=>{
   e.preventDefault(); clearError(signupError);
@@ -105,12 +120,50 @@ $("google-signup-btn").onclick=async()=>{
     const result=await signInWithPopup(auth,new GoogleAuthProvider());
     const snap=await getDoc(doc(db,"users",result.user.uid));
     if(snap.exists()){ goCalendar(snap.data(),result.user.email||""); return; }
-    const display=(result.user.displayName||"").trim(); const parts=display.split(/\s+/).filter(Boolean); const first=parts.shift()||"Google"; const last=parts.pop()||"User"; const middle=(parts[0]||"").replace(/[^A-Za-z]/g,"").slice(0,1).toUpperCase();
-    pendingSignup={uid:result.user.uid,email:result.user.email||"",first,last,middle,name:`${first} ${middle?middle+" ":""}${last}`};
-    buildRoleButtons(); showRoleStep();
+    // Do not use Google's displayName as the BCFC profile name.
+    // Ask the user explicitly for the name they want stored in Firestore.
+    pendingGoogleSignup={uid:result.user.uid,email:result.user.email||""};
+    $("google-last-name").value="";
+    $("google-first-name").value="";
+    $("google-middle-initial").value="";
+    clearError($("google-name-error"));
+    showGoogleNameStep();
   }catch(err){ console.error(err); showError(signupError,friendlyAuthError(err)); }
   finally{ btn.disabled=false; txt.textContent="Continue with Google"; }
 };
+
+// Google signup step 2: collect the name explicitly before role selection.
+const googleNameForm=$("google-name-form");
+const googleNameError=$("google-name-error");
+if(googleNameForm){
+  googleNameForm.addEventListener("submit",e=>{
+    e.preventDefault();
+    clearError(googleNameError);
+    if(!pendingGoogleSignup) return;
+
+    const last=$("google-last-name").value.trim();
+    const first=$("google-first-name").value.trim();
+    const middle=$("google-middle-initial").value.trim().toUpperCase();
+
+    if(!last || !first){
+      showError(googleNameError,"Please enter your first and last name.");
+      return;
+    }
+    if(middle && !/^[A-Z]$/.test(middle)){
+      showError(googleNameError,"Middle initial must be one letter.");
+      return;
+    }
+
+    pendingSignup={
+      ...pendingGoogleSignup,
+      first,last,middle,
+      name:`${first} ${middle?middle+" ":""}${last}`
+    };
+    pendingGoogleSignup=null;
+    buildRoleButtons();
+    showRoleStep();
+  });
+}
 
 function buildRoleButtons(){
   $("role-groups").innerHTML=ROLE_GROUPS.map(([title,list])=>`<div class="role-group"><h3>${title}</h3><div class="role-grid">${list.map(([key,label])=>`<button type="button" class="role-btn" data-role="${key}">${label.replace(/&/g,"&amp;")}</button>`).join("")}</div></div>`).join("");

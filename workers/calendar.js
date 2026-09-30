@@ -803,9 +803,9 @@ function eventTeam(event){
 
 function canManageEvent(event){
 
-  return myModules().includes(
-    event.module
-  );
+  return window.roleReady === true
+    && window.isApproved === true
+    && myModules().includes(event.module);
 
 }
 
@@ -1185,9 +1185,14 @@ function renderPanel(){
   }
 
 
-  addBtn.hidden = false;
-  addBtn.disabled = false;
-  addBtn.title = window.roleStatus === "approved" ? "Add activity" : "Waiting for admin approval";
+  const canAddActivity =
+    window.roleReady === true
+    && window.isApproved === true
+    && myModules().length > 0;
+
+  addBtn.hidden = !canAddActivity;
+  addBtn.disabled = !canAddActivity;
+  addBtn.title = canAddActivity ? "Add activity" : "Waiting for permission";
 
 }
 

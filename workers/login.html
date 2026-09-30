@@ -63,6 +63,21 @@
       </button>
     </div>
 
+    <div id="step-google-name" hidden>
+      <h2 class="step-title">Enter your name</h2>
+      <p class="step-help">Your Google account has been connected. Please enter the name you want to use for your BCFC Workers profile.</p>
+      <p id="google-name-error" class="form-error" role="alert" hidden></p>
+      <form id="google-name-form" novalidate>
+        <label for="google-last-name">Last name</label>
+        <input id="google-last-name" autocomplete="family-name" maxlength="60" required>
+        <label for="google-first-name">First name</label>
+        <input id="google-first-name" autocomplete="given-name" maxlength="60" required>
+        <label for="google-middle-initial">Middle initial <span style="font-weight:400">(optional)</span></label>
+        <input id="google-middle-initial" autocomplete="additional-name" maxlength="1" pattern="[A-Za-z]">
+        <button type="submit" class="btn btn-primary" id="google-name-continue">Continue</button>
+      </form>
+    </div>
+
     <div id="step-role" hidden>
       <h2 class="step-title">Choose your role</h2>
       <p class="step-help">Your role will be reviewed by an administrator before full access is granted.</p>
