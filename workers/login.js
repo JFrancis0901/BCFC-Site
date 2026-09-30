@@ -130,7 +130,29 @@ $("role-groups").addEventListener("click",async e=>{
 
 async function showSignupNotice(role){
   const label=ROLE_LABEL[role]||role;
-  alert(`Account created successfully.\n\nRequested role: ${label}\n\nPlease wait for an administrator to confirm your role before you can use the full system.`);
+  let overlay=document.getElementById("signup-notification");
+  if(!overlay){
+    overlay=document.createElement("div");
+    overlay.id="signup-notification";
+    overlay.className="signup-notification";
+    overlay.innerHTML=`
+      <div class="signup-notification-card" role="dialog" aria-modal="true">
+        <button type="button" class="signup-notification-close" aria-label="Close">&times;</button>
+        <div class="signup-notification-icon">✓</div>
+        <h2>Account Created</h2>
+        <p class="signup-notification-message"></p>
+        <button type="button" class="signup-notification-ok">Continue</button>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+  overlay.querySelector(".signup-notification-message").textContent=
+    `Your requested role is ${label}. Please wait for an administrator to confirm your role before you can use the full system.`;
+  overlay.classList.add("show");
+  return new Promise(resolve=>{
+    const close=()=>{ overlay.classList.remove("show"); resolve(); };
+    overlay.querySelector(".signup-notification-close").onclick=close;
+    overlay.querySelector(".signup-notification-ok").onclick=close;
+  });
 }
 
 // Password reset

@@ -1,209 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Members | BCFC Workers</title>
-
-<link
-  rel="stylesheet"
-  href="portal.css">
-
+<link rel="stylesheet" href="portal.css">
 <style>
-
-.members-page {
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 30px 20px;
-}
-
-.members-page h1 {
-  margin-bottom: 8px;
-}
-
-.members-description {
-  margin-bottom: 25px;
-  color: #666;
-}
-
-.members-table-wrap {
-  overflow-x: auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.08);
-}
-
-.members-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.members-table th,
-.members-table td {
-  padding: 14px 16px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.members-table th {
-  font-weight: 700;
-  background: #f7f7f7;
-}
-
-.members-table tr:last-child td {
-  border-bottom: none;
-}
-
-.role-badge {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 20px;
-  background: #eee;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.members-empty {
-  padding: 30px !important;
-  text-align: center !important;
-  color: #777;
-}
-
-.members-error {
-  padding: 15px;
-  background: #fdeceb;
-  color: #b3122a;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-
-.approve-member-btn, .reject-member-btn {
-  border: 0; color: white; padding: 7px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;
-}
-.approve-member-btn { background: #2e7d32; }
-.reject-member-btn { background: #8e5a00; }
-.approve-member-btn:disabled, .reject-member-btn:disabled { opacity: .6; cursor: wait; }
-
-.remove-member-btn {
-  border: 0;
-  background: #c62828;
-  color: white;
-  padding: 7px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.remove-member-btn:hover {
-  background: #a91f1f;
-}
-
-.remove-member-btn:disabled {
-  opacity: .6;
-  cursor: wait;
-}
-
-.cannot-remove {
-  color: #888;
-  font-size: 12px;
-}
-
+.members-page{max-width:1200px;margin:0 auto;padding:30px 20px;}
+.members-page h1{margin-bottom:8px}.members-description{margin-bottom:25px;color:#666}.members-section{margin-bottom:28px}.members-section h2{margin:0 0 10px}.request-count{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 8px;border-radius:20px;background:#c62828;color:#fff;font-size:13px;margin-left:8px}.members-table-wrap{overflow-x:auto;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.08)}.members-table{width:100%;border-collapse:collapse}.members-table th,.members-table td{padding:14px 16px;text-align:left;border-bottom:1px solid #eee}.members-table th{font-weight:700;background:#f7f7f7}.members-empty{padding:30px!important;text-align:center!important;color:#777}.members-error{padding:15px;background:#fdeceb;color:#b3122a;border-radius:8px;margin-bottom:20px}.role-badge{display:inline-block;padding:5px 10px;border-radius:20px;background:#eee;font-size:13px;font-weight:600}.pending-badge{background:#fff3cd;color:#856404}.approved-badge{background:#eaf7ef;color:#246b3d}.rejected-badge{background:#fdeaea;color:#9b2226}.approve-member-btn,.reject-member-btn,.remove-member-btn{border:0;color:white;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:600}.approve-member-btn{background:#2e7d32}.reject-member-btn{background:#8e5a00}.remove-member-btn{background:#c62828}.approve-member-btn:disabled,.reject-member-btn:disabled,.remove-member-btn:disabled{opacity:.6;cursor:wait}.action-row{display:flex;gap:7px;flex-wrap:wrap}.members-notice{padding:15px 18px;background:#eef4ff;border-left:4px solid #1c5fd4;border-radius:8px;margin-bottom:20px}.members-notification{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(16,26,61,.5);opacity:0;visibility:hidden;transition:.18s}.members-notification.show{opacity:1;visibility:visible}.members-notification-card{position:relative;background:#fff;width:min(440px,calc(100% - 40px));padding:30px;border-radius:14px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}.members-notification-card h2{margin:0 0 10px}.members-notification-card p{line-height:1.6;color:#555}.members-notification-card button{margin-top:12px;border:0;background:#101a3d;color:#fff;border-radius:7px;padding:10px 24px;cursor:pointer;font-weight:600}.members-notification-close{position:absolute!important;right:10px;top:8px;background:transparent!important;color:#555!important;font-size:25px;padding:5px!important;margin:0!important}
 </style>
-
 </head>
-
-
 <body>
-
-<header
-  class="portal-header"
-  id="portal-header">
-</header>
-
-
+<header class="portal-header" id="portal-header"></header>
 <main class="members-page">
-
-  <h1>
-    All Members
-  </h1>
-
-  <p class="members-description">
-    Review pending role requests and manage approved members.
-  </p>
-
-
-  <div
-    id="members-error"
-    class="members-error"
-    hidden>
-  </div>
-
-
-  <div class="members-table-wrap">
-
-    <table class="members-table">
-
-      <thead>
-
-        <tr>
-
-          <th>Name</th>
-
-          <th>Email</th>
-
-          <th>Requested Role</th>
-          <th>Status</th>
-          <th>Approved Role</th>
-
-          <th>Account Created</th>
-
-          <th>Action</th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody id="members-list">
-
-        <tr>
-
-          <td
-            colspan="7"
-            class="members-empty">
-
-            Loading members...
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
-
+<h1>Members & Role Requests</h1>
+<p class="members-description">Review new role requests here. Approving a request gives the member access according to the selected role.</p>
+<div id="members-error" class="members-error" hidden></div>
+<section class="members-section">
+<h2>Pending Role Requests <span id="request-count" class="request-count">0</span></h2>
+<div class="members-notice">New accounts stay in <strong>Pending</strong> status until an administrator approves their requested role.</div>
+<div class="members-table-wrap"><table class="members-table"><thead><tr><th>Name</th><th>Email</th><th>Requested Role</th><th>Account Created</th><th>Action</th></tr></thead><tbody id="requests-list"><tr><td colspan="5" class="members-empty">Loading requests...</td></tr></tbody></table></div>
+</section>
+<section class="members-section">
+<h2>All Members</h2>
+<div class="members-table-wrap"><table class="members-table"><thead><tr><th>Name</th><th>Email</th><th>Requested Role</th><th>Status</th><th>Approved Role</th><th>Account Created</th><th>Action</th></tr></thead><tbody id="members-list"><tr><td colspan="7" class="members-empty">Loading members...</td></tr></tbody></table></div>
+</section>
 </main>
-
-
-<script
-  type="module"
-  src="portal.js">
-</script>
-
-<script
-  type="module"
-  src="members.js">
-</script>
-
+<div id="members-notification" class="members-notification"><div class="members-notification-card"><button type="button" class="members-notification-close" aria-label="Close">&times;</button><h2 id="members-notification-title">BCFC</h2><p id="members-notification-text"></p><button type="button" id="members-notification-ok">OK</button></div></div>
+<script type="module" src="portal.js"></script>
+<script type="module" src="members.js"></script>
 </body>
-
 </html>

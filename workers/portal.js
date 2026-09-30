@@ -70,10 +70,10 @@ onAuthStateChanged(auth,async user=>{
   if(!user){leaveToLogin();return;}
   try{
     const ref=doc(db,'users',user.uid); const snap=await getDoc(ref);
-    if(!snap.exists()){alert('Your worker profile could not be found. Please contact an administrator.'); await signOut(auth); leaveToLogin(); return;}
+    if(!snap.exists()){popup('Your worker profile could not be found. Please contact an administrator.','Account Error'); await signOut(auth); leaveToLogin(); return;}
     applyUser(snap.data(),false);
     onSnapshot(ref,docSnap=>{if(docSnap.exists()) applyUser(docSnap.data(),true);});
-  }catch(e){console.error(e); alert(`Could not load your worker profile (${e.code||e.message}).`);}
+  }catch(e){console.error(e); popup(`Could not load your worker profile (${e.code||e.message}).`,'Account Error');}
 });
 
 function currentPage(){
