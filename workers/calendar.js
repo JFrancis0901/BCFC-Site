@@ -499,6 +499,8 @@ let notifyResolver = null;
    BCFC NOTIFICATION POPUP
    ========================================================== */
 
+window.showCalendarPopup = showCalendarPopup;
+
 function showCalendarPopup({
 
   title="BCFC",
@@ -1183,8 +1185,9 @@ function renderPanel(){
   }
 
 
-  addBtn.hidden =
-    myModules().length === 0;
+  addBtn.hidden = false;
+  addBtn.disabled = false;
+  addBtn.title = window.roleStatus === "approved" ? "Add activity" : "Waiting for admin approval";
 
 }
 
@@ -1542,6 +1545,11 @@ function openTeamPopup(team){
 
 async function openEditDialog(eventId){
 
+  if(window.roleStatus !== "approved" || !window.currentRole){
+    await showCalendarPopup({ title:"Access Pending", text:"Please wait for the admin to confirm your role before you can edit activities.", okText:"OK", type:"danger" });
+    return;
+  }
+
   const activity =
     events.find(
       event =>
@@ -1784,6 +1792,11 @@ panelList.addEventListener(
       return;
     }
 
+    if(window.roleStatus !== "approved" || !window.currentRole){
+      await showCalendarPopup({ title:"Access Pending", text:"Please wait for the admin to confirm your role before you can delete activities.", okText:"OK", type:"danger" });
+      return;
+    }
+
 
     const confirmed =
       await showCalendarPopup({
@@ -1997,10 +2010,19 @@ function prepareAddForm(){
 
 addBtn.addEventListener(
   "click",
-  () => {
+  async () => {
+
+    if(window.roleStatus !== "approved" || !window.currentRole){
+      await showCalendarPopup({ title:"Access Pending", text:"Please wait for the admin to confirm your role before you can use this feature.", okText:"OK", type:"danger" });
+      return;
+    }
+
+    if(myModules().length === 0){
+      await showCalendarPopup({ title:"No Permission", text:"Your approved role does not have permission to add activities.", okText:"OK", type:"danger" });
+      return;
+    }
 
     prepareAddForm();
-
     dialog.showModal();
 
   }
@@ -2023,6 +2045,15 @@ modSel.addEventListener(
   }
 );
 
+
+const eventCloseButton = document.getElementById("evt-close");
+if(eventCloseButton){
+  eventCloseButton.addEventListener("click", () => {
+    editingEventId = null;
+    errBox.hidden = true;
+    if(dialog.open) dialog.close();
+  });
+}
 
 /* ==========================================================
    CANCEL

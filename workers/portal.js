@@ -1,316 +1,60 @@
-/* ==========================================================
-   portal.js
-   Shared logic for every BCFC Workers page.
-
-   IMPORTANT:
-   - Users cannot change their role after login.
-   - The role comes from Firebase users/{uid}.
-   - Admin no longer has a "Viewing as" dropdown.
-   - Admin can access the Members page.
-   ========================================================== */
-
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { auth, db } from "./firebase-config.js";
 
-const LEADS =
-  'childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead';
-
-/* ----------------------------------------------------------
-   NAVIGATION
-   ---------------------------------------------------------- */
-
-const NAV = [
-  ['Calendar', 'calendar.html', 'all'],
-
-  ['Announcements', 'announcements.html', `admin,pastor,${LEADS}`],
-
-  ["Children's Church", 'dept.html?m=childrens',
-    'admin,childrens-lead,childrens'],
-
-  ['UFY', 'dept.html?m=ufy',
-    'admin,ufy-lead,ufy'],
-
-  ['UFW', 'dept.html?m=ufw',
-    'admin,ufw-lead,ufw'],
-
-  ['UFM', 'dept.html?m=ufm',
-    'admin,ufm-lead,ufm'],
-
-  ['Praise & Worship', 'worship.html',
-    'admin,pastor,preaching'],
-
-  ['Production', 'projects.html?m=production',
-    'admin,production-lead,production'],
-
-  ['Creatives', 'projects.html?m=creatives',
-    'admin,creatives-lead,creatives'],
-
-  ['Members', 'members.html',
-    'admin'],
-
-  ['Chat', 'chat.html', 'all'],
+const NAV=[
+ ['Calendar','calendar.html','all'],['Announcements','announcements.html','admin,pastor,childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead'],
+ ["Children's Church",'dept.html?m=childrens','admin,childrens-lead,childrens'],['UFY','dept.html?m=ufy','admin,ufy-lead,ufy'],['UFW','dept.html?m=ufw','admin,ufw-lead,ufw'],['UFM','dept.html?m=ufm','admin,ufm-lead,ufm'],
+ ['Praise & Worship','worship.html','admin,pastor,preaching'],['Production','projects.html?m=production','admin,production-lead,production'],['Creatives','projects.html?m=creatives','admin,creatives-lead,creatives'],['Members','members.html','admin'],['Chat','chat.html','all']
 ];
+const NAMES={admin:'Admin',pastor:'Pastor',preaching:'Preaching Staff','childrens-lead':"Children's Church Lead",childrens:"Children's Church Worker",'ufy-lead':'UFY Lead',ufy:'UFY Worker','ufw-lead':'UFW Lead',ufw:'UFW Worker','ufm-lead':'UFM Lead',ufm:'UFM Worker','production-lead':'Production Lead',production:'Production Worker','creatives-lead':'Creatives Lead',creatives:'Creatives Worker'};
+let realRole=sessionStorage.getItem('bcfc-role')||'';
+let userName=sessionStorage.getItem('bcfc-name')||'';
+let roleStatus=sessionStorage.getItem('bcfc-role-status') || (realRole ? 'approved' : 'pending');
+let requestedRole='';
+window.realRole=realRole; window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
 
-/* ----------------------------------------------------------
-   ROLE NAMES
-   ---------------------------------------------------------- */
-
-const NAMES = {
-  admin: 'Admin',
-  pastor: 'Pastor',
-  preaching: 'Preaching Staff',
-
-  'childrens-lead': "Children's Church Lead",
-  childrens: "Children's Church Worker",
-
-  'ufy-lead': 'UFY Lead',
-  ufy: 'UFY Worker',
-
-  'ufw-lead': 'UFW Lead',
-  ufw: 'UFW Worker',
-
-  'ufm-lead': 'UFM Lead',
-  ufm: 'UFM Worker',
-
-  'production-lead': 'Production Lead',
-  production: 'Production Worker',
-
-  'creatives-lead': 'Creatives Lead',
-  creatives: 'Creatives Worker',
-
-  guest: 'Guest'
-};
-
-/* ----------------------------------------------------------
-   REAL ROLE
-   ---------------------------------------------------------- */
-
-let realRole = sessionStorage.getItem('bcfc-role');
-let userName = sessionStorage.getItem('bcfc-name') || '';
-
-/*
-   Remove old role-switching information.
-   This makes sure an old "Viewing as" role cannot remain.
-*/
-sessionStorage.removeItem('bcfc-view-role');
-sessionStorage.removeItem('bcfc-test-role');
-
-function leaveToLogin() {
-  [
-    'bcfc-role',
-    'bcfc-name',
-    'bcfc-email',
-    'bcfc-view-role',
-    'bcfc-test-role'
-  ].forEach(k => sessionStorage.removeItem(k));
-
-  window.location.href = "login.html";
+function leaveToLogin(){['bcfc-role','bcfc-name','bcfc-email','bcfc-role-status','bcfc-view-role','bcfc-test-role'].forEach(k=>sessionStorage.removeItem(k)); location.href='login.html';}
+function popup(message,title='Access Pending'){
+  if(window.showCalendarPopup){ window.showCalendarPopup({title,text:message,okText:'OK',type:'danger'}); return; }
+  alert(`${title}\n\n${message}`);
+}
+function applyUser(data, notify=false){
+  const oldApproved=window.isApproved;
+  realRole=data.role||''; userName=(data.name||`${data.firstName||''} ${data.lastName||''}`).trim(); roleStatus=data.roleStatus || (data.role ? 'approved' : 'pending'); requestedRole=data.requestedRole||'';
+  window.realRole=realRole; window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
+  sessionStorage.setItem('bcfc-role',realRole); sessionStorage.setItem('bcfc-name',userName); sessionStorage.setItem('bcfc-role-status',roleStatus);
+  refresh();
+  if(notify && !oldApproved && window.isApproved) popup('Your role has been confirmed by an administrator. You now have full access to the BCFC Workers system.','Role Approved');
+  if(notify && roleStatus==='rejected') popup('Your requested role was not approved by the administrator. Please contact an administrator.','Role Request Update');
 }
 
-if (!realRole) {
-  leaveToLogin();
-}
-
-/* ----------------------------------------------------------
-   CHECK FIREBASE LOGIN + REAL ROLE
-   ---------------------------------------------------------- */
-
-onAuthStateChanged(auth, async user => {
-  if (!user) {
-    leaveToLogin();
-    return;
-  }
-
-  try {
-    const snap = await getDoc(doc(db, 'users', user.uid));
-
-    if (!snap.exists()) {
-      warn(
-        `No document at users/${user.uid} in Firestore. ` +
-        `Create the user profile first.`
-      );
-      return;
-    }
-
-    const data = snap.data();
-    const dbRole = data.role;
-
-    /*
-       Firebase is the source of truth.
-       The role saved in Firebase is the role the user gets.
-    */
-    if (dbRole && dbRole !== realRole) {
-      realRole = dbRole;
-
-      sessionStorage.setItem('bcfc-role', dbRole);
-      sessionStorage.setItem('bcfc-name', data.name || '');
-
-      userName = data.name || '';
-
-      refresh();
-    }
-
-  } catch (e) {
-    warn(
-      `Could not read your users document ` +
-      `(${e.code || e.message}).`
-    );
-  }
+onAuthStateChanged(auth,async user=>{
+  if(!user){leaveToLogin();return;}
+  try{
+    const ref=doc(db,'users',user.uid); const snap=await getDoc(ref);
+    if(!snap.exists()){alert('Your worker profile could not be found. Please contact an administrator.'); await signOut(auth); leaveToLogin(); return;}
+    applyUser(snap.data(),false);
+    onSnapshot(ref,docSnap=>{if(docSnap.exists()) applyUser(docSnap.data(),true);});
+  }catch(e){console.error(e); alert(`Could not load your worker profile (${e.code||e.message}).`);}
 });
 
-/* ----------------------------------------------------------
-   WARNING
-   ---------------------------------------------------------- */
-
-function warn(msg) {
-  console.warn(msg);
-
-  const b = document.createElement('div');
-
-  b.style.cssText =
-    'background:#fdeceb;color:#b3122a;padding:.6rem 1rem;' +
-    'font:600 .85rem sans-serif;text-align:center';
-
-  b.textContent = msg;
-
-  document.body.prepend(b);
-}
-
-/* ----------------------------------------------------------
-   GLOBAL ROLE
-   ---------------------------------------------------------- */
-
-/*
-   IMPORTANT:
-   currentRole is ALWAYS the real Firebase role.
-   There is no role switching anymore.
-*/
-window.realRole = realRole;
-window.currentRole = realRole;
-
-/* ----------------------------------------------------------
-   BUILD HEADER
-   ---------------------------------------------------------- */
-
-const here =
-  (location.pathname.split('/').pop() || 'calendar.html') +
-  location.search;
-
-const header = document.getElementById('portal-header');
-
-if (header) {
-
-  header.innerHTML = `
-    <a href="calendar.html" class="portal-logo">
-      BCFC <span>Workers</span>
-    </a>
-
-    <nav class="portal-nav">
-      ${NAV.map(([t, h, r]) => `
-        <a
-          href="${h}"
-          data-roles="${r}"
-          ${h === here ? 'class="active"' : ''}
-        >
-          ${t.replace('&', '&amp;')}
-        </a>
-      `).join('')}
-    </nav>
-
-    <div class="portal-user">
-      <span class="role-label" id="role-label"></span>
-
-      <a href="login.html" class="btn-logout">
-        Log Out
-      </a>
-    </div>
-  `;
-}
-
-/* ----------------------------------------------------------
-   NAVIGATION PERMISSIONS
-   ---------------------------------------------------------- */
-
-const roleLabel =
-  document.getElementById('role-label');
-
-const navLinks =
-  [...document.querySelectorAll('.portal-nav a')];
-
-const canSee = a => {
-  return a.dataset.roles
-    .split(',')
-    .some(r => r === 'all' || r === window.currentRole);
-};
-
-/* ----------------------------------------------------------
-   REFRESH HEADER
-   ---------------------------------------------------------- */
-
-function refresh() {
-
-  window.currentRole = realRole;
-
-  if (roleLabel) {
-    roleLabel.textContent =
-      `${userName ? userName + ' ' : ''}` +
-      `(${NAMES[realRole] || realRole})`;
-  }
-
-  navLinks.forEach(a => {
-
-    const allowed = canSee(a);
-
-    a.classList.toggle('locked', !allowed);
-
-    a.setAttribute(
-      'aria-disabled',
-      String(!allowed)
-    );
-
-    /*
-       Hide navigation links the role cannot use.
-    */
-    a.style.display = allowed ? '' : 'none';
+const here=(location.pathname.split('/').pop()||'calendar.html')+location.search;
+const header=document.getElementById('portal-header');
+if(header){header.innerHTML=`<a href="calendar.html" class="portal-logo">BCFC <span>Workers</span></a><nav class="portal-nav">${NAV.map(([t,h,r])=>`<a href="${h}" data-roles="${r}">${t.replace('&','&amp;')}</a>`).join('')}</nav><div class="portal-user"><span class="role-label" id="role-label"></span><a href="login.html" class="btn-logout">Log Out</a></div>`;}
+const roleLabel=document.getElementById('role-label'); const navLinks=[...document.querySelectorAll('.portal-nav a')];
+const canSee=a=>a.dataset.roles.split(',').some(r=>r==='all'||r===window.currentRole);
+function refresh(){
+  window.currentRole=realRole; window.roleStatus=roleStatus; window.isApproved=roleStatus==='approved'&&!!realRole;
+  if(roleLabel){roleLabel.textContent=`${userName?userName+' ':''}(${window.isApproved?(NAMES[realRole]||realRole):'Role Pending'})`;}
+  navLinks.forEach(a=>{
+    const isCalendar=a.getAttribute('href')==='calendar.html'; const allowed=window.isApproved&&canSee(a);
+    const visible=window.isApproved ? canSee(a) : true;
+    a.style.display=visible?'':'none'; a.classList.toggle('locked',!allowed); a.setAttribute('aria-disabled',String(!allowed));
   });
-
-  /*
-     Page protection.
-     If the current page is not allowed for this role,
-     send the user back to Calendar.
-  */
-
-  const current = navLinks.find(
-    a => a.getAttribute('href') === here
-  );
-
-  if (current && !canSee(current)) {
-    window.location.replace('calendar.html');
-  }
+  if(!window.isApproved && here!=='calendar.html') location.replace('calendar.html');
+  else {const current=navLinks.find(a=>a.getAttribute('href')===here); if(current && !window.isApproved && here!=='calendar.html') location.replace('calendar.html'); else if(current && window.isApproved && !canSee(current)) location.replace('calendar.html');}
 }
-
 refresh();
-
-/* ----------------------------------------------------------
-   LOG OUT
-   ---------------------------------------------------------- */
-
-const logoutButton =
-  document.querySelector('.btn-logout');
-
-if (logoutButton) {
-
-  logoutButton.addEventListener('click', async e => {
-
-    e.preventDefault();
-
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error(err);
-    }
-
-    leaveToLogin();
-  });
-}
+navLinks.forEach(a=>a.addEventListener('click',e=>{if(!window.isApproved && a.getAttribute('href')!=='calendar.html'){e.preventDefault();popup('Please wait for the admin to confirm your role before using this feature.');return;} if(window.isApproved&&!canSee(a)){e.preventDefault();popup('You do not have permission to use this feature.','No Permission');}}));
+const logoutButton=document.querySelector('.btn-logout'); if(logoutButton) logoutButton.onclick=async e=>{e.preventDefault();try{await signOut(auth);}finally{leaveToLogin();}};
