@@ -26,7 +26,7 @@ body{margin:0;font-family:var(--body);color:var(--ink);background:var(--ivory)}
 .portal-nav a{color:#cfd3e6;text-decoration:none;font-size:.92rem;font-weight:600;padding:.3rem 0}
 .portal-nav a:hover{color:#fff}
 .portal-nav a.active{color:var(--gold);border-bottom:2px solid var(--gold)}
-.portal-nav a.locked{color:#5c6083;pointer-events:none}     /* set by portal.js when a role can't see it */
+.portal-nav a.locked{color:#5c6083;cursor:not-allowed}     /* pending users can click to see the in-app access notice */
 
 .portal-user{display:flex;align-items:center;gap:.6rem;margin-left:auto}
 .role-label{font-size:.75rem;color:#a9a4c4}
@@ -40,3 +40,93 @@ body{margin:0;font-family:var(--body);color:var(--ink);background:var(--ivory)}
 }
 
 .role-label[hidden],#role-switch[hidden]{display:none}
+
+
+/* ---------- In-app notifications ---------- */
+.portal-notification{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(16,26,61,.48);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .18s ease, visibility .18s ease;
+}
+.portal-notification.show{
+  opacity:1;
+  visibility:visible;
+}
+.portal-notification-card{
+  position:relative;
+  width:min(440px,100%);
+  padding:30px 30px 24px;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  text-align:center;
+  transform:translateY(8px) scale(.98);
+  transition:transform .18s ease;
+}
+.portal-notification.show .portal-notification-card{
+  transform:translateY(0) scale(1);
+}
+.portal-notification-close{
+  position:absolute;
+  top:10px;
+  right:12px;
+  width:34px;
+  height:34px;
+  border:0;
+  background:transparent;
+  color:#555;
+  font-size:26px;
+  line-height:1;
+  cursor:pointer;
+}
+.portal-notification-icon{
+  width:54px;
+  height:54px;
+  margin:0 auto 14px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#fdeaea;
+  color:#c62828;
+  font-size:26px;
+  font-weight:700;
+}
+.portal-notification-card[data-type="success"] .portal-notification-icon{
+  background:#eaf7ef;
+  color:#25854b;
+}
+.portal-notification-card[data-type="info"] .portal-notification-icon{
+  background:#e8efff;
+  color:#1c5fd4;
+}
+.portal-notification-card h2{
+  margin:0 0 10px;
+  color:var(--navy);
+  font:700 1.45rem var(--head);
+}
+.portal-notification-card p{
+  margin:0 auto 22px;
+  max-width:360px;
+  color:#55566a;
+  line-height:1.6;
+  font-size:.94rem;
+}
+.portal-notification-ok{
+  min-width:110px;
+  padding:10px 20px;
+  border:1px solid var(--navy);
+  border-radius:7px;
+  background:var(--navy);
+  color:#fff;
+  font:600 .9rem var(--body);
+  cursor:pointer;
+}
+.portal-notification-ok:hover{opacity:.9}
