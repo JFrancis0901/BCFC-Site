@@ -1,0 +1,7 @@
+{
+  "outputDirectory": ".",
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/", "destination": "/workers/login.html", "permanent": false }
+  ]
+}
