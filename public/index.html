@@ -61,7 +61,7 @@
         <h2>Baguio City Foursquare Church</h2>
         <p class="location-subtitle">Baguio Foursquare Family Center</p>
         <dl class="location-details">
-          <div><dt>Pastor</dt><dd>Rev. Samuel B. Pinzon</dd></div>
+          <div><dt>Pastor</dt><dd>Rev. Dale Pinzon</dd></div>
           <div><dt>Address</dt><dd>392 Lt. Tacay Rd, Pinsao Proper, Baguio City</dd></div>
         </dl>
         <div class="hero-actions">
@@ -70,7 +70,8 @@
         </div>
       </div>
       <div class="map-frame">
-        <iframe title="Baguio City Foursquare Church map" src="https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <button type="button" class="map-reset" id="bcfc-map-reset" aria-label="Reset map to Baguio City Foursquare Church">↻ Reset Map</button>
+        <iframe id="bcfc-map" title="Baguio City Foursquare Church map" src="https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
   </section>
@@ -83,12 +84,12 @@
       <p>Find a Foursquare church near you in Baguio City.</p>
     </div>
     <div class="church-grid">
-      <article class="church-card"><h3>Agape Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Rev. Orlando S. Villegas</p><p>046 Interior Ledesma St., Aurora Hill, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=046+Interior+Ledesma+St%2C+Aurora+Hill%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
-      <article class="church-card"><h3>Aurora Hill Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Narcisa P. Belino</p><p>062 Ledesma St., Aurora Hill, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=062+Ledesma+St%2C+Aurora+Hill%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
-      <article class="church-card"><h3>City Central Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Rose Marie M. Dontogan</p><p>1 Yandok St., Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=1+Yandok+St%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
-      <article class="church-card"><h3>Quirino Hill Foursquare Gospel Church</h3><p>7 Quirino Hill Road, Quirino Hill East, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=7+Quirino+Hill+Road%2C+Quirino+Hill+East%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
-      <article class="church-card"><h3>Peza Foursquare Gospel Church</h3><p>96 Purok Pidawan, Loakan Rd, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=96+Purok+Pidawan%2C+Loakan+Rd%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
-      <article class="church-card"><h3>Marcos Highway Foursquare Gospel Church</h3><p>Marcos Highway, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=Marcos+Highway%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+      <article class="church-card"><h3>Agape Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Rev. Orlando S. Villegas</p><p>046 Interior Ledesma St., Aurora Hill, Baguio City</p></article>
+      <article class="church-card"><h3>Aurora Hill Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Narcisa P. Belino</p><p>062 Ledesma St., Aurora Hill, Baguio City</p></article>
+      <article class="church-card"><h3>City Central Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Rose Marie M. Dontogan</p><p>1 Yandok St., Baguio City</p></article>
+      <article class="church-card"><h3>Quirino Hill Foursquare Gospel Church</h3><p>7 Quirino Hill Road, Quirino Hill East, Baguio City</p></article>
+      <article class="church-card"><h3>Peza Foursquare Gospel Church</h3><p>96 Purok Pidawan, Loakan Rd, Baguio City</p></article>
+      <article class="church-card"><h3>Marcos Highway Foursquare Gospel Church</h3><p>Marcos Highway, Baguio City</p></article>
     </div>
   </section>
 
@@ -108,5 +109,16 @@
   </section>
 </main>
 <div id="site-footer"></div>
+<script>
+  (function () {
+    const button = document.getElementById('bcfc-map-reset');
+    const map = document.getElementById('bcfc-map');
+    if (!button || !map) return;
+    const homeUrl = 'https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed';
+    button.addEventListener('click', function () {
+      map.src = homeUrl;
+    });
+  })();
+</script>
 </body>
 </html>
