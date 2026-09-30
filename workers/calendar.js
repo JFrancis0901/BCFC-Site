@@ -421,6 +421,11 @@ const notesInput =
     "evt-notes"
   );
 
+const publicInput =
+  document.getElementById(
+    "evt-public"
+  );
+
 const saveButton =
   document.getElementById(
     "evt-save"
@@ -1601,6 +1606,10 @@ async function openEditDialog(eventId){
 
   form.reset();
 
+  if(publicInput){
+    publicInput.checked = false;
+  }
+
   errBox.hidden =
     true;
 
@@ -1667,6 +1676,10 @@ async function openEditDialog(eventId){
   notesInput.value =
     activity.notes ||
     "";
+
+  if(publicInput){
+    publicInput.checked = activity.public === true;
+  }
 
 
   preacherRow.hidden =
@@ -2236,7 +2249,9 @@ form.addEventListener(
                 ? preacher
                 : "",
 
-            notes
+            notes,
+
+            public: publicInput ? publicInput.checked === true : false
 
           }
 
@@ -2334,6 +2349,8 @@ form.addEventListener(
                 : "",
 
             notes,
+
+            public: publicInput ? publicInput.checked === true : false,
 
             createdBy:
               auth.currentUser?.uid ||

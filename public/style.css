@@ -198,3 +198,7 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .to-top:hover { background: var(--gold); color: var(--navy); }
 .to-top:focus-visible, .search input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .to-top { transition: none; } html { scroll-behavior: auto; } }
+
+
+.public-events-empty{margin:1rem 0 0; opacity:.75;}
+.public-event{margin-bottom:.75rem;}
