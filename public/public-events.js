@@ -18,8 +18,6 @@ const firebaseConfig = {
   appId: "1:248341878396:web:35ed0e8ccb2f829c835bf9"
 };
 
-// This page is intentionally unauthenticated. Firestore Rules must allow
-// public reads only for events where public == true.
 const app = initializeApp(firebaseConfig, "bcfc-public-events");
 const db = getFirestore(app);
 
@@ -35,7 +33,10 @@ const MODULE_LABELS = {
 
 function todayISO(){
   const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
 }
 
 function parseDate(iso){
@@ -43,9 +44,16 @@ function parseDate(iso){
   return new Date(y, (m || 1)-1, d || 1);
 }
 
+function formatDate(iso){
+  if(!iso) return "Date to be announced";
+  return parseDate(iso).toLocaleDateString(undefined, {
+    month:"long", day:"numeric", year:"numeric"
+  });
+}
+
 function formatTime(value){
   if(!value) return "";
-  const [h,m] = String(value).split(":").map(Number);
+  const [h,m] = value.split(":").map(Number);
   if(Number.isNaN(h) || Number.isNaN(m)) return value;
   const d = new Date();
   d.setHours(h,m,0,0);
@@ -53,21 +61,21 @@ function formatTime(value){
 }
 
 function eventMarkup(event){
-  const d = parseDate(event.date);
-  const dateLabel = Number.isNaN(d.getTime()) ? "Date TBA" : d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
   const time = event.time
     ? `${formatTime(event.time)}${event.endTime ? ` – ${formatTime(event.endTime)}` : ""}`
     : "";
-  const meta = [MODULE_LABELS[event.module] || "BCFC Event", event.place, time].filter(Boolean).join(" · ");
-
-  return `<article class="evt public-event">
-    <div class="date"><b>${esc(dateLabel.split(" ")[1] || dateLabel)}</b>${esc(dateLabel.split(" ")[0] || "")}</div>
+  const meta = [event.place, time].filter(Boolean).join(" · ");
+  const category = MODULE_LABELS[event.module] || "BCFC Event";
+  const d = parseDate(event.date);
+  const day = d.getDate();
+  const month = d.toLocaleDateString(undefined,{month:"short"});
+  return `<div class="evt public-event">
+    <div class="date"><b>${day}</b>${esc(month)}</div>
     <div>
       <h3>${esc(event.title || "BCFC Event")}</h3>
-      <p>${esc(meta)}</p>
-      ${event.notes ? `<p>${esc(event.notes)}</p>` : ""}
+      <p>${esc([category, meta].filter(Boolean).join(" · "))}</p>
     </div>
-  </article>`;
+  </div>`;
 }
 
 function render(events){
@@ -86,21 +94,20 @@ function render(events){
   });
 
   document.querySelectorAll("[data-public-event-status]").forEach(el => {
-    el.textContent = "";
+    el.textContent = upcoming.length ? "" : "No upcoming public events at the moment.";
   });
 }
 
-function showError(error){
-  console.error("Public events listener:", error);
-  document.querySelectorAll("[data-public-events]").forEach(container => {
-    container.innerHTML = `<p class="public-events-empty">Public events are temporarily unavailable. Please check the site's Firestore public-event rules.</p>`;
-  });
-}
+const eventsQuery = query(
+  collection(db, "events"),
+  where("public", "==", true)
+);
 
-// IMPORTANT: keep the where(public == true) constraint. It allows Firestore
-// Rules to prove that the unauthenticated public site can only receive events
-// explicitly marked for public posting.
-const eventsQuery = query(collection(db, "events"), where("public", "==", true));
 onSnapshot(eventsQuery, snapshot => {
   render(snapshot.docs.map(d => ({id:d.id, ...d.data()})));
-}, showError);
+}, error => {
+  console.error("Public events listener:", error);
+  document.querySelectorAll("[data-public-events]").forEach(container => {
+    container.innerHTML = `<p class="public-events-empty">Events are temporarily unavailable.</p>`;
+  });
+});

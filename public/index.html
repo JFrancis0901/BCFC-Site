@@ -1,78 +1,112 @@
 <!DOCTYPE html>
-<!-- index.html = one page. Menu + footer come from script.js. Edit the text inside <main>. -->
-<html lang="en"><head><meta charset="UTF-8"><base href="/public/"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script><script type="module" src="public-events.js"></script></head>
-<!-- t-purple / t-blue / t-scarlet / t-navy = this page main color -->
+<html lang="en">
+<head>
+<meta charset="UTF-8"><base href="/public/"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baguio City Foursquare Church | BCFC</title>
+<link rel="stylesheet" href="style.css">
+<script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script><script type="module" src="public-events.js"></script>
+</head>
 <body class="t-purple">
 <div id="site-header"></div>
 <main>
-<!-- HERO: random photo behind a purple tint. EDIT the words and links -->
-<section class="hero" data-random-bg>
-  <p class="script">You belong here</p>
-  <h1>Welcome to <em>BCFC</em></h1>
-  <a class="btn" href="find-church">Find a Church</a>
-  <a class="btn btn-outline" href="contact">Contact Us</a>
-</section>
+  <!-- HERO -->
+  <section class="bcfc-hero">
+    <div class="bcfc-hero-inner">
+      <div class="bcfc-logo-wrap">
+        <img src="assets/bcfc-logo.png" alt="BCFC Logo" class="bcfc-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="logo-placeholder" aria-hidden="true">BCFC LOGO<br><small>Place your logo at public/assets/bcfc-logo.png</small></div>
+      </div>
+      <p class="eyebrow">Baguio City Foursquare Church</p>
+      <h1>Jesus Christ is the same yesterday<br class="desktop-only"> and today and forever.</h1>
+      <p class="verse">Hebrews 13:8</p>
+      <p class="welcome-copy">Welcome to Baguio City Foursquare Church — a family growing together in faith, worship, prayer, and service. We are glad you are here, and we would love to worship with you.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#services">Service Times</a>
+        <a class="btn btn-outline" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Watch Online</a>
+      </div>
+    </div>
+  </section>
 
-<!-- NEW HERE? (arch photo) -->
-<section class="band b-white split">
-  <div><h2>New here? We're <em>ready</em> to help.</h2>
-    <p>EDIT: Introduce your church family and how newcomers can find their place.</p>
-    <a class="btn btn-dark" href="get-involved">Get Involved</a></div>
-  <div class="photo arch"><img data-random alt="Church family"></div>
-</section>
+  <!-- SERVICE TIMES -->
+  <section class="band b-white" id="services">
+    <div class="section-heading center">
+      <p class="script">Join us</p>
+      <h2>Service <em>Times</em></h2>
+      <p>Come and worship with the BCFC family.</p>
+    </div>
+    <div class="service-grid">
+      <article class="service-card"><span class="service-day">Sunday</span><h3>Sunday Service</h3><p>9:00 AM – 11:00 AM</p></article>
+      <article class="service-card"><span class="service-day">Tuesday</span><h3>Family Nurture</h3><p>7:00 PM – 9:00 PM</p></article>
+      <article class="service-card"><span class="service-day">Friday</span><h3>Abound in Prayer</h3><p>7:30 PM – 9:30 PM</p></article>
+    </div>
+  </section>
 
-<!-- LEADERS (blue band, framed photo) -->
-<section class="band b-blue split flip">
-  <div class="photo frame"><img data-random alt="Church leaders"></div>
-  <div><h2>Are you a <em>leader?</em> Find what you need.</h2>
-    <p>EDIT: Explain the support available to pastors and church leaders.</p>
-    <a class="btn" href="support">Get Leader Support</a>
-    <a class="btn btn-outline" href="ministries">Our Ministries</a></div>
-</section>
+  <!-- UPCOMING EVENTS FROM WORKERS -->
+  <section class="band b-ivory" id="events">
+    <div class="section-heading">
+      <p class="script">What's happening</p>
+      <h2>Upcoming <em>Events</em></h2>
+      <p>Activities marked as public by the BCFC Workers team will appear here automatically.</p>
+    </div>
+    <div data-public-events="all"></div>
+    <p data-public-event-status></p>
+    <p class="center"><a class="btn btn-dark" href="events">View All Events</a></p>
+  </section>
 
-<!-- NEXT STEPS: 3 solid tiles, each opens its own page -->
-<section class="band b-ivory">
-  <h2>Take your next step</h2>
-  <div class="grid">
-    <a class="tile s" href="minister"><h3>Become a Minister</h3><p>Start your journey into ministry.</p><span>Open page</span></a>
-    <a class="tile b" href="plant-church"><h3>Plant a Church</h3><p>Start something new in your city.</p><span>Open page</span></a>
-    <a class="tile p" href="find-church"><h3>Find a Church</h3><p>Find a service near you.</p><span>Open page</span></a>
-  </div>
-</section>
+  <!-- MAIN CHURCH -->
+  <section class="band b-white" id="visit">
+    <div class="location-feature">
+      <div>
+        <p class="script">Visit us</p>
+        <h2>Baguio City Foursquare Church</h2>
+        <p class="location-subtitle">Baguio Foursquare Family Center</p>
+        <dl class="location-details">
+          <div><dt>Pastor</dt><dd>Rev. Samuel B. Pinzon</dd></div>
+          <div><dt>Address</dt><dd>392 Lt. Tacay Rd, Pinsao Proper, Baguio City</dd></div>
+        </dl>
+        <div class="hero-actions">
+          <a class="btn btn-dark" href="https://www.google.com/maps/search/?api=1&query=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City" target="_blank" rel="noopener">Open in Google Maps</a>
+          <a class="btn btn-outline-dark" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Facebook</a>
+        </div>
+      </div>
+      <div class="map-frame">
+        <iframe title="Baguio City Foursquare Church map" src="https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
 
-<!-- EVENTS PREVIEW: copy a <div class="evt"> to add one -->
-<section class="band b-white">
-  <h2>Upcoming <em>events</em></h2>
-  <div data-public-events="3"></div>
-  <p data-public-event-status></p>
-  <p><a class="btn btn-dark" href="events">Find More Events</a></p>
-</section>
+  <!-- OTHER BAGUIO CHURCHES -->
+  <section class="band b-navy" id="churches">
+    <div class="section-heading center light">
+      <p class="script">Foursquare family in Baguio</p>
+      <h2>Other <em>Churches</em></h2>
+      <p>Find a Foursquare church near you in Baguio City.</p>
+    </div>
+    <div class="church-grid">
+      <article class="church-card"><h3>Agape Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Rev. Orlando S. Villegas</p><p>046 Interior Ledesma St., Aurora Hill, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=046+Interior+Ledesma+St%2C+Aurora+Hill%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+      <article class="church-card"><h3>Aurora Hill Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Narcisa P. Belino</p><p>062 Ledesma St., Aurora Hill, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=062+Ledesma+St%2C+Aurora+Hill%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+      <article class="church-card"><h3>City Central Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Rose Marie M. Dontogan</p><p>1 Yandok St., Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=1+Yandok+St%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+      <article class="church-card"><h3>Quirino Hill Foursquare Gospel Church</h3><p>7 Quirino Hill Road, Quirino Hill East, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=7+Quirino+Hill+Road%2C+Quirino+Hill+East%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+      <article class="church-card"><h3>Peza Foursquare Gospel Church</h3><p>96 Purok Pidawan, Loakan Rd, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=96+Purok+Pidawan%2C+Loakan+Rd%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+      <article class="church-card"><h3>Marcos Highway Foursquare Gospel Church</h3><p>Marcos Highway, Baguio City</p><a href="https://www.google.com/maps/search/?api=1&query=Marcos+Highway%2C+Baguio+City" target="_blank" rel="noopener">View Map</a></article>
+    </div>
+  </section>
 
-<!-- CALLING BANNER -->
-<section class="band b-purple center">
-  <p class="script">Called to more?</p>
-  <h2>Follow your calling</h2>
-  <p>EDIT: Invite people to become a minister or plant a church.</p>
-  <a class="btn" href="minister">Become a Minister</a>
-  <a class="btn btn-outline" href="plant-church">Plant a Church</a>
-</section>
+  <!-- SOCIAL / ONLINE SERVICE -->
+  <section class="band b-purple center">
+    <p class="script">Stay connected</p>
+    <h2>Worship with us <em>online</em></h2>
+    <p>Join the BCFC online service and keep up with church updates through our Facebook page.</p>
+    <a class="btn" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Watch on Facebook</a>
+  </section>
 
-<!-- MINISTRIES -->
-<section class="band b-ivory">
-  <h2>Beyond the <em>walls</em> of the church</h2>
-  <div class="grid">
-    <article class="card"><h3>Missions</h3><p>EDIT: describe this ministry.</p><a href="missions">Learn more</a></article>
-    <article class="card"><h3>Disaster Relief</h3><p>EDIT: describe this ministry.</p><a href="relief">Learn more</a></article>
-    <article class="card"><h3>Chaplains</h3><p>EDIT: describe this ministry.</p><a href="chaplains">Learn more</a></article>
-  </div>
-</section>
-
-<!-- CONTACT STRIP (gold band, dark button) -->
-<section class="band b-gold center">
-  <h2>Reach out to us</h2>
-  <p>EDIT: address and phone</p>
-  <a class="btn btn-dark" href="contact">Contact Us</a>
-</section>
+  <!-- WELCOME / CONTACT -->
+  <section class="band b-gold center">
+    <h2>You are <em>welcome</em> here.</h2>
+    <p>Whether you are visiting for the first time or have been part of our family for years, there is a place for you at BCFC.</p>
+    <a class="btn btn-dark" href="contact">Contact Us</a>
+  </section>
 </main>
 <div id="site-footer"></div>
-</body></html>
+</body>
+</html>
