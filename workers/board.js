@@ -32,7 +32,7 @@ export function board(parent, { title, col, filter = {}, defaults = {}, fields, 
     return `<input ${n} type="${f.type || 'text'}" ${f.type === 'number' ? 'min="0"' : ''} ${f.req ? 'required' : ''} maxlength="120">`;
   };
   sec.innerHTML = `<h2>${esc(title)}</h2>
-    <details class="bd-add"><summary>+ Add</summary>
+    <details class="bd-add" hidden><summary>+ Add</summary>
       <form>${fields.map(f => `<label>${esc(f.label)}${control(f)}</label>`).join('')}
       <p class="bd-err" hidden></p><button class="bd-save">Save</button></form></details>
     <ul class="bd-list"></ul>`;
@@ -51,7 +51,10 @@ export function board(parent, { title, col, filter = {}, defaults = {}, fields, 
   });
 
   const render = () => {
-    const w = canWrite(window.currentRole);
+    // Never expose management controls while the authenticated user's role is
+    // still being loaded. This prevents a stale sessionStorage role from
+    // briefly showing + Add / Delete controls to a worker.
+    const w = window.roleReady === true && window.isApproved === true && canWrite(window.currentRole);
     add.hidden = !w;
     const shown = items.filter(d => Object.entries(filter).every(([k, v]) => d[k] === v)).sort(sort);
     list.innerHTML = shown.length
@@ -65,6 +68,10 @@ export function board(parent, { title, col, filter = {}, defaults = {}, fields, 
 
   form.addEventListener('submit', async e => {
     e.preventDefault(); err.hidden = true;
+    if (!(window.roleReady === true && window.isApproved === true && canWrite(window.currentRole))) {
+      add.open = false;
+      return;
+    }
     const data = Object.fromEntries([...new FormData(form)].map(([k, v]) => [k, v.trim()]));
     fields.filter(f => f.type === 'number').forEach(f => data[f.k] = Number(data[f.k] || 0));
     try {
