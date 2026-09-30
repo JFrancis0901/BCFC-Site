@@ -25,9 +25,15 @@
 <h2>All Members</h2>
 <div class="members-table-wrap"><table class="members-table"><thead><tr><th>Name</th><th>Email</th><th>Requested Role</th><th>Status</th><th>Approved Role</th><th>Account Created</th><th>Action</th></tr></thead><tbody id="members-list"><tr><td colspan="7" class="members-empty">Loading members...</td></tr></tbody></table></div>
 </section>
+<section class="members-section" id="org-chart-admin">
+<h2>Public Organizational Chart</h2>
+<div class="members-notice">The public About Us page uses a safe copy of approved worker names and roles. Use this button after membership or role changes to publish the current hierarchical structure. Email addresses and other private member details are never published.</div>
+<div class="action-row"><button type="button" class="approve-member-btn" id="sync-org-chart">Publish Current Structure</button><span id="org-chart-sync-status" style="align-self:center;color:#666"></span></div>
+</section>
 </main>
 <div id="members-notification" class="members-notification"><div class="members-notification-card"><button type="button" class="members-notification-close" aria-label="Close">&times;</button><h2 id="members-notification-title">BCFC</h2><p id="members-notification-text"></p><button type="button" id="members-notification-ok">OK</button></div></div>
 <script type="module" src="portal.js"></script>
 <script type="module" src="members.js"></script>
+<script type="module" src="orgchart.js"></script>
 </body>
 </html>
