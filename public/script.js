@@ -70,7 +70,7 @@ const navHtml = MENU.map(m =>
     </div></div>`).join('');
 
 document.getElementById('site-header').innerHTML = `
-  <div class="topbar">${SEARCH_BOX}<span class="toplinks"><a href="find-church.html">Find a church</a><a href="contact.html">Contact</a></span></div>
+  <div class="topbar">${SEARCH_BOX}<span class="toplinks"><a href="find-church.html">Find a church</a><a href="contact.html">Contact</a><a href="../workers/login.html">Worker Login</a></span></div>
   <header class="site-header">
     <a href="index.html" class="logo">BCFC</a> <!-- EDIT: your church name -->
     <button class="menu-toggle" aria-expanded="false">Menu</button>
