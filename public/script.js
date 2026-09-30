@@ -8,7 +8,7 @@
 // moreTitle + more = the small links in the right-hand panel
 const MENU = [
   { label: 'About Us', href: 'about.html', color: 'var(--purple)',
-    items: [['Our mission', 'about-mission.html', 'Discover our mission.'], ['Our history', 'about-history.html', 'Explore our history.'], ['What we believe', 'about-beliefs.html', 'What do we believe?'], ['Our leadership', 'about-leadership.html', 'Meet our leadership team.'], ['Our workers', 'workers.html', 'Meet the people behind the ministry.']],
+    items: [['Our vision', 'about.html#vision', 'See our vision.'], ['Our mission', 'about-mission.html', 'Discover our mission.'], ['Our history', 'about-history.html', 'Explore our history.'], ['What we believe', 'about-beliefs.html', 'What do we believe?'], ['Our leadership', 'about-leadership.html', 'Meet our leadership team.'], ['Our workers', 'workers.html', 'Meet the people behind the ministry.']],
     moreTitle: 'More about BCFC', more: [['Find a church', 'find-church.html'], ['Contact us', 'contact.html'], ['Upcoming events', 'events.html']] },
   { label: 'Get Involved', href: 'get-involved.html', color: 'var(--blue)',
     items: [['Find your place', 'get-involved.html', 'Welcome! We have just the place for you.'], ['Become a minister', 'minister.html', 'Become a BCFC minister.'], ['Plant a church', 'plant-church.html', 'Plant a church or bring your church into BCFC.'], ['Water baptism', 'water-baptism.html', 'Take the step of water baptism.']],
@@ -30,7 +30,8 @@ const MENU = [
 const PAGES = [
   { title: 'Home', url: 'index.html', desc: 'Welcome to BCFC.', keys: 'home welcome church family newcomers' },
   { title: 'About Us', url: 'about.html', desc: 'Who we are.', keys: 'about who we are' },
-  { title: 'Our Mission', url: 'about-mission.html', desc: 'Why we exist.', keys: 'mission purpose vision' },
+  { title: 'Our Vision', url: 'about.html#vision', desc: 'Our vision for national and global transformation.', keys: 'vision empowered missional healthy holistic harvesting churches transformation' },
+  { title: 'Our Mission', url: 'about-mission.html', desc: 'Why we exist.', keys: 'mission purpose evangelism discipleship church planting leadership development social engagement transformation' },
   { title: 'Our History', url: 'about-history.html', desc: 'How we got here.', keys: 'history timeline story founded years' },
   { title: 'What We Believe', url: 'about-beliefs.html', desc: 'Our core beliefs.', keys: 'beliefs believe doctrine faith statement' },
   { title: 'Our Leadership', url: 'about-leadership.html', desc: 'Meet our leadership team.', keys: 'leadership leaders team board elders' },
