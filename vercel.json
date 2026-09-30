@@ -12,7 +12,7 @@
     },
     {
       "source": "/",
-      "destination": "/public/index.html"
+      "destination": "/workers/login.html"
     },
     {
       "source": "/public",
