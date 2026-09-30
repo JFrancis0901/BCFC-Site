@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<!--
-  login.html = sign-in AND sign-up page for the WORKERS site.
-  Sign-up is 3 steps:
-  1) pick your role
-  2) enter the access code for that role
-  3) create account with Google OR email/password
--->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -13,453 +6,75 @@
 <title>Worker Login | BCFC</title>
 <link rel="stylesheet" href="login.css">
 </head>
-
 <body>
-
 <main class="login-page">
-
-  <div class="login-card">
-
-    <div class="brand">
-      <span class="brand-mark">BCFC</span>
-      <p>Workers Portal</p>
-    </div>
-
-
-    <!-- LOGIN / SIGN UP TABS -->
-
-    <div class="auth-tabs" role="tablist">
-
-      <button
-        type="button"
-        id="tab-login"
-        class="on"
-        role="tab"
-        aria-selected="true">
-        Log in
-      </button>
-
-      <button
-        type="button"
-        id="tab-signup"
-        role="tab"
-        aria-selected="false">
-        Sign up
-      </button>
-
-    </div>
-
-
-    <!-- =====================================================
-         LOG IN
-         ===================================================== -->
-
-    <section id="login-panel">
-
-      <form id="login-form" novalidate>
-
-        <p
-          id="form-error"
-          class="form-error"
-          role="alert"
-          hidden>
-        </p>
-
-
-        <label for="email">
-          Email
-        </label>
-
-        <input
-          type="email"
-          id="email"
-          name="email"
-          autocomplete="username"
-          required
-          placeholder="you@bcfc.com">
-
-
-        <label for="password">
-          Password
-        </label>
-
-        <div class="password-field">
-
-          <input
-            type="password"
-            id="password"
-            name="password"
-            autocomplete="current-password"
-            required
-            placeholder="••••••••">
-
-          <button
-            type="button"
-            id="toggle-password"
-            aria-label="Show password">
-            Show
-          </button>
-
-        </div>
-
-
-        <a
-          href="#forgot-password"
-          class="forgot-link">
-          Forgot password?
-        </a>
-
-
-        <button
-          type="submit"
-          class="btn btn-primary"
-          id="login-btn">
-          Log In
-        </button>
-
-      </form>
-
-
-      <!-- GOOGLE LOGIN -->
-
-      <div class="divider">
-        <span>or</span>
-      </div>
-
-      <button
-        type="button"
-        class="btn btn-google"
-        id="google-btn">
-
-        <span id="google-btn-text">
-          Continue with Google
-        </span>
-
-        <span class="google-icon">
-
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true">
-
-            <path
-              fill="#4285F4"
-              d="M21.35 12.27c0-.79-.07-1.55-.22-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4z"/>
-
-            <path
-              fill="#34A853"
-              d="M12 21.5c2.62 0 4.82-.87 6.43-2.36l-3.14-2.44c-.87.58-1.98.92-3.29.92-2.53 0-4.67-1.71-5.44-4.01H3.32v2.52A9.71 9.71 0 0 0 12 21.5z"/>
-
-            <path
-              fill="#FBBC05"
-              d="M6.56 13.61A5.84 5.84 0 0 1 6.25 12c0-.56.11-1.1.31-1.61V7.87H3.32A9.5 9.5 0 0 0 2.5 12c0 1.53.37 2.98.82 4.13l3.24-2.52z"/>
-
-            <path
-              fill="#EA4335"
-              d="M12 6.38c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.82 3.4 14.62 2.5 12 2.5a9.71 9.71 0 0 0-8.68 5.37l3.24 2.52C6.33 8.09 8.47 6.38 12 6.38z"/>
-
-          </svg>
-
-        </span>
-
-      </button>
-
-
-      <button
-        type="button"
-        class="btn btn-guest"
-        id="guest-btn">
-        Log In as Guest
-      </button>
-
-    </section>
-
-
-    <!-- =====================================================
-         SIGN UP
-         ===================================================== -->
-
-    <section id="signup-panel" hidden>
-
-
-      <!-- STEP 1: ROLE -->
-
-      <div id="step-role">
-
-        <h2 class="step-title">
-          Who are you signing up as?
-        </h2>
-
-        <div id="role-groups"></div>
-
-      </div>
-
-
-      <!-- STEP 2: ACCESS CODE -->
-
-      <div id="step-code" hidden>
-
-        <button
-          type="button"
-          class="back-link"
-          data-back="role">
-          &#8249; Change role
-        </button>
-
-        <h2
-          class="step-title"
-          id="code-title">
-          Enter your access code
-        </h2>
-
-        <p class="step-help">
-          Ask your pastor or admin for the code for this role.
-        </p>
-
-        <p
-          id="code-error"
-          class="form-error"
-          role="alert"
-          hidden>
-        </p>
-
-        <form
-          id="code-form"
-          novalidate>
-
-          <label for="access-code">
-            Access code
-          </label>
-
-          <input
-            id="access-code"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-            maxlength="40"
-            required>
-
-          <button
-            type="submit"
-            class="btn btn-primary">
-            Continue
-          </button>
-
-        </form>
-
-      </div>
-
-
-      <!-- STEP 3: ACCOUNT -->
-
-      <div id="step-account" hidden>
-
-        <button
-          type="button"
-          class="back-link"
-          data-back="code">
-          &#8249; Change code
-        </button>
-
-        <h2 class="step-title">
-          Create your account
-        </h2>
-
-        <p
-          class="role-chip"
-          id="role-chip">
-        </p>
-
-
-        <!-- GOOGLE SIGN UP -->
-
-        <button
-          type="button"
-          class="btn btn-google"
-          id="google-signup-btn">
-
-          <span id="google-signup-btn-text">
-            Continue with Google
-          </span>
-
-          <span class="google-icon">
-
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true">
-
-              <path
-                fill="#4285F4"
-                d="M21.35 12.27c0-.79-.07-1.55-.22-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4z"/>
-
-              <path
-                fill="#34A853"
-                d="M12 21.5c2.62 0 4.82-.87 6.43-2.36l-3.14-2.44c-.87.58-1.98.92-3.29.92-2.53 0-4.67-1.71-5.44-4.01H3.32v2.52A9.71 9.71 0 0 0 12 21.5z"/>
-
-              <path
-                fill="#FBBC05"
-                d="M6.56 13.61A5.84 5.84 0 0 1 6.25 12c0-.56.11-1.1.31-1.61V7.87H3.32A9.5 9.5 0 0 0 2.5 12c0 1.53.37 2.98.82 4.13l3.24-2.52z"/>
-
-              <path
-                fill="#EA4335"
-                d="M12 6.38c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.82 3.4 14.62 2.5 12 2.5a9.71 9.71 0 0 0-8.68 5.37l3.24 2.52C6.33 8.09 8.47 6.38 12 6.38z"/>
-
-            </svg>
-
-          </span>
-
-        </button>
-
-
-        <div class="divider">
-          <span>or</span>
-        </div>
-
-
-        <!-- EMAIL SIGN UP -->
-
-        <p
-          id="signup-error"
-          class="form-error"
-          role="alert"
-          hidden>
-        </p>
-
-        <form
-          id="signup-form"
-          novalidate>
-
-          <label for="su-name">
-            Full name
-          </label>
-
-          <input
-            id="su-name"
-            autocomplete="name"
-            maxlength="60"
-            required>
-
-
-          <label for="su-email">
-            Email
-          </label>
-
-          <input
-            type="email"
-            id="su-email"
-            autocomplete="username"
-            required
-            placeholder="you@bcfc.com">
-
-
-          <label for="su-password">
-            Password
-          </label>
-
-          <input
-            type="password"
-            id="su-password"
-            autocomplete="new-password"
-            minlength="8"
-            required
-            placeholder="At least 8 characters">
-
-
-          <label for="su-password2">
-            Confirm password
-          </label>
-
-          <input
-            type="password"
-            id="su-password2"
-            autocomplete="new-password"
-            required>
-
-
-          <button
-            type="submit"
-            class="btn btn-primary"
-            id="signup-btn">
-            Create account
-          </button>
-
-        </form>
-
-      </div>
-
-    </section>
-
-
-    <p class="portal-note">
-      Workers portal for BCFC staff and department leads.
-    </p>
-
+<div class="login-card">
+  <div class="brand"><span class="brand-mark">BCFC</span><p>Workers Portal</p></div>
+  <div class="auth-tabs" role="tablist">
+    <button type="button" id="tab-login" class="on" role="tab" aria-selected="true">Log in</button>
+    <button type="button" id="tab-signup" role="tab" aria-selected="false">Sign up</button>
   </div>
 
-
-  <!-- =====================================================
-       FORGOT PASSWORD
-       ===================================================== -->
-
-  <div
-    id="forgot-password"
-    class="login-card forgot-card">
-
-    <button
-      type="button"
-      class="close-forgot"
-      aria-label="Close">
-      &times;
-    </button>
-
-    <h2>
-      Reset your password
-    </h2>
-
-    <p>
-      Enter the email you log in with.
-      We'll send you a link to reset your password.
-    </p>
-
-    <form
-      id="forgot-form"
-      novalidate>
-
-      <p
-        id="forgot-success"
-        class="form-success"
-        role="status"
-        hidden>
-        Check your email for a reset link.
-      </p>
-
-      <label for="forgot-email">
-        Email
-      </label>
-
-      <input
-        type="email"
-        id="forgot-email"
-        name="forgot-email"
-        required
-        placeholder="you@bcfc.com">
-
-      <button
-        type="submit"
-        class="btn btn-primary">
-        Send Reset Link
-      </button>
-
+  <section id="login-panel">
+    <form id="login-form" novalidate>
+      <p id="form-error" class="form-error" role="alert" hidden></p>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" autocomplete="username" required placeholder="you@bcfc.com">
+      <label for="password">Password</label>
+      <div class="password-field">
+        <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+        <button type="button" id="toggle-password" aria-label="Show password">Show</button>
+      </div>
+      <a href="#forgot-password" class="forgot-link">Forgot password?</a>
+      <button type="submit" class="btn btn-primary" id="login-btn">Log In</button>
     </form>
+    <div class="divider"><span>or</span></div>
+    <button type="button" class="btn btn-google" id="google-btn">
+      <span id="google-btn-text">Continue with Google</span>
+      <span class="google-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.22-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4z"/><path fill="#34A853" d="M12 21.5c2.62 0 4.82-.87 6.43-2.36l-3.14-2.44c-.87.58-1.98.92-3.29.92-2.53 0-4.67-1.71-5.44-4.01H3.32v2.52A9.71 9.71 0 0 0 12 21.5z"/><path fill="#FBBC05" d="M6.56 13.61A5.84 5.84 0 0 1 6.25 12c0-.56.11-1.1.31-1.61V7.87H3.32A9.5 9.5 0 0 0 2.5 12c0 1.53.37 2.98.82 4.13l3.24-2.52z"/><path fill="#EA4335" d="M12 6.38c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.82 3.4 14.62 2.5 12 2.5a9.71 9.71 0 0 0-8.68 5.37l3.24 2.52C6.33 8.09 8.47 6.38 12 6.38z"/></svg></span>
+    </button>
+    <button type="button" class="btn btn-guest" id="guest-btn">Log In as Guest</button>
+  </section>
 
-  </div>
+  <section id="signup-panel" hidden>
+    <div id="step-account">
+      <h2 class="step-title">Create your account</h2>
+      <p class="step-help">All fields are required except Middle Initial.</p>
+      <p id="signup-error" class="form-error" role="alert" hidden></p>
+      <form id="signup-form" novalidate>
+        <label for="su-last-name">Last name</label>
+        <input id="su-last-name" autocomplete="family-name" maxlength="60" required>
+        <label for="su-first-name">First name</label>
+        <input id="su-first-name" autocomplete="given-name" maxlength="60" required>
+        <label for="su-middle-initial">Middle initial <span style="font-weight:400">(optional)</span></label>
+        <input id="su-middle-initial" autocomplete="additional-name" maxlength="1" pattern="[A-Za-z]">
+        <label for="su-email">Email</label>
+        <input type="email" id="su-email" autocomplete="username" required placeholder="you@bcfc.com">
+        <label for="su-password">Password</label>
+        <input type="password" id="su-password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
+        <label for="su-password2">Confirm password</label>
+        <input type="password" id="su-password2" autocomplete="new-password" required>
+        <button type="submit" class="btn btn-primary" id="signup-btn">Create account</button>
+      </form>
+      <div class="divider"><span>or</span></div>
+      <button type="button" class="btn btn-google" id="google-signup-btn">
+        <span id="google-signup-btn-text">Continue with Google</span>
+        <span class="google-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.22-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.93v2.44h3.14c1.84-1.69 2.92-4.18 2.92-7.4z"/><path fill="#34A853" d="M12 21.5c2.62 0 4.82-.87 6.43-2.36l-3.14-2.44c-.87.58-1.98.92-3.29.92-2.53 0-4.67-1.71-5.44-4.01H3.32v2.52A9.71 9.71 0 0 0 12 21.5z"/><path fill="#FBBC05" d="M6.56 13.61A5.84 5.84 0 0 1 6.25 12c0-.56.11-1.1.31-1.61V7.87H3.32A9.5 9.5 0 0 0 2.5 12c0 1.53.37 2.98.82 4.13l3.24-2.52C6.33 8.09 8.47 6.38 12 6.38z"/><path fill="#EA4335" d="M12 6.38c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.82 3.4 14.62 2.5 12 2.5a9.71 9.71 0 0 0-8.68 5.37l3.24 2.52C6.33 8.09 8.47 6.38 12 6.38z"/></svg></span>
+      </button>
+    </div>
 
+    <div id="step-role" hidden>
+      <h2 class="step-title">Choose your role</h2>
+      <p class="step-help">Your role will be reviewed by an administrator before full access is granted.</p>
+      <p id="role-error" class="form-error" role="alert" hidden></p>
+      <div id="role-groups"></div>
+    </div>
+  </section>
+
+  <p class="portal-note">Workers portal for BCFC staff and department leads.</p>
+</div>
 </main>
-
-
-<script
-  type="module"
-  src="login.js">
-</script>
-
+<div id="forgot-password" class="login-card forgot-card" hidden></div>
+<script type="module" src="login.js"></script>
 </body>
 </html>
