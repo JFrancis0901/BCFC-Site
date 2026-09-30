@@ -2649,17 +2649,27 @@ async function startCalendar(){
 }
 
 
-teamDialog.addEventListener(
-  "close",
-  () => {
+/* ==========================================================
+   TEAM POPUP CLOSE
+   ========================================================== */
 
-    /*
-      Keep the last selected team remembered,
-      but don't force the popup open again.
-    */
-
+teamPopupClose.addEventListener("click", () => {
+  if (teamDialog.open) {
+    teamDialog.close();
   }
-);
+  currentTeamPopup = null;
+});
+
+teamDialog.addEventListener("click", event => {
+  if (event.target === teamDialog) {
+    teamDialog.close();
+    currentTeamPopup = null;
+  }
+});
+
+teamDialog.addEventListener("close", () => {
+  currentTeamPopup = null;
+});
 
 
 startCalendar();
