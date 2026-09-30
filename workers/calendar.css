@@ -493,6 +493,26 @@
   border-color:var(--gold);
 }
 
+.public-post-option{
+  display:flex !important;
+  align-items:flex-start;
+  gap:.65rem;
+  margin:.95rem 0 .25rem !important;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.public-post-option input{
+  width:auto !important;
+  margin:.15rem 0 0;
+  accent-color:var(--gold);
+}
+
+.public-post-option span{
+  font-size:.86rem;
+  line-height:1.35;
+}
+
 .row2{
   display:grid;
   grid-template-columns:1fr 1fr;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- index.html = one page. Menu + footer come from script.js. Edit the text inside <main>. -->
-<html lang="en"><head><meta charset="UTF-8"><base href="/public/"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script></head>
+<html lang="en"><head><meta charset="UTF-8"><base href="/public/"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Home | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script><script type="module" src="public-events.js"></script></head>
 <!-- t-purple / t-blue / t-scarlet / t-navy = this page main color -->
 <body class="t-purple">
 <div id="site-header"></div>
@@ -43,9 +43,8 @@
 <!-- EVENTS PREVIEW: copy a <div class="evt"> to add one -->
 <section class="band b-white">
   <h2>Upcoming <em>events</em></h2>
-  <div class="evt"><div class="date"><b>9</b>Oct</div><div><h3>Event name</h3><p>City, time</p></div></div>
-  <div class="evt"><div class="date"><b>22</b>Oct</div><div><h3>Event name</h3><p>City, time</p></div></div>
-  <div class="evt"><div class="date"><b>23</b>Oct</div><div><h3>Event name</h3><p>City, time</p></div></div>
+  <div data-public-events="3"></div>
+  <p data-public-event-status></p>
   <p><a class="btn btn-dark" href="events">Find More Events</a></p>
 </section>
 
