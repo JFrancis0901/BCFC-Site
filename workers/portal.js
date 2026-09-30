@@ -1,6 +1,6 @@
 import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { auth, db } from "./firebase-config.js";
+import { auth, db, authPersistenceReady } from "./firebase-config.js";
 
 const NAV=[
  ['Calendar','calendar.html','all'],['Announcements','announcements.html','admin,pastor,childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead'],
@@ -67,6 +67,7 @@ function applyUser(data, notify=false){
 }
 
 onAuthStateChanged(auth,async user=>{
+  await authPersistenceReady;
   if(!user){leaveToLogin();return;}
   try{
     const ref=doc(db,'users',user.uid); const snap=await getDoc(ref);

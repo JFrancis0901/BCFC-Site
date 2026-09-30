@@ -9,7 +9,7 @@ import {
 import {
   doc, getDoc, setDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { auth, db } from "./firebase-config.js";
+import { auth, db, authPersistenceReady } from "./firebase-config.js";
 
 const $ = id => document.getElementById(id);
 const ROLE_GROUPS = [
@@ -58,7 +58,8 @@ tabLogin.onclick=()=>showTab("login"); tabSignup.onclick=()=>showTab("signup");
 const loginForm=$("login-form"), formError=$("form-error"), loginBtn=$("login-btn");
 $("toggle-password").onclick=()=>{ const p=$("password"), hidden=p.type==="password"; p.type=hidden?"text":"password"; $("toggle-password").textContent=hidden?"Hide":"Show"; };
 loginForm.addEventListener("submit",async e=>{
-  e.preventDefault(); clearError(formError); loginBtn.disabled=true; loginBtn.textContent="Logging in...";
+  e.preventDefault();
+  await authPersistenceReady; clearError(formError); loginBtn.disabled=true; loginBtn.textContent="Logging in...";
   try{
     const cred=await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
     const snap=await getDoc(doc(db,"users",cred.user.uid));
@@ -69,7 +70,8 @@ loginForm.addEventListener("submit",async e=>{
 
 // Google login
 $("google-btn").onclick=async()=>{
-  clearError(formError); const btn=$("google-btn"), txt=$("google-btn-text"); btn.disabled=true; txt.textContent="Connecting to Google...";
+  clearError(formError);
+  await authPersistenceReady; const btn=$("google-btn"), txt=$("google-btn-text"); btn.disabled=true; txt.textContent="Connecting to Google...";
   try{
     const result=await signInWithPopup(auth,new GoogleAuthProvider());
     const snap=await getDoc(doc(db,"users",result.user.uid));
@@ -99,7 +101,8 @@ function showRoleStep(){
 }
 const signupForm=$("signup-form"), signupError=$("signup-error");
 signupForm.addEventListener("submit",async e=>{
-  e.preventDefault(); clearError(signupError);
+  e.preventDefault();
+  await authPersistenceReady; clearError(signupError);
   const last=$("su-last-name").value.trim(), first=$("su-first-name").value.trim(), middle=$("su-middle-initial").value.trim().toUpperCase(), email=$("su-email").value.trim(), pw=$("su-password").value, pw2=$("su-password2").value;
   if(!last||!first||!email||!pw||!pw2) return showError(signupError,"Please fill in all required fields.");
   if(middle && !/^[A-Z]$/.test(middle)) return showError(signupError,"Middle initial must be one letter.");
@@ -115,7 +118,8 @@ signupForm.addEventListener("submit",async e=>{
 
 // Google signup: Google provides identity/name, then user chooses role.
 $("google-signup-btn").onclick=async()=>{
-  clearError(signupError); const btn=$("google-signup-btn"), txt=$("google-signup-btn-text"); btn.disabled=true; txt.textContent="Connecting to Google...";
+  clearError(signupError);
+  await authPersistenceReady; const btn=$("google-signup-btn"), txt=$("google-signup-btn-text"); btn.disabled=true; txt.textContent="Connecting to Google...";
   try{
     const result=await signInWithPopup(auth,new GoogleAuthProvider());
     const snap=await getDoc(doc(db,"users",result.user.uid));
