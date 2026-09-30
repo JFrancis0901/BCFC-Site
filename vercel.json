@@ -1,7 +1,18 @@
 {
   "outputDirectory": ".",
   "cleanUrls": true,
-  "redirects": [
-    { "source": "/", "destination": "/workers/login.html", "permanent": false }
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/workers/login.html"
+    },
+    {
+      "source": "/login/",
+      "destination": "/workers/login.html"
+    },
+    {
+      "source": "/",
+      "destination": "/public/index.html"
+    }
   ]
 }
