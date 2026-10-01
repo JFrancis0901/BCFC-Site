@@ -1,72 +1,13 @@
 <!DOCTYPE html>
-<!-- workers.html = one page. Menu + footer come from script.js. Edit the text inside <main>. -->
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Workers | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script></head>
-<!-- t-purple / t-blue / t-scarlet / t-navy = this page main color -->
-<body class="t-blue">
-<div id="site-header"></div>
-<main>
-<!-- HERO with quick links. Each chip jumps to a team below. Add a chip when you add a team -->
-<section class="hero-left" data-random-bg>
-  <p class="script">The people behind the ministry</p>
-  <h1>Our <em>Workers</em></h1>
-  <nav class="chips"><a href="#pastor">Pastor</a><a href="#leaders">Leaders</a><a href="#music">Music Ministry</a><a href="#production">Production</a><a href="#welcome">Ushers + Welcome</a><a href="#children">Children's Ministry</a><a href="#prayer">Prayer Team</a></nav>
-</section>
-
-<!-- PASTOR (id="pastor" is what the chip links to) -->
-<section id="pastor" class="band b-white split">
-  <div class="photo round"><img data-random alt="Pastor"></div>
-  <div><h2>Pastor</h2><h3>Pastor Name</h3><p>EDIT: short bio and a welcome message.</p></div>
-</section>
-
-<!-- LEADERS: copy a <div> with an avatar to add a person (put their initials in the circle) -->
-<section id="leaders" class="band b-ivory">
-  <h2>Leaders</h2><p>EDIT: describe the leadership team.</p>
-  <div class="people">
-    <div><div class="avatar">AB</div><h3>Name</h3><p>Role</p></div>
-    <div><div class="avatar">CD</div><h3>Name</h3><p>Role</p></div>
-    <div><div class="avatar">EF</div><h3>Name</h3><p>Role</p></div>
-    <div><div class="avatar">GH</div><h3>Name</h3><p>Role</p></div>
-  </div>
-</section>
-
-<!-- MUSIC MINISTRY: copy an <article> to add a role -->
-<section id="music" class="band b-purple">
-  <h2>Music <em>Ministry</em></h2><p>EDIT: describe the worship team.</p>
-  <div class="grid">
-    <article class="card"><h3>Worship leader</h3><p>Name</p></article>
-    <article class="card"><h3>Vocals</h3><p>Names</p></article>
-    <article class="card"><h3>Keys and guitar</h3><p>Names</p></article>
-    <article class="card"><h3>Bass and drums</h3><p>Names</p></article>
-  </div>
-</section>
-
-<!-- PRODUCTION: copy a <div><dt>..</dt><dd>..</dd></div> to add a role -->
-<section id="production" class="band b-white">
-  <h2>Production</h2><p>EDIT: describe the media and tech team.</p>
-  <dl class="roles">
-    <div><dt>Sound</dt><dd>Name</dd></div>
-    <div><dt>Lights</dt><dd>Name</dd></div>
-    <div><dt>Video and livestream</dt><dd>Name</dd></div>
-    <div><dt>Slides and lyrics</dt><dd>Name</dd></div>
-  </dl>
-</section>
-
-<!-- USHERS + WELCOME -->
-<section id="welcome" class="band b-ivory">
-  <h2>Ushers + <em>Welcome</em></h2>
-  <ul class="checks"><li>Greeters: Names</li><li>Ushers: Names</li><li>Hospitality: Names</li></ul>
-</section>
-
-<!-- CHILDREN'S MINISTRY -->
-<section id="children" class="band b-blue">
-  <h2>Children's <em>Ministry</em></h2><p>EDIT: describe the team.</p>
-  <dl class="roles"><div><dt>Nursery</dt><dd>Name</dd></div><div><dt>Kids church</dt><dd>Name</dd></div><div><dt>Youth</dt><dd>Name</dd></div></dl>
-</section>
-
-<!-- PRAYER TEAM -->
-<section id="prayer" class="band b-white">
-  <div class="stripe"><h2>Prayer <em>Team</em></h2><p>EDIT: describe the prayer team and how people can request prayer.</p></div>
-</section>
-</main>
-<div id="site-footer"></div>
-</body></html>
+<body class="t-blue"><div id="site-header"></div><main>
+<section class="hero-left" data-random-bg><p class="script">Serving together</p><h1>BCFC <em>Workers</em></h1><p>Meet the ministries that serve our church and community. Ministry information and team details are maintained through the Workers portal.</p></section>
+<section class="band b-white"><div class="section-heading"><p class="script">Our ministries</p><h2>Find a place to <em>serve</em></h2></div><div class="grid">
+<article class="card" id="childrens"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>Children’s Church</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/dept.html?m=childrens">View ministry</a></article>
+<article class="card" id="ufy"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>UFY</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/dept.html?m=ufy">View ministry</a></article>
+<article class="card" id="ufw"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>UFW</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/dept.html?m=ufw">View ministry</a></article>
+<article class="card" id="ufm"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>UFM</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/dept.html?m=ufm">View ministry</a></article>
+<article class="card" id="worship"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>Praise & Worship</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/worship.html">View ministry</a></article>
+<article class="card" id="production"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>Production</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/projects.html?m=production">View ministry</a></article>
+<article class="card" id="creatives"><img src="assets/bcfc-logo.png" alt="BCFC logo" style="width:90px;height:90px;object-fit:contain"><h3>Creatives</h3><p>Explore this ministry and its team through the Workers portal.</p><a class="btn btn-dark" href="../workers/projects.html?m=creatives">View ministry</a></article>
+</div></section><section class="band b-ivory center"><p>For the latest team members and leadership details, open the ministry in the Workers portal.</p><a class="btn btn-dark" href="../workers/login.html">Workers Portal</a></section></main><div id="site-footer"></div></body></html>
