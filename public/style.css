@@ -35,10 +35,11 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .site-nav a { color: #fff; text-decoration: none; }
 .nav-search { display: none; }
 .dropdown { margin-left: 1.5rem; }                     /* no "position": the panel spans the header */
-.dropdown > a { position: relative; display: inline-block; padding: .35rem 0; }
-.dropdown > a::after { content: "\25BE"; font-size: .75em; margin-left: .35rem; opacity: .8; }
-.dropdown:hover > a, .dropdown:focus-within > a { color: var(--gold); }
-.dropdown:hover > a::before { content: ""; position: absolute; left: -1rem; right: -1rem; top: 100%; height: 1.8rem; }  /* keeps the menu open while moving down */
+.dropdown > a, .dropdown > .nav-category { position: relative; display: inline-block; padding: .35rem 0; }
+.dropdown > .nav-category { color:#fff; font-weight:600; cursor:default; }
+.dropdown > .nav-category::after { content: "\25BE"; font-size: .75em; margin-left: .35rem; opacity: .8; }
+.dropdown:hover > a, .dropdown:focus-within > a, .dropdown:hover > .nav-category { color: var(--gold); }
+.dropdown:hover > a::before, .dropdown:hover > .nav-category::before { content: ""; position: absolute; left: -1rem; right: -1rem; top: 100%; height: 1.8rem; }  /* keeps the menu open while moving down */
 /* The panel: dark links on the left, colored "more" panel on the right */
 .mega { display: none; position: absolute; top: 100%; z-index: 20; right: 1rem; left: auto; width: min(1100px, calc(100% - 2rem));
   grid-template-columns: 1.4fr 1fr; border-top: 4px solid var(--gold); box-shadow: 0 14px 30px rgba(0,0,0,.35); }
@@ -176,8 +177,8 @@ p { margin: 0 0 1rem; max-width: 62ch; }
   .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; padding-bottom: 1rem; background: var(--theme); }
   .site-nav.open { display: flex; }
   .dropdown { margin: 0; }
-  .dropdown > a { display: block; padding: .7rem 1.5rem; font-weight: 600; }
-  .dropdown > a::after, .dropdown:hover > a::before { display: none; }
+  .dropdown > a, .dropdown > .nav-category { display: block; padding: .7rem 1.5rem; font-weight: 600; }
+  .dropdown > a::after, .dropdown > .nav-category::after, .dropdown:hover > a::before, .dropdown:hover > .nav-category::before { display: none; }
   .mega, .dropdown:hover .mega, .dropdown:focus-within .mega { display: block; position: static; border: 0; box-shadow: none; }
   .mega-main { background: transparent; padding: 0; }
   .mega-label, .mega-side { display: none; }
