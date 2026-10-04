@@ -281,3 +281,12 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .service-card p:last-child { margin-bottom:0; }
 .visit-pastor { margin-top:.75rem; }
 @media(max-width:760px){.service-cards{grid-template-columns:1fr}.service-card{padding:1rem}}
+
+/* Keep interior pages focused: remove oversized introductory banners everywhere.
+   The homepage's main BCFC hero is intentionally preserved. */
+body:not(:has(.bcfc-hero)) .hero,
+body:not(:has(.bcfc-hero)) .hero-left,
+body:not(:has(.bcfc-hero)) .hero-strip,
+body:not(:has(.bcfc-hero)) .hero-split {
+  display: none !important;
+}
