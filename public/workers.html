@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Workers | BCFC</title><link rel="stylesheet" href="style.css"><script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script>
 <style>
-.ministry-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}.ministry-choice{border:1px solid #e4dfd4;border-radius:14px;background:#fff;padding:18px;text-align:left;cursor:pointer;box-shadow:0 5px 18px #0000000d}.ministry-choice:hover,.ministry-choice:focus-visible{outline:2px solid var(--blue);transform:translateY(-2px)}.ministry-choice img{width:66px;height:66px;object-fit:contain;display:block;margin-bottom:10px}.ministry-choice h3{margin:0 0 7px}.ministry-choice p{margin:0;color:#666;font-size:.9rem}.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:22px}.team-person{background:white;border:1px solid #e5e0d5;border-radius:14px;padding:18px;text-align:center}.team-person img{width:90px;height:90px;object-fit:contain;border-radius:50%;border:2px solid #e0c15b}.team-role{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:20px;background:#edf2ff;color:#23469b;font-size:.8rem;font-weight:700}.team-status{text-align:center;padding:16px;color:#666}.back-ministry{margin-bottom:18px}
+.ministry-picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}.ministry-choice{border:1px solid #e4dfd4;border-radius:14px;background:#fff;padding:18px;text-align:left;cursor:pointer;box-shadow:0 5px 18px #0000000d}.ministry-choice:hover,.ministry-choice:focus-visible{outline:2px solid var(--blue);transform:translateY(-2px)}.ministry-choice img{width:66px;height:66px;object-fit:contain;display:block;margin-bottom:10px}.ministry-choice h3{margin:0 0 7px}.ministry-choice p{margin:0;color:#666;font-size:.9rem}.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:22px}.team-person{background:white;border:1px solid #e5e0d5;border-radius:14px;padding:18px;text-align:center}.team-person img{width:90px;height:90px;object-fit:contain;border-radius:50%;border:2px solid #e0c15b}.team-role{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:20px;background:#edf2ff;color:#23469b;font-size:.8rem;font-weight:700}.team-status{text-align:center;padding:16px;color:#666}.back-ministry{margin-bottom:18px}[hidden]{display:none!important}.team-group{margin:26px 0 6px;font-size:1.1rem;color:#23469b;border-bottom:2px solid #e0c15b;padding-bottom:6px}.team-group:first-of-type{margin-top:10px}#team-description{max-width:720px;font-size:1.05rem;color:#444;line-height:1.6}.team-person img{background:#fff;padding:6px}
 </style></head>
 <body class="t-blue"><div id="site-header"></div><main>
 <section class="hero-left"><p class="script">Serving together</p><h1>BCFC <em>Workers</em></h1><p>Learn about each ministry and meet the people who serve in it.</p></section>
@@ -17,4 +17,62 @@
 </div></div>
 <div id="team-section" hidden><button type="button" id="back-ministries" class="btn btn-dark back-ministry">← All ministries</button><div class="section-heading"><p class="script">Meet the team</p><h2 id="team-title"></h2><p id="team-description"></p></div><p id="team-status" class="team-status" role="status"></p><div id="team-list" class="team-grid"></div></div>
 </section><section class="band b-ivory center"><a class="btn btn-dark" href="../workers/login.html">Workers Portal</a></section></main><div id="site-footer"></div>
-<script type="module" src="workers-public.js"></script></body></html>
+<script type="module">
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { db } from "../workers/firebase-config.js";
+
+const NAMES={childrens:"Children’s Church",ufy:"UFY",ufw:"UFW",ufm:"UFM",worship:"Praise & Worship",production:"Production",creatives:"Creatives"};
+const DESC={
+ childrens:'Children’s Church helps kids learn about Jesus through Bible stories, songs, games, and activities in a safe, fun, and caring environment.',
+ ufy:'United Foursquare Youth (UFY) is a ministry for young people to grow in faith, build lasting friendships, and serve God and others.',
+ ufw:'United Foursquare Women (UFW) encourages women through fellowship, prayer, spiritual growth, and service to the church and community.',
+ ufm:'United Foursquare Men (UFM) builds fellowship and encourages men to grow in faith, lead with integrity, and serve the church.',
+ worship:'The Praise & Worship team leads the congregation into God’s presence through music, singing, and praise every service.',
+ production:'The Production team supports church services through sound, lights, video, and live streaming so everyone can worship without distraction.',
+ creatives:'The Creatives team designs graphics, photos, videos, and social media content that share the church’s message and events.'};
+const LOGO='assets/bcfc-logo.png';
+const $=id=>document.getElementById(id);
+const choices=$('ministry-choices'), section=$('team-section'), status=$('team-status'), list=$('team-list');
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function nm(m){return m.name||[m.firstName,m.middleInitial,m.lastName].filter(Boolean).join(' ')||'Name unavailable';}
+function card(m){return `<article class="team-person"><img src="${esc(m.photo||m.photoURL||LOGO)}" alt="${esc(nm(m))}" onerror="this.onerror=null;this.src='${LOGO}'"><h3>${esc(nm(m))}</h3><span class="team-role">${m.role.endsWith('-lead')?'Leader':'Worker'}</span></article>`;}
+
+function showAll(){section.hidden=true;choices.hidden=false;}
+
+async function show(key){
+  choices.hidden=true; section.hidden=false;
+  $('team-title').textContent=NAMES[key];
+  $('team-description').textContent=DESC[key]||'';
+  status.textContent='Loading team…'; list.innerHTML='';
+  try{
+    const snap=await getDocs(collection(db,'orgChart'));
+    const people=snap.docs.map(d=>d.data()).filter(m=>m.active!==false&&(m.role===key||m.role===key+'-lead'))
+      .sort((a,b)=>nm(a).localeCompare(nm(b)));
+    const leaders=people.filter(m=>m.role.endsWith('-lead')), workers=people.filter(m=>!m.role.endsWith('-lead'));
+    if(!people.length){status.textContent='No published team members are available yet.';return;}
+    status.textContent='';
+    list.innerHTML='';
+    list.style.display='block';
+    list.innerHTML=(leaders.length?`<h3 class="team-group">Leaders</h3><div class="team-grid">${leaders.map(card).join('')}</div>`:'')
+                  +(workers.length?`<h3 class="team-group">Workers</h3><div class="team-grid">${workers.map(card).join('')}</div>`:'');
+  }catch(e){console.error(e);status.textContent='Team information is not available right now. Please try again later.';}
+}
+
+function route(){
+  const k=(location.hash.replace('#','')||new URLSearchParams(location.search).get('m')||'').toLowerCase();
+  if(NAMES[k]) show(k); else showAll();
+}
+choices.addEventListener('click',e=>{const b=e.target.closest('[data-ministry]');if(b){location.hash=b.dataset.ministry;}});
+$('back-ministries').addEventListener('click',()=>{history.pushState(null,'',location.pathname);showAll();window.scrollTo(0,0);});
+window.addEventListener('hashchange',route);
+window.addEventListener('popstate',route);
+route();
+</script>
+<script>
+/* Instant hide (runs before the module above finishes loading) */
+(function(){var k=(location.hash.replace('#','')||new URLSearchParams(location.search).get('m')||'').toLowerCase();
+if(['childrens','ufy','ufw','ufm','worship','production','creatives'].indexOf(k)>-1){
+document.getElementById('ministry-choices').hidden=true;document.getElementById('team-section').hidden=false;}})();
+</script>
+</body></html>
