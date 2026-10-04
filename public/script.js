@@ -9,7 +9,7 @@
 const MENU = [
   { label: 'About Us', href: null, color: 'var(--purple)',
     items: [['Our Mission', 'about-mission.html', 'Our Mission'], ['Our Vision', 'about-vision.html', 'Our Vision'], ['Our history', 'about-history.html', 'Our history'], ['Organizational Chart', 'about-organization.html', 'Organizational Chart'], ['Visit Us', 'find-church.html', 'Visit Us']],
-    moreTitle: 'More about BCFC', more: [['Find a church', 'find-church.html'], ['Contact us', 'contact.html']] },
+    moreTitle: 'More about BCFC', more: [['Contact us', 'contact.html']] },
   { label: 'Workers', href: 'workers.html', color: 'var(--blue)',
     items: [['Children’s Church', 'workers.html#childrens', 'Children’s Church'], ['UFY', 'workers.html#ufy', 'United Foursquare Youth'], ['UFW', 'workers.html#ufw', 'United Foursquare Women'], ['UFM', 'workers.html#ufm', 'United Foursquare Men'], ['Praise & Worship', 'workers.html#worship', 'Praise & Worship'], ['Production', 'workers.html#production', 'Production'], ['Creatives', 'workers.html#creatives', 'Creatives']],
     moreTitle: 'BCFC Workers', more: [['View all ministries', 'workers.html'], ['Worker Login', '../workers/login.html']] },
@@ -18,7 +18,7 @@ const MENU = [
     moreTitle: 'Work with BCFC', more: [['Partner With Us', 'support.html'], ['Contact us', 'contact.html']] },
   { label: 'Other Churches', href: 'other-churches.html', color: 'var(--navy)',
     items: [['Foursquare Family in Baguio', 'other-churches.html', 'Find a Foursquare church near you in Baguio City.']],
-    moreTitle: 'More', more: [['Contact us', 'contact.html'], ['Find a church', 'find-church.html']] }
+    moreTitle: 'More', more: [['Contact us', 'contact.html']] }
 ];
 
 // ---------- 2. SEARCH: list every page here (add a line when you add a page) ----------
@@ -69,7 +69,7 @@ const navHtml = MENU.map(m => {
 }).join('');
 
 document.getElementById('site-header').innerHTML = `
-  <div class="topbar">${SEARCH_BOX}<span class="toplinks"><a href="find-church.html">Find a church</a><a href="contact.html">Contact</a><a href="../workers/login.html">Worker Login</a></span></div>
+  <div class="topbar">${SEARCH_BOX}<span class="toplinks"><a href="contact.html">Contact</a><a href="../workers/login.html">Worker Login</a></span></div>
   <header class="site-header">
     <a href="index.html" class="logo">BCFC</a> <!-- EDIT: your church name -->
     <button class="menu-toggle" aria-expanded="false">Menu</button>
