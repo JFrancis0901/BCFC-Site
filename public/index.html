@@ -4,7 +4,9 @@
 <meta charset="UTF-8"><base href="/public/"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Baguio City Foursquare Church | BCFC</title>
 <link rel="stylesheet" href="style.css">
-<script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script><script type="module" src="public-events.js"></script>
+<link rel="stylesheet" href="service-times.css">
+<script src="photos.js"></script><script src="script.js" defer></script><script src="clean-urls.js" defer></script>
+<script src="service-times.js" defer></script>
 </head>
 <body class="t-purple">
 <div id="site-header"></div>
@@ -21,104 +23,40 @@
       <p class="verse">Hebrews 13:8</p>
       <p class="welcome-copy">Welcome to Baguio City Foursquare Church — a family growing together in faith, worship, prayer, and service. We are glad you are here, and we would love to worship with you.</p>
       <div class="hero-actions">
-        <a class="btn" href="#services">Service Times</a>
+        <!-- EDIT: this button opens the Service Times slideshow (built in service-times.js) instead of linking to a page -->
+        <button type="button" class="btn btn-outline" id="open-service-times">Service Times</button>
         <a class="btn btn-outline" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Watch Online</a>
       </div>
     </div>
   </section>
-
-  <!-- SERVICE TIMES -->
-  <section class="band b-white" id="services">
-    <div class="section-heading center">
-      <p class="script">Join us</p>
-      <h2>Service <em>Times</em></h2>
-      <p>Come and worship with the BCFC family.</p>
-    </div>
-    <div class="service-grid">
-      <article class="service-card"><span class="service-day">Sunday</span><h3>Sunday Service</h3><p>9:00 AM – 11:00 AM</p></article>
-      <article class="service-card"><span class="service-day">Tuesday</span><h3>Family Nurture</h3><p>7:00 PM – 9:00 PM</p></article>
-      <article class="service-card"><span class="service-day">Friday</span><h3>Abound in Prayer</h3><p>7:30 PM – 9:30 PM</p></article>
-    </div>
-  </section>
-
-  <!-- UPCOMING EVENTS FROM WORKERS -->
-  <section class="band b-ivory" id="events">
-    <div class="section-heading">
-      <p class="script">What's happening</p>
-      <h2>Upcoming <em>Events</em></h2>
-      <p>Activities marked as public by the BCFC Workers team will appear here automatically.</p>
-    </div>
-    <div data-public-events="all"></div>
-    <p data-public-event-status></p>
-    <p class="center"><a class="btn btn-dark" href="events">View All Events</a></p>
-  </section>
-
-  <!-- MAIN CHURCH -->
-  <section class="band b-white" id="visit">
-    <div class="location-feature">
-      <div>
-        <p class="script">Visit us</p>
-        <h2>Baguio City Foursquare Church</h2>
-        <p class="location-subtitle">Baguio Foursquare Family Center</p>
-        <dl class="location-details">
-          <div><dt>Pastor</dt><dd>Rev. Dale Pinzon</dd></div>
-          <div><dt>Address</dt><dd>392 Lt. Tacay Rd, Pinsao Proper, Baguio City</dd></div>
-        </dl>
-        <div class="hero-actions">
-          <a class="btn btn-dark" href="https://www.google.com/maps/search/?api=1&query=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City" target="_blank" rel="noopener">Open in Google Maps</a>
-          <a class="btn btn-outline-dark" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Facebook</a>
-        </div>
-      </div>
-      <div class="map-frame">
-        <button type="button" class="map-reset" id="bcfc-map-reset" aria-label="Reset map to Baguio City Foursquare Church">↻ Reset Map</button>
-        <iframe id="bcfc-map" title="Baguio City Foursquare Church map" src="https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-    </div>
-  </section>
-
-  <!-- OTHER BAGUIO CHURCHES -->
-  <section class="band b-navy" id="churches">
-    <div class="section-heading center light">
-      <p class="script">Foursquare family in Baguio</p>
-      <h2>Other <em>Churches</em></h2>
-      <p>Find a Foursquare church near you in Baguio City.</p>
-    </div>
-    <div class="church-grid">
-      <article class="church-card"><h3>Agape Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Rev. Orlando S. Villegas</p><p>046 Interior Ledesma St., Aurora Hill, Baguio City</p></article>
-      <article class="church-card"><h3>Aurora Hill Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Narcisa P. Belino</p><p>062 Ledesma St., Aurora Hill, Baguio City</p></article>
-      <article class="church-card"><h3>City Central Foursquare Gospel Church</h3><p><strong>Pastor:</strong> Ptra. Rose Marie M. Dontogan</p><p>1 Yandok St., Baguio City</p></article>
-      <article class="church-card"><h3>Quirino Hill Foursquare Gospel Church</h3><p>7 Quirino Hill Road, Quirino Hill East, Baguio City</p></article>
-      <article class="church-card"><h3>Peza Foursquare Gospel Church</h3><p>96 Purok Pidawan, Loakan Rd, Baguio City</p></article>
-      <article class="church-card"><h3>Marcos Highway Foursquare Gospel Church</h3><p>Marcos Highway, Baguio City</p></article>
-    </div>
-  </section>
-
-  <!-- SOCIAL / ONLINE SERVICE -->
-  <section class="band b-purple center">
-    <p class="script">Stay connected</p>
-    <h2>Worship with us <em>online</em></h2>
-    <p>Join the BCFC online service and keep up with church updates through our Facebook page.</p>
-    <a class="btn" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Watch on Facebook</a>
-  </section>
-
-  <!-- WELCOME / CONTACT -->
-  <section class="band b-gold center">
-    <h2>You are <em>welcome</em> here.</h2>
-    <p>Whether you are visiting for the first time or have been part of our family for years, there is a place for you at BCFC.</p>
-    <a class="btn btn-dark" href="contact">Contact Us</a>
-  </section>
 </main>
 <div id="site-footer"></div>
+
+<button type="button" class="to-top" id="back-to-top" aria-label="Back to top" title="Back to top">&#8593;</button>
 <script>
   (function () {
-    const button = document.getElementById('bcfc-map-reset');
-    const map = document.getElementById('bcfc-map');
-    if (!button || !map) return;
-    const homeUrl = 'https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed';
-    button.addEventListener('click', function () {
-      map.src = homeUrl;
-    });
+    const button = document.getElementById('back-to-top');
+    if (!button) return;
+    function updateButton() { button.classList.toggle('show', window.scrollY > 180); }
+    window.addEventListener('scroll', updateButton, { passive: true });
+    button.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    updateButton();
   })();
 </script>
+
+<!-- ============ SERVICE TIMES MODAL ============ -->
+<!-- Hidden until the "Service Times" button is clicked. Built/filled in by service-times.js -->
+<div class="st-modal" id="st-modal" hidden aria-hidden="true">
+  <div class="st-overlay" id="st-overlay"></div>
+  <div class="st-dialog" role="dialog" aria-modal="true" aria-label="Service Times">
+    <button type="button" class="st-close" id="st-close" aria-label="Close">&times;</button>
+    <div class="st-slides" id="st-slides"></div>
+    <div class="st-controls">
+      <button type="button" class="st-arrow" id="st-prev" aria-label="Previous">&#8249;</button>
+      <div class="st-dots" id="st-dots"></div>
+      <button type="button" class="st-arrow" id="st-next" aria-label="Next">&#8250;</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

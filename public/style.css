@@ -35,10 +35,11 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .site-nav a { color: #fff; text-decoration: none; }
 .nav-search { display: none; }
 .dropdown { margin-left: 1.5rem; }                     /* no "position": the panel spans the header */
-.dropdown > a { position: relative; display: inline-block; padding: .35rem 0; }
-.dropdown > a::after { content: "\25BE"; font-size: .75em; margin-left: .35rem; opacity: .8; }
-.dropdown:hover > a, .dropdown:focus-within > a { color: var(--gold); }
-.dropdown:hover > a::before { content: ""; position: absolute; left: -1rem; right: -1rem; top: 100%; height: 1.8rem; }  /* keeps the menu open while moving down */
+.dropdown > a, .dropdown > .nav-category { position: relative; display: inline-block; padding: .35rem 0; }
+.dropdown > .nav-category { color:#fff; font-weight:600; cursor:default; }
+.dropdown > .nav-category::after { content: "\25BE"; font-size: .75em; margin-left: .35rem; opacity: .8; }
+.dropdown:hover > a, .dropdown:focus-within > a, .dropdown:hover > .nav-category { color: var(--gold); }
+.dropdown:hover > a::before, .dropdown:hover > .nav-category::before { content: ""; position: absolute; left: -1rem; right: -1rem; top: 100%; height: 1.8rem; }  /* keeps the menu open while moving down */
 /* The panel: dark links on the left, colored "more" panel on the right */
 .mega { display: none; position: absolute; top: 100%; z-index: 20; right: 1rem; left: auto; width: min(1100px, calc(100% - 2rem));
   grid-template-columns: 1.4fr 1fr; border-top: 4px solid var(--gold); box-shadow: 0 14px 30px rgba(0,0,0,.35); }
@@ -176,8 +177,8 @@ p { margin: 0 0 1rem; max-width: 62ch; }
   .site-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; padding-bottom: 1rem; background: var(--theme); }
   .site-nav.open { display: flex; }
   .dropdown { margin: 0; }
-  .dropdown > a { display: block; padding: .7rem 1.5rem; font-weight: 600; }
-  .dropdown > a::after, .dropdown:hover > a::before { display: none; }
+  .dropdown > a, .dropdown > .nav-category { display: block; padding: .7rem 1.5rem; font-weight: 600; }
+  .dropdown > a::after, .dropdown > .nav-category::after, .dropdown:hover > a::before, .dropdown:hover > .nav-category::before { display: none; }
   .mega, .dropdown:hover .mega, .dropdown:focus-within .mega { display: block; position: static; border: 0; box-shadow: none; }
   .mega-main { background: transparent; padding: 0; }
   .mega-label, .mega-side { display: none; }
@@ -204,11 +205,11 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .public-event{margin-bottom:.75rem;}
 
 /* ---------- BCFC HOMEPAGE ---------- */
-.bcfc-hero { min-height: 650px; display: grid; place-items: center; text-align: center; padding: 5rem 1.5rem; background: radial-gradient(circle at top, #6a4698 0, #4a2b7a 42%, #101a3d 100%); color: #fff; }
+.bcfc-hero { min-height: 460px; display: grid; place-items: center; text-align: center; padding: 2.5rem 1.5rem; background: radial-gradient(circle at top, #6a4698 0, #4a2b7a 42%, #101a3d 100%); color: #fff; }
 .bcfc-hero-inner { max-width: 900px; }
-.bcfc-logo-wrap { width: 150px; height: 150px; margin: 0 auto 1.4rem; display: grid; place-items: center; }
-.bcfc-logo { max-width: 150px; max-height: 150px; object-fit: contain; }
-.logo-placeholder { display: none; width: 150px; height: 150px; border: 2px dashed rgba(255,255,255,.65); border-radius: 50%; place-items: center; padding: 1rem; font: 700 1rem var(--head); color: #fff; }
+.bcfc-logo-wrap { width: 110px; height: 110px; margin: 0 auto 1rem; display: grid; place-items: center; }
+.bcfc-logo { max-width: 110px; max-height: 110px; object-fit: contain; }
+.logo-placeholder { display: none; width: 110px; height: 110px; border: 2px dashed rgba(255,255,255,.65); border-radius: 50%; place-items: center; padding: 1rem; font: 700 1rem var(--head); color: #fff; }
 .logo-placeholder small { display:block; margin-top:.4rem; font: 400 .58rem/1.2 var(--body); opacity:.8; }
 .eyebrow { margin: 0 0 .6rem; color: var(--gold); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
 .bcfc-hero h1 { font-size: clamp(2rem, 5vw, 4rem); margin-bottom: .5rem; }
@@ -216,6 +217,7 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .welcome-copy { max-width: 700px; margin: 0 auto 1.5rem; color: #eeeaf7; font-size: 1.05rem; }
 .hero-actions { display:flex; flex-wrap:wrap; gap:.8rem; align-items:center; }
 .bcfc-hero .hero-actions { justify-content:center; }
+.bcfc-hero .hero-actions .btn { width: 180px; min-width: 180px; height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; text-align: center; font: inherit; font-weight: 600; line-height: 1; padding: 0 1rem; margin: 0; }
 .section-heading { margin-bottom: 2rem; }
 .section-heading.center { text-align:center; }
 .section-heading.center p { margin-inline:auto; }
@@ -250,6 +252,41 @@ p { margin: 0 0 1rem; max-width: 62ch; }
   .service-grid, .church-grid, .location-feature { grid-template-columns:1fr; }
   .map-frame { min-height:300px; }
   .map-frame iframe { height:300px; }
-  .bcfc-hero { min-height:600px; padding:4rem 1.2rem; }
+  .bcfc-hero { min-height:480px; padding:2.5rem 1.2rem; }
   .desktop-only { display:none; }
+}
+
+/* About Us is a label with direct links, not a clickable mega-dropdown. */
+.about-nav { position: relative; }
+.about-nav-label { position: relative; display: inline-block; padding: .35rem 0; font-weight: 600; cursor: default; }
+.about-nav-label::after { content: ""; }
+.about-links { display:none; position:absolute; z-index:100; top:100%; right:0; min-width:220px; padding:.6rem; background:var(--navy); box-shadow:0 10px 22px rgba(0,0,0,.2); }
+.about-nav:hover .about-links, .about-nav:focus-within .about-links { display:grid; }
+.about-links a { color:#fff; padding:.65rem .8rem; text-decoration:none; }
+.about-links a:hover { color:var(--gold); }
+.map-frame { position:relative; min-height:300px; overflow:hidden; border:5px solid var(--gold); }
+.map-frame iframe { width:100%; height:300px; border:0; display:block; }
+.map-reset { position:absolute; z-index:2; top:10px; right:10px; padding:.55rem .75rem; border:0; border-radius:5px; background:var(--navy); color:white; cursor:pointer; }
+
+/* Visit Us: welcoming, easy-to-scan service schedule */
+.visit-schedule { width:100%; }
+.visit-schedule > .script { margin:0 0 .35rem; color:var(--gold); font-size:1.25rem; }
+.visit-schedule h2 { margin:.1rem 0 .5rem; }
+.visit-intro { max-width:38rem; margin-bottom:1.25rem; }
+.service-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin:1.25rem 0; }
+.service-card { padding:1.15rem; border-radius:12px; border:1px solid rgba(30,65,145,.18); border-top:5px solid var(--gold); background:#fff; box-shadow:0 8px 22px rgba(17,31,73,.09); }
+.service-card h3 { margin:.4rem 0 .25rem; color:var(--navy); }
+.service-day { font-size:.72rem; letter-spacing:.12em; font-weight:800; color:#a87900; }
+.service-card .service-time { font-weight:800; color:var(--theme); margin:.3rem 0 .55rem; }
+.service-card p:last-child { margin-bottom:0; }
+.visit-pastor { margin-top:.75rem; }
+@media(max-width:760px){.service-cards{grid-template-columns:1fr}.service-card{padding:1rem}}
+
+/* Keep interior pages focused: remove oversized introductory banners everywhere.
+   The homepage's main BCFC hero is intentionally preserved. */
+body:not(:has(.bcfc-hero)) .hero,
+body:not(:has(.bcfc-hero)) .hero-left,
+body:not(:has(.bcfc-hero)) .hero-strip,
+body:not(:has(.bcfc-hero)) .hero-split {
+  display: none !important;
 }
