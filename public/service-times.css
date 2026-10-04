@@ -3,6 +3,7 @@
    ========================================================== */
 
 .st-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1.5rem; }
+.st-modal[hidden] { display: none; }
 .st-overlay { position: absolute; inset: 0; background: rgba(16, 26, 61, .82); }
 
 .st-dialog {
