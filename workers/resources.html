@@ -16,11 +16,49 @@
 .res-btn{background:var(--navy);color:#fff;text-decoration:none;font-weight:600;font-size:.85rem;padding:.5rem 1rem;border-radius:6px}
 .res-btn:hover{background:var(--blue)}
 #resource-status{color:#666}
+.res-aud{display:block;color:#8a6d00;margin:-6px 0 12px;font-size:.78rem}
+.res-del{background:none;border:1px solid #d9b3b8;color:var(--scarlet);font:600 .8rem var(--body);padding:.4rem .7rem;border-radius:6px;cursor:pointer;margin-right:6px}
+.res-del:hover{background:var(--scarlet);color:#fff}
+.res-pending{font-size:.82rem;color:#8a6d00;font-weight:600}
+#admin-panel{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:6px 18px;margin:18px 0 8px}
+#admin-panel summary{cursor:pointer;font-weight:700;padding:10px 0;color:var(--navy)}
+#upload-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 16px;padding-bottom:14px}
+#upload-form label{display:flex;flex-direction:column;gap:4px;font-size:.82rem;font-weight:600}
+#upload-form input[type=text],#upload-form textarea{font:inherit;font-weight:400;padding:.5rem;border:1px solid var(--line);border-radius:6px}
+#upload-form .wide{grid-column:1/-1}
+.for-box{display:flex;flex-wrap:wrap;gap:6px 14px}.for-box label{flex-direction:row;align-items:center;gap:6px;font-weight:400}
+#up-btn{background:var(--navy);color:#fff;border:0;border-radius:6px;font:600 .9rem var(--body);padding:.65rem 1.2rem;cursor:pointer;justify-self:start}
+#up-btn:disabled{opacity:.6;cursor:wait}
+.res-msg{margin:0 0 12px;padding:10px 12px;border-radius:8px;font-size:.88rem}.res-msg.ok{background:#e6f6ea;color:#176b34}.res-msg.bad{background:#fde8ea;color:#9b1226}
+.res-msg[hidden],#admin-panel[hidden]{display:none}
+
 </style></head>
 <body>
 <header class="portal-header" id="portal-header"></header>
 <main class="board-page"><h1>Resources</h1>
 <p class="page-note">Files and templates for BCFC workers. Click Download to save a file to your device.</p>
+<details id="admin-panel" hidden>
+<summary>＋ Add a file (Admin)</summary>
+<form id="upload-form">
+  <label>File (PDF, Word, PowerPoint, Excel, image… max 3 MB)<input type="file" id="up-file" required accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.txt,.png,.jpg,.jpeg,.mp3"></label>
+  <label>Title<input type="text" id="up-title" maxlength="80" placeholder="e.g. Youth Camp Form"></label>
+  <label>Category<input type="text" id="up-cat" maxlength="40" list="res-cats" placeholder="e.g. Forms, Presentations"><datalist id="res-cats"></datalist></label>
+  <label class="wide">Short description<textarea id="up-desc" rows="2" maxlength="200" placeholder="What is this file for?"></textarea></label>
+  <div class="wide"><strong style="font-size:.82rem">Who can see it?</strong>
+    <div class="for-box">
+      <label><input type="checkbox" id="for-all" checked> Everyone</label>
+      <label><input type="checkbox" class="for-role" value="childrens"> Children's Church</label>
+      <label><input type="checkbox" class="for-role" value="ufy"> UFY</label>
+      <label><input type="checkbox" class="for-role" value="ufw"> UFW</label>
+      <label><input type="checkbox" class="for-role" value="ufm"> UFM</label>
+      <label><input type="checkbox" class="for-role" value="production"> Production</label>
+      <label><input type="checkbox" class="for-role" value="creatives"> Creatives</label>
+      <label><input type="checkbox" class="for-role" value="pastor"> Pastor</label>
+      <label><input type="checkbox" class="for-role" value="preaching"> Preaching Staff</label>
+    </div></div>
+  <button id="up-btn" class="wide">Upload &amp; save to GitHub</button>
+</form></details>
+<p id="admin-msg" class="res-msg" hidden></p>
 <p id="resource-status" role="status">Loading resources…</p>
 <div id="resource-list"></div></main>
 <script type="module" src="resources.js"></script>

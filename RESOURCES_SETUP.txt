@@ -1,0 +1,39 @@
+BCFC Workers - Resources: one-time setup for "Upload & save to GitHub"
+
+The Resources page lets an Admin add/remove files. The site saves them straight to
+GitHub (one commit) and Vercel redeploys automatically.
+
+You must give Vercel a GitHub token ONCE. The token stays on Vercel only - never in the code.
+
+STEP 1 - Create the GitHub token
+ 1. GitHub > click your profile picture > Settings > Developer settings
+ 2. Personal access tokens > Fine-grained tokens > Generate new token
+ 3. Token name: BCFC Resources     Expiration: pick the longest you are comfortable with
+ 4. Repository access: "Only select repositories" > choose BCFC-Site
+ 5. Permissions > Repository permissions > Contents: "Read and write"
+ 6. Generate token and COPY it (you only see it once).
+
+STEP 2 - Add it to Vercel
+ 1. Vercel > your project (bcfc-site) > Settings > Environment Variables
+ 2. Name:  GITHUB_TOKEN     Value: (paste the token)     Environments: Production (and Preview if you like)
+ 3. Save, then go to Deployments and Redeploy (variables only apply to new deployments).
+
+OPTIONAL variables (only if different from the defaults)
+ GITHUB_REPO    default JFrancis0901/BCFC-Site
+ GITHUB_BRANCH  default main
+
+HOW TO USE
+ Log in as Admin > Resources > "+ Add a file (Admin)".
+ Choose the file, title, category and who can see it, then "Upload & save to GitHub".
+ After about a minute (Vercel redeploy) the file appears for everyone allowed to see it.
+
+LIMITS
+ - Max 3 MB per file (Vercel request limit). Bigger files: upload directly on GitHub into workers/Files/
+   and add a line to workers/Files/resources.json.
+ - Allowed types: pdf, doc, docx, ppt, pptx, xls, xlsx, csv, txt, png, jpg, jpeg, mp3.
+
+IMPORTANT
+ - After an upload, GitHub has a newer commit than your computer. In GitHub Desktop click
+   "Fetch origin" / "Pull origin" before you push your own changes.
+ - Files are normal web files: anyone who knows the exact link can download them. Do not
+   upload confidential documents.
