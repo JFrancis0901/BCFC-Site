@@ -130,3 +130,12 @@ body{margin:0;font-family:var(--body);color:var(--ink);background:var(--ivory)}
   cursor:pointer;
 }
 .portal-notification-ok:hover{opacity:.9}
+
+/* ---------- Admin "View as" (troubleshooting) ---------- */
+.view-as{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:#a9a4c4}
+.view-as select{font:600 .8rem var(--body);padding:.3rem .45rem;border-radius:4px;border:1px solid var(--gold);background:#fff;color:var(--ink);max-width:190px}
+.view-as[hidden]{display:none}
+.view-as-banner{display:flex;align-items:center;justify-content:center;gap:.8rem;flex-wrap:wrap;background:var(--gold);color:var(--navy);font-size:.85rem;font-weight:600;padding:.45rem 1rem;text-align:center}
+.view-as-banner[hidden]{display:none}
+.view-as-banner button{font:600 .8rem var(--body);background:var(--navy);color:#fff;border:0;border-radius:4px;padding:.3rem .7rem;cursor:pointer}
+.view-as-banner button:hover{background:var(--scarlet)}
