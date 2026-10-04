@@ -8,20 +8,17 @@
 // moreTitle + more = the small links in the right-hand panel
 const MENU = [
   { label: 'About Us', href: 'about.html', color: 'var(--purple)',
-    items: [['Mission and Vision', 'about.html#mission-vision', 'Our mission and vision.'], ['Our history', 'about-history.html', 'Explore our history.'], ['Organizational Chart', 'about-organization.html', 'See the current ministry structure.']],
-    moreTitle: 'More about BCFC', more: [['Find a church', 'find-church.html'], ['Contact us', 'contact.html'], ['Upcoming events', 'events.html']] },
+    items: [['Mission and Vision', 'about.html#mission-vision', 'Our mission and vision.'], ['Our history', 'about-history.html', 'Explore our history.'], ['Organizational Chart', 'about-organization.html', 'See the current ministry structure.'], ['Visit Us', 'about.html#visit', 'Service times, address, and map.']],
+    moreTitle: 'More about BCFC', more: [['Find a church', 'find-church.html'], ['Contact us', 'contact.html']] },
   { label: 'Workers', href: 'workers.html', color: 'var(--blue)',
     items: [['Children’s Church', 'workers.html#childrens', 'Children’s Church'], ['UFY', 'workers.html#ufy', 'United Foursquare Youth'], ['UFW', 'workers.html#ufw', 'United Foursquare Women'], ['UFM', 'workers.html#ufm', 'United Foursquare Men'], ['Praise & Worship', 'workers.html#worship', 'Praise & Worship'], ['Production', 'workers.html#production', 'Production'], ['Creatives', 'workers.html#creatives', 'Creatives']],
     moreTitle: 'BCFC Workers', more: [['View all ministries', 'workers.html'], ['Worker Login', '../workers/login.html']] },
-  { label: 'Partnership', href: 'support.html', color: 'var(--scarlet)',
-    items: [['Community Partnership', 'support.html', 'Let us serve together for the glory of the Lord.']],
+  { label: 'Partnership + Upcoming Events', href: 'support.html', color: 'var(--scarlet)',
+    items: [['Community Partnership', 'support.html', 'Let us serve together for the glory of the Lord.'], ['Events', 'events.html', 'See what is coming up.']],
     moreTitle: 'Work with BCFC', more: [['Partner With Us', 'support.html'], ['Contact us', 'contact.html']] },
-  { label: 'Mission + Ministry', href: 'ministries.html', color: 'var(--purple)',
-    items: [['Missions', 'missions.html', 'Take the message further.'], ['Disaster relief', 'relief.html', 'Help when it is needed most.'], ['Chaplains', 'chaplains.html', 'Bring care to where people are.']],
-    moreTitle: 'More ways to serve', more: [['Become a minister', 'minister.html'], ['Get involved', 'get-involved.html'], ['Contact us', 'contact.html']] },
-  { label: 'Events + Training', href: 'events.html', color: 'var(--blue)',
-    items: [['Upcoming events', 'events.html', 'See what is coming up.'], ['Training', 'training.html', 'Find a course to grow.']],
-    moreTitle: 'More to explore', more: [['Get involved', 'get-involved.html'], ['Water baptism', 'water-baptism.html'], ['Find a church', 'find-church.html']] }
+  { label: 'Other Churches', href: 'other-churches.html', color: 'var(--navy)',
+    items: [['Foursquare Family in Baguio', 'other-churches.html', 'Find a Foursquare church near you in Baguio City.']],
+    moreTitle: 'More', more: [['Contact us', 'contact.html'], ['Find a church', 'find-church.html']] }
 ];
 
 // ---------- 2. SEARCH: list every page here (add a line when you add a page) ----------
@@ -33,6 +30,7 @@ const PAGES = [
   { title: 'Mission and Vision', url: 'about.html#mission-vision', desc: 'Our mission and vision.', keys: 'mission vision purpose evangelism discipleship church planting leadership development social engagement transformation empowered missional healthy holistic harvesting churches' },
   { title: 'Our History', url: 'about-history.html', desc: 'How we got here.', keys: 'history timeline story founded years Foursquare BCFC' },
   { title: 'Organizational Chart', url: 'about-organization.html', desc: 'Current ministry structure.', keys: 'organization organizational chart hierarchy workers staff pastor ministry structure' },
+  { title: 'Visit Us', url: 'about.html#visit', desc: 'Service times, address, and map to BCFC.', keys: 'visit address map directions pastor location service times' },
   { title: 'Workers', url: 'workers.html', desc: 'Explore BCFC ministry workers.', keys: 'workers ministries members leaders' },
   { title: 'Become a Minister', url: 'minister.html', desc: 'Answer the call to ministry.', keys: 'minister ministry calling ordination credential apply train commissioned' },
   { title: 'Plant a Church', url: 'plant-church.html', desc: 'Start something new in your city.', keys: 'plant church planting start new coaching funding' },
@@ -48,7 +46,8 @@ const PAGES = [
   { title: 'Upcoming Events', url: 'events.html', desc: 'What is coming up.', keys: 'events calendar schedule dates upcoming' },
   { title: 'Training', url: 'training.html', desc: 'Courses to help you grow.', keys: 'training courses classes learn' },
   { title: 'Find a Church', url: 'find-church.html', desc: 'Service times and where we meet.', keys: 'find church service times sunday wednesday location visit address' },
-  { title: 'Contact Us', url: 'contact.html', desc: 'Address, phone and email.', keys: 'contact address phone email location reach message' }
+  { title: 'Contact Us', url: 'contact.html', desc: 'Address, phone and email.', keys: 'contact address phone email location reach message' },
+  { title: 'Other Churches', url: 'other-churches.html', desc: 'Foursquare family in Baguio City.', keys: 'other churches foursquare family baguio agape aurora hill city central quirino peza marcos highway' }
 ];
 
 // ---------- 3. BUILD THE HEADER ----------

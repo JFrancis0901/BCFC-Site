@@ -25,6 +25,29 @@
   <a class="btn" href="https://www.foursquare.org/about/history/" target="_blank" rel="noopener">Read Foursquare History</a>
 </section>
 
+<!-- VISIT US (moved here from the homepage) -->
+<section class="band b-white" id="visit">
+  <div class="location-feature">
+    <div>
+      <p class="script">Visit us</p>
+      <h2>Baguio City Foursquare Church</h2>
+      <p class="location-subtitle">Baguio Foursquare Family Center</p>
+      <dl class="location-details">
+        <div><dt>Pastor</dt><dd>Rev. Dale Pinzon</dd></div>
+        <div><dt>Address</dt><dd>392 Lt. Tacay Rd, Pinsao Proper, Baguio City</dd></div>
+      </dl>
+      <div class="hero-actions">
+        <a class="btn btn-dark" href="https://www.google.com/maps/search/?api=1&query=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City" target="_blank" rel="noopener">Open in Google Maps</a>
+        <a class="btn btn-outline-dark" href="https://www.facebook.com/BaguioCityFoursquareChurch/" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+    <div class="map-frame">
+      <button type="button" class="map-reset" id="bcfc-map-reset" aria-label="Reset map to Baguio City Foursquare Church">↻ Reset Map</button>
+      <iframe id="bcfc-map" title="Baguio City Foursquare Church map" src="https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
 <section class="band b-white">
   <div class="section-heading">
     <p class="script">Explore more</p>
@@ -32,8 +55,20 @@
   </div>
   <div class="grid">
     <a class="tile b" href="about-organization"><h3>Organizational Chart</h3><p>See the current BCFC ministry structure from the Workers portal.</p><span>Open chart</span></a>
+    <a class="tile p" href="about.html#visit"><h3>Visit Us</h3><p>Service times, pastor, address, and map.</p><span>See details</span></a>
   </div>
 </section>
 </main>
+<script>
+  (function () {
+    const button = document.getElementById('bcfc-map-reset');
+    const map = document.getElementById('bcfc-map');
+    if (!button || !map) return;
+    const homeUrl = 'https://www.google.com/maps?q=392+Lt.+Tacay+Rd%2C+Pinsao+Proper%2C+Baguio+City&output=embed';
+    button.addEventListener('click', function () {
+      map.src = homeUrl;
+    });
+  })();
+</script>
 <div id="site-footer"></div>
 </body></html>
