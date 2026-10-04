@@ -32,6 +32,18 @@
 </main>
 <div id="site-footer"></div>
 
+<button type="button" class="to-top" id="back-to-top" aria-label="Back to top" title="Back to top">&#8593;</button>
+<script>
+  (function () {
+    const button = document.getElementById('back-to-top');
+    if (!button) return;
+    function updateButton() { button.classList.toggle('show', window.scrollY > 180); }
+    window.addEventListener('scroll', updateButton, { passive: true });
+    button.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    updateButton();
+  })();
+</script>
+
 <!-- ============ SERVICE TIMES MODAL ============ -->
 <!-- Hidden until the "Service Times" button is clicked. Built/filled in by service-times.js -->
 <div class="st-modal" id="st-modal" hidden aria-hidden="true">

@@ -216,7 +216,7 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .welcome-copy { max-width: 700px; margin: 0 auto 1.5rem; color: #eeeaf7; font-size: 1.05rem; }
 .hero-actions { display:flex; flex-wrap:wrap; gap:.8rem; align-items:center; }
 .bcfc-hero .hero-actions { justify-content:center; }
-.bcfc-hero .hero-actions .btn { min-width: 180px; text-align: center; }
+.bcfc-hero .hero-actions .btn { width: 180px; min-width: 180px; height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; text-align: center; font: inherit; font-weight: 600; line-height: 1; padding: 0 1rem; margin: 0; }
 .section-heading { margin-bottom: 2rem; }
 .section-heading.center { text-align:center; }
 .section-heading.center p { margin-inline:auto; }
