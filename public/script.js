@@ -8,7 +8,7 @@
 // moreTitle + more = the small links in the right-hand panel
 const MENU = [
   { label: 'About Us', href: 'about.html', color: 'var(--purple)',
-    items: [['Mission and Vision', 'about.html#mission-vision', 'Our mission and vision.'], ['Our history', 'about-history.html', 'Explore our history.'], ['Organizational Chart', 'about-organization.html', 'See the current ministry structure.'], ['Visit Us', 'about.html#visit', 'Service times, address, and map.']],
+    items: [['Our Mission', 'about-mission.html', 'Our calling to serve and transform.'], ['Our Vision', 'about-vision.html', 'The future we are working toward.'], ['Our history', 'about-history.html', 'Explore our history.'], ['Organizational Chart', 'about-organization.html', 'See the current ministry structure.'], ['Visit Us', 'find-church.html', 'Service times, address, and map.']],
     moreTitle: 'More about BCFC', more: [['Find a church', 'find-church.html'], ['Contact us', 'contact.html']] },
   { label: 'Workers', href: 'workers.html', color: 'var(--blue)',
     items: [['Children’s Church', 'workers.html#childrens', 'Children’s Church'], ['UFY', 'workers.html#ufy', 'United Foursquare Youth'], ['UFW', 'workers.html#ufw', 'United Foursquare Women'], ['UFM', 'workers.html#ufm', 'United Foursquare Men'], ['Praise & Worship', 'workers.html#worship', 'Praise & Worship'], ['Production', 'workers.html#production', 'Production'], ['Creatives', 'workers.html#creatives', 'Creatives']],
@@ -27,7 +27,8 @@ const MENU = [
 const PAGES = [
   { title: 'Home', url: 'index.html', desc: 'Welcome to BCFC.', keys: 'home welcome church family newcomers' },
   { title: 'About Us', url: 'about.html', desc: 'Who we are.', keys: 'about who we are' },
-  { title: 'Mission and Vision', url: 'about.html#mission-vision', desc: 'Our mission and vision.', keys: 'mission vision purpose evangelism discipleship church planting leadership development social engagement transformation empowered missional healthy holistic harvesting churches' },
+  { title: 'Our Mission', url: 'about-mission.html', desc: 'Our calling and mission.', keys: 'mission purpose evangelism discipleship church planting leadership development social engagement transformation' },
+  { title: 'Our Vision', url: 'about-vision.html', desc: 'Our vision for the church.', keys: 'vision empowered missional healthy holistic harvesting churches national global transformation' },
   { title: 'Our History', url: 'about-history.html', desc: 'How we got here.', keys: 'history timeline story founded years Foursquare BCFC' },
   { title: 'Organizational Chart', url: 'about-organization.html', desc: 'Current ministry structure.', keys: 'organization organizational chart hierarchy workers staff pastor ministry structure' },
   { title: 'Visit Us', url: 'about.html#visit', desc: 'Service times, address, and map to BCFC.', keys: 'visit address map directions pastor location service times' },
