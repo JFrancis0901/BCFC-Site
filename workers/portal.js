@@ -5,7 +5,7 @@ import { auth, db, authPersistenceReady } from "./firebase-config.js";
 const NAV=[
  ['Calendar','calendar.html','all'],['Announcements','announcements.html','admin,pastor,childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead'],
  ["Children's Church",'dept.html?m=childrens','admin,childrens-lead,childrens'],['UFY','dept.html?m=ufy','admin,ufy-lead,ufy'],['UFW','dept.html?m=ufw','admin,ufw-lead,ufw'],['UFM','dept.html?m=ufm','admin,ufm-lead,ufm'],
- ['Praise & Worship','worship.html','admin,pastor,preaching'],['Production','projects.html?m=production','admin,production-lead,production'],['Creatives','projects.html?m=creatives','admin,creatives-lead,creatives'],['Members','members.html','admin'],['Chat','chat.html','all']
+ ['Praise & Worship','worship.html','admin,pastor,preaching'],['Production','projects.html?m=production','admin,production-lead,production'],['Creatives','projects.html?m=creatives','admin,creatives-lead,creatives'],['Resources','resources.html','all'],['Members','members.html','admin'],['Chat','chat.html','all']
 ];
 const NAMES={admin:'Admin',pastor:'Pastor',preaching:'Preaching Staff','childrens-lead':"Children's Church Lead",childrens:"Children's Church Worker",'ufy-lead':'UFY Lead',ufy:'UFY Worker','ufw-lead':'UFW Lead',ufw:'UFW Worker','ufm-lead':'UFM Lead',ufm:'UFM Worker','production-lead':'Production Lead',production:'Production Worker','creatives-lead':'Creatives Lead',creatives:'Creatives Worker'};
 let realRole=sessionStorage.getItem('bcfc-role')||'';
