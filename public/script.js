@@ -71,7 +71,7 @@ const navHtml = MENU.map(m => {
 document.getElementById('site-header').innerHTML = `
   <div class="topbar">${SEARCH_BOX}<span class="toplinks"><a href="contact.html">Contact</a><a href="../workers/login.html">Worker Login</a></span></div>
   <header class="site-header">
-    <a href="index.html" class="logo">BCFC</a> <!-- EDIT: your church name -->
+    <a href="index.html" class="logo" aria-label="Baguio City Foursquare Church - Home"><img src="assets/bcfc-logo.png" alt="BCFC logo" onerror="this.replaceWith(document.createTextNode('BCFC'))"></a> <!-- EDIT: logo file is public/assets/bcfc-logo.png -->
     <button class="menu-toggle" aria-expanded="false">Menu</button>
     <nav class="site-nav" id="nav"><div class="nav-search">${SEARCH_BOX}</div>${navHtml}</nav>
   </header>`;
@@ -217,3 +217,16 @@ if (PHOTOS.length) {
     el.style.setProperty('--photo', `url("${nextPhoto()}")`);
   });
 }
+
+// ---------- 9. EXTRA FEATURES: language picker + chat assistant ----------
+// language.js = "Change language" menu (top bar).  assistant.js/.css = chat assistant (lower right).
+(function () {
+  const css = document.createElement('link');
+  css.rel = 'stylesheet'; css.href = 'assistant.css';
+  document.head.appendChild(css);
+  ['language.js', 'assistant.js'].forEach(src => {
+    const el = document.createElement('script');
+    el.src = src; el.defer = true;
+    document.body.appendChild(el);
+  });
+})();
