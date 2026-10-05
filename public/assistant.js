@@ -86,12 +86,13 @@
     log.scrollTop = log.scrollHeight;
     return b;
   }
-  // Keep answers inside the assistant. Questions should not open another page/interface.
-  const linkBtns = () => '';
+  const linkBtns = links => links && links.length
+    ? '<div class="bca-links">' + links.map(l => `<a href="${l[1]}"${/^https?:/.test(l[1]) ? ' target="_blank" rel="noopener"' : ''}>${esc(l[0])}</a>`).join('') + '</div>' : '';
   const textHtml = t => esc(t).replace(/\n/g, '<br>');
 
   function greet() {
-    say('bot', 'Hi! I’m the BCFC Assistant. Ask me about our church, services, location, events, or ministries.');
+    say('bot', 'Hi, I’m the BCFC Assistant. I can help you find service times, our location, events, water baptism, ministries and more.');
+    say('bot', 'I’m an automated guide, not a person. For prayer or pastoral needs, please contact the church directly.');
     CHIPS.forEach(c => { const b = el('button', null, esc(c)); b.type = 'button'; b.addEventListener('click', () => ask(c)); chips.appendChild(b); });
   }
 
@@ -101,19 +102,24 @@
     if (typeof loadIndex === 'function' && typeof searchPages === 'function') {
       try {
         const hits = searchPages(await loadIndex(), q).hits.slice(0, 3);
-        if (hits.length) return 'I found information about this on the BCFC website. Please ask your question more specifically and I’ll give you the short answer here.';
+        if (hits.length) return 'I’m not sure about that, but these pages may help:' + linkBtns(hits.map(h => [h.title, h.url]));
       } catch (e) { /* fall through */ }
     }
-    return 'Sorry, I don’t have a short answer for that yet. Try asking about services, location, events, ministries, or contact information.';
+    return 'Sorry, I couldn’t find that. Please try different words, or reach out through our Contact page.' + linkBtns([['Contact Us', 'contact.html']]);
   }
 
   async function ask(q) {
     q = q.trim(); if (!q) return;
-    chips.hidden = true;
     say('me', esc(q));
     const typing = say('bot typing', '<span></span><span></span><span></span>');
     const html = await answer(q);
-    setTimeout(() => { typing.className = 'bca-msg bot'; typing.innerHTML = html; log.scrollTop = log.scrollHeight; }, 350);
+    setTimeout(() => {
+      typing.className = 'bca-msg bot';
+      typing.innerHTML = html;
+      // Keep the shortcut questions available after every answer.
+      chips.hidden = false;
+      log.scrollTop = log.scrollHeight;
+    }, 350);
   }
 
   function toggle(open) {

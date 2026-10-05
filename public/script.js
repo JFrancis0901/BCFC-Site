@@ -1,4 +1,7 @@
 // script.js = runs on EVERY page (photo list is in photos.js).
+// Hide the dynamic header while it is being built so the logo/menu cannot flash during refresh.
+const __siteHeader = document.getElementById('site-header');
+if (__siteHeader) __siteHeader.style.visibility = 'hidden';
 // It builds the menu, the footer, the site search, the back-to-top button, the mobile button, and random photos.
 
 // ---------- 1. THE MENU: edit once, it changes on every page ----------
@@ -75,6 +78,7 @@ document.getElementById('site-header').innerHTML = `
     <button class="menu-toggle" aria-expanded="false">Menu</button>
     <nav class="site-nav" id="nav"><div class="nav-search">${SEARCH_BOX}</div>${navHtml}</nav>
   </header>`;
+if (__siteHeader) __siteHeader.style.visibility = 'visible';
 
 // ---------- 4. BUILD THE FOOTER ----------
 document.getElementById('site-footer').innerHTML = `
