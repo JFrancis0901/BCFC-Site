@@ -98,31 +98,10 @@ btn.addEventListener('click', () => {
   btn.setAttribute('aria-expanded', nav.classList.toggle('open'));
 });
 
-// ---------- 6. SMOOTH NAVIGATION ----------
+// ---------- 6. NAVIGATION ----------
+// Navigate immediately. The tiny page-turn movement is handled by CSS;
+// do not delay clicks or fade the current page out.
 (function () {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Fade the current page out before moving to another internal page.
-  // Hash links, external links, downloads and modified clicks behave normally.
-  document.addEventListener('click', function (e) {
-    if (reduceMotion || e.defaultPrevented) return;
-    const link = e.target.closest && e.target.closest('a[href]');
-    if (!link) return;
-    if (link.target && link.target !== '_self') return;
-    if (link.hasAttribute('download')) return;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-
-    let url;
-    try { url = new URL(link.href, location.href); } catch (_) { return; }
-    if (url.origin !== location.origin) return;
-    if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
-
-    e.preventDefault();
-    document.body.classList.add('page-leaving');
-    window.setTimeout(() => { window.location.href = url.href; }, 220);
-  });
-
-  // If the browser restores a page from its back/forward cache, make sure it is visible.
   window.addEventListener('pageshow', () => document.body.classList.remove('page-leaving'));
 })();
 

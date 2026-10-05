@@ -16,22 +16,20 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
-/* ---------- Smooth page transitions ---------- */
-@keyframes bcfc-page-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* ---------- Minimal page movement: like turning to the next page ---------- */
+@keyframes bcfc-page-turn-in {
+  from { transform: translateX(8px); }
+  to { transform: translateX(0); }
 }
-body { animation: bcfc-page-in .28s ease-out both; }
-body.page-leaving { animation: none; opacity: 0; transition: opacity .22s ease-in; }
-
-/* The header is built by script.js. Keep it invisible until it is complete,
-   then fade it in so the BCFC logo never flashes during refresh. */
-#site-header { opacity: 0; transition: opacity .30s ease-out; }
-#site-header.ready { opacity: 1; }
+/* No fade-to-black or delayed navigation. A tiny, quick horizontal movement only. */
+body { animation: bcfc-page-turn-in .12s ease-out both; }
+body.page-leaving { animation: none; opacity: 1; transform: none; }
+/* Keep the header visible and steady; don't fade the BCFC logo on refresh. */
+#site-header, #site-header.ready { opacity: 1; transition: none; }
 
 @media (prefers-reduced-motion: reduce) {
   body, #site-header { animation: none !important; transition: none !important; }
-  body.page-leaving { opacity: 1; }
+  body.page-leaving { opacity: 1; transform: none; }
 }
 body { margin: 0; font-family: var(--body); color: var(--ink); background: #fff; line-height: 1.75; }
 h1, h2, h3, h4 { font-family: var(--head); line-height: 1.15; margin: 0 0 .8rem; }
