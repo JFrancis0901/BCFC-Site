@@ -30,7 +30,8 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .topbar .toplinks a { color: var(--gold); margin-left: 1.2rem; text-decoration: none; }
 .site-header { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center;
   padding: .9rem 1.5rem; background: var(--theme); border-bottom: 4px solid var(--gold); }
-.logo { color: #fff; font: 900 italic 1.7rem var(--head); text-decoration: none; }
+.logo { color: #fff; font: 900 italic 1.7rem var(--head); text-decoration: none; display: inline-flex; align-items: center; }
+.logo img { height: 42px; width: auto; max-width: none; display: block; }  /* fixes the oversized logo flash on refresh: the raw file is 518x518px with no size rule before this */
 .site-nav { display: flex; }
 .site-nav a { color: #fff; text-decoration: none; }
 .nav-search { display: none; }
