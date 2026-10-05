@@ -1,7 +1,7 @@
 // script.js = runs on EVERY page (photo list is in photos.js).
-// Hide the dynamic header while it is being built so the logo/menu cannot flash during refresh.
+// Keep the dynamic header hidden until it is fully built so the logo/menu never flashes.
 const __siteHeader = document.getElementById('site-header');
-if (__siteHeader) __siteHeader.style.visibility = 'hidden';
+if (__siteHeader) __siteHeader.setAttribute('aria-busy', 'true');
 // It builds the menu, the footer, the site search, the back-to-top button, the mobile button, and random photos.
 
 // ---------- 1. THE MENU: edit once, it changes on every page ----------
@@ -78,7 +78,10 @@ document.getElementById('site-header').innerHTML = `
     <button class="menu-toggle" aria-expanded="false">Menu</button>
     <nav class="site-nav" id="nav"><div class="nav-search">${SEARCH_BOX}</div>${navHtml}</nav>
   </header>`;
-if (__siteHeader) __siteHeader.style.visibility = 'visible';
+if (__siteHeader) {
+  __siteHeader.removeAttribute('aria-busy');
+  requestAnimationFrame(() => __siteHeader.classList.add('ready'));
+}
 
 // ---------- 4. BUILD THE FOOTER ----------
 document.getElementById('site-footer').innerHTML = `
@@ -95,7 +98,35 @@ btn.addEventListener('click', () => {
   btn.setAttribute('aria-expanded', nav.classList.toggle('open'));
 });
 
-// ---------- 6. SEARCH ENGINE ----------
+// ---------- 6. SMOOTH NAVIGATION ----------
+(function () {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Fade the current page out before moving to another internal page.
+  // Hash links, external links, downloads and modified clicks behave normally.
+  document.addEventListener('click', function (e) {
+    if (reduceMotion || e.defaultPrevented) return;
+    const link = e.target.closest && e.target.closest('a[href]');
+    if (!link) return;
+    if (link.target && link.target !== '_self') return;
+    if (link.hasAttribute('download')) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    let url;
+    try { url = new URL(link.href, location.href); } catch (_) { return; }
+    if (url.origin !== location.origin) return;
+    if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+
+    e.preventDefault();
+    document.body.classList.add('page-leaving');
+    window.setTimeout(() => { window.location.href = url.href; }, 220);
+  });
+
+  // If the browser restores a page from its back/forward cache, make sure it is visible.
+  window.addEventListener('pageshow', () => document.body.classList.remove('page-leaving'));
+})();
+
+// ---------- 7. SEARCH ENGINE ----------
 const norm = s => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
 const escHtml = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -193,7 +224,7 @@ document.addEventListener('click', e => {
   document.querySelectorAll('.search .results').forEach(b => { if (!b.parentElement.contains(e.target)) b.hidden = true; });
 });
 
-// ---------- 7. BACK TO TOP BUTTON (lower right) ----------
+// ---------- 8. BACK TO TOP BUTTON (lower right) ----------
 const toTop = document.createElement('button');
 toTop.className = 'to-top';
 toTop.setAttribute('aria-label', 'Back to top');
@@ -202,7 +233,7 @@ document.body.appendChild(toTop);
 window.addEventListener('scroll', () => toTop.classList.toggle('show', window.scrollY > 300), { passive: true });
 toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-// ---------- 8. RANDOM PHOTOS ----------
+// ---------- 9. RANDOM PHOTOS ----------
 // Shuffles the list so photos don't repeat until all have been used.
 let pool = [];
 function nextPhoto() {
@@ -222,7 +253,7 @@ if (PHOTOS.length) {
   });
 }
 
-// ---------- 9. EXTRA FEATURES: language picker + chat assistant ----------
+// ---------- 10. EXTRA FEATURES: language picker + chat assistant ----------
 // language.js = "Change language" menu (top bar).  assistant.js/.css = chat assistant (lower right).
 (function () {
   const css = document.createElement('link');

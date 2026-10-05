@@ -15,6 +15,24 @@
 /* ---------- 2. BASICS ---------- */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+
+/* ---------- Smooth page transitions ---------- */
+@keyframes bcfc-page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+body { animation: bcfc-page-in .28s ease-out both; }
+body.page-leaving { animation: none; opacity: 0; transition: opacity .22s ease-in; }
+
+/* The header is built by script.js. Keep it invisible until it is complete,
+   then fade it in so the BCFC logo never flashes during refresh. */
+#site-header { opacity: 0; transition: opacity .30s ease-out; }
+#site-header.ready { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  body, #site-header { animation: none !important; transition: none !important; }
+  body.page-leaving { opacity: 1; }
+}
 body { margin: 0; font-family: var(--body); color: var(--ink); background: #fff; line-height: 1.75; }
 h1, h2, h3, h4 { font-family: var(--head); line-height: 1.15; margin: 0 0 .8rem; }
 h1 { font-weight: 900; font-size: clamp(2.3rem, 6vw, 4rem); }
