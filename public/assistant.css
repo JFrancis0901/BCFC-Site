@@ -17,8 +17,8 @@ body { top: 0 !important; }
 .logo img { display: block; height: 54px; width: 54px; object-fit: contain; background: #fff; border-radius: 8px; padding: 3px; }
 
 /* ---------- Chat assistant ---------- */
-.to-top { bottom: 5.6rem; }                       /* keep Back-to-top above the chat button */
-.bca { position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 40; font-family: var(--body, system-ui, sans-serif); }
+.to-top { bottom: 5.6rem; z-index: 60; }          /* fixed to the viewport, above the assistant button */
+.bca { position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 70; font-family: var(--body, system-ui, sans-serif); }
 .bca-fab { width: 3.6rem; height: 3.6rem; border-radius: 50%; border: 2px solid var(--gold); background: var(--navy); color: var(--gold);
   display: grid; place-items: center; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.35); transition: transform .15s; }
 .bca-fab:hover { transform: scale(1.06); background: var(--gold); color: var(--navy); }

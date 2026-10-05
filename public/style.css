@@ -22,14 +22,14 @@ html { scroll-behavior: smooth; }
   to { transform: translateX(0); }
 }
 /* No fade-to-black or delayed navigation. A tiny, quick horizontal movement only. */
-body { animation: bcfc-page-turn-in .12s ease-out both; }
-body.page-leaving { animation: none; opacity: 1; transform: none; }
+main { animation: bcfc-page-turn-in .12s ease-out both; }
+body.page-leaving { opacity: 1; }
 /* Keep the header visible and steady; don't fade the BCFC logo on refresh. */
 #site-header, #site-header.ready { opacity: 1; transition: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  body, #site-header { animation: none !important; transition: none !important; }
-  body.page-leaving { opacity: 1; transform: none; }
+  main, #site-header { animation: none !important; transition: none !important; }
+  body.page-leaving { opacity: 1; }
 }
 body { margin: 0; font-family: var(--body); color: var(--ink); background: #fff; line-height: 1.75; }
 h1, h2, h3, h4 { font-family: var(--head); line-height: 1.15; margin: 0 0 .8rem; }
@@ -209,7 +209,7 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 }
 
 /* ---------- 11. BACK TO TOP (lower right) ---------- */
-.to-top { position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 30; width: 3rem; height: 3rem; border-radius: 50%; cursor: pointer;
+.to-top { position: fixed; right: 1.2rem; bottom: 5.6rem; z-index: 60; width: 3rem; height: 3rem; border-radius: 50%; cursor: pointer;
   background: var(--navy); color: var(--gold); border: 2px solid var(--gold); font: 700 1.4rem/1 var(--body);
   box-shadow: 0 4px 12px rgba(0,0,0,.3); opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .2s, transform .2s, visibility .2s; }
 .to-top.show { opacity: 1; visibility: visible; transform: none; }

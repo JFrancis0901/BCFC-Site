@@ -204,13 +204,18 @@ document.addEventListener('click', e => {
 });
 
 // ---------- 8. BACK TO TOP BUTTON (lower right) ----------
-const toTop = document.createElement('button');
-toTop.className = 'to-top';
-toTop.setAttribute('aria-label', 'Back to top');
-toTop.innerHTML = '&#8593;';
-document.body.appendChild(toTop);
-window.addEventListener('scroll', () => toTop.classList.toggle('show', window.scrollY > 300), { passive: true });
+const toTop = document.getElementById('back-to-top') || document.createElement('button');
+if (!toTop.id) {
+  toTop.className = 'to-top';
+  toTop.setAttribute('aria-label', 'Back to top');
+  toTop.title = 'Back to top';
+  toTop.innerHTML = '&#8593;';
+  document.body.appendChild(toTop);
+}
+function updateToTop() { toTop.classList.toggle('show', window.scrollY > 180); }
+window.addEventListener('scroll', updateToTop, { passive: true });
 toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+updateToTop();
 
 // ---------- 9. RANDOM PHOTOS ----------
 // Shuffles the list so photos don't repeat until all have been used.
