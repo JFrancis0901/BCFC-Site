@@ -32,7 +32,7 @@ const PAGES = [
   { title: 'About Us', url: 'about.html', desc: 'Who we are.', keys: 'about who we are' },
   { title: 'Mission and Vision', url: 'about-mission.html', desc: 'Our mission and vision.', keys: 'mission vision purpose evangelism discipleship church planting leadership development social engagement transformation empowered missional healthy holistic harvesting churches' },
   { title: 'Our History', url: 'about-history.html', desc: 'The history of Baguio City Foursquare Church.', keys: 'history timeline story founded years BCFC' },
-  { title: 'All About Foursquare', url: 'about-foursquare.html', desc: 'Our name, logo and symbols, flag, emblem, and song.', keys: 'foursquare name logo symbols flag emblem song gospel living word Jesus Saviour Baptizer Healer coming King' },
+  { title: 'All About Foursquare', url: 'about-foursquare.html', desc: 'Our name, logo and symbols, emblem, and song.', keys: 'foursquare name logo symbols emblem song gospel living word Jesus Saviour Baptizer Healer coming King' },
   { title: 'Organizational Chart', url: 'about-organization.html', desc: 'Current ministry structure.', keys: 'organization organizational chart hierarchy workers staff pastor ministry structure' },
   { title: 'Visit Us', url: 'about-visit.html', desc: 'Service times, address, and map to BCFC.', keys: 'visit address map directions pastor location service times' },
   { title: 'Workers', url: 'workers.html', desc: 'Explore BCFC ministry workers.', keys: 'workers ministries members leaders' },

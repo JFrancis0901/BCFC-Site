@@ -3,34 +3,112 @@
 <body class="t-blue">
 <div id="site-header"></div>
 <main>
-<section class="hero-strip"><p class="script">Our Foursquare family</p><h1>All About <em>Foursquare</em></h1><p>Discover the meaning behind the Foursquare name, symbols, flag, emblem, and song.</p></section>
+<section class="hero-strip"><p class="script">Our Foursquare family</p><h1>All About <em>Foursquare</em></h1><p>Choose a topic to open its information in a scrollable window.</p></section>
 
 <section class="band b-white">
-  <div class="section-heading center"><p class="script">Explore</p><h2>Choose a <em>Topic</em></h2></div>
-  <div class="grid foursquare-choice-grid">
-    <a class="tile p" href="#our-name"><h3>OUR NAME</h3><p>The meaning and biblical background of the Foursquare name.</p><span>Read</span></a>
-    <a class="tile b" href="#logo-symbol"><h3>LOGO AND SYMBOL</h3><p>The meaning of the Cross, Dove, Cup, and Crown.</p><span>Read</span></a>
-    <a class="tile s" href="#flag"><h3>FOURSQUARE FLAG</h3><p>The four colors and what they represent.</p><span>Read</span></a>
-    <a class="tile p" href="#emblem"><h3>FOURSQUARE EMBLEM</h3><p>The four faces and the message of the emblem.</p><span>Read</span></a>
-    <a class="tile b" href="#song"><h3>FOURSQUARE SONG</h3><p>The Foursquare song.</p><span>Read</span></a>
+  <div class="section-heading center"><p class="script">Explore</p><h2>All About <em>Foursquare</em></h2><p>Click any choice below. The information will open in a separate popup that you can scroll through and close when finished.</p></div>
+  <div class="grid foursquare-choice-grid foursquare-modal-grid">
+    <button type="button" class="tile p foursquare-topic" data-topic="our-name"><h3>OUR NAME</h3><p>The meaning and biblical background of the Foursquare name.</p><span>Open</span></button>
+    <button type="button" class="tile b foursquare-topic" data-topic="logo-symbol"><h3>LOGO AND SYMBOLS</h3><p>The meaning of the Cross, Dove, Cup, and Crown.</p><span>Open</span></button>
+    <button type="button" class="tile p" data-topic="emblem"><h3>FOURSQUARE EMBLEM</h3><p>The four faces and the message of the emblem.</p><span>Open</span></button>
+    <button type="button" class="tile b foursquare-topic" data-topic="song"><h3>FOURSQUARE SONG</h3><p>The Foursquare song.</p><span>Open</span></button>
   </div>
 </section>
 
-<section class="band b-ivory" id="our-name"><div class="section-heading"><p class="script">Our Name</p><h2>Why <em>Foursquare</em>?</h2><p>“Foursquare” is a biblical term used in descriptions of the tabernacle, the Temple, and Heaven. The Foursquare Gospel name expresses a balanced and enduring presentation of Jesus Christ as Savior, Baptizer with the Holy Spirit, Healer, and Soon-Coming King. Hebrews 13:8 is also closely associated with Foursquare churches: Jesus Christ is the same yesterday, today, and forever.</p></div></section>
+<!-- Popup content. Only one is shown at a time. -->
+<div class="foursquare-modal" id="foursquareModal" aria-hidden="true">
+  <div class="foursquare-modal-backdrop" data-close-foursquare></div>
+  <div class="foursquare-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="foursquareModalTitle" tabindex="-1">
+    <button type="button" class="foursquare-modal-close" aria-label="Close" data-close-foursquare>&times;</button>
+    <div class="foursquare-modal-content">
+      <div class="foursquare-modal-panel" data-panel="our-name">
+        <p class="script">Our Name</p>
+        <h2 id="foursquareModalTitle">Why <em>Foursquare</em>?</h2>
+        <p><strong>Foursquare</strong> is a Biblical term used of the tabernacle in the Book of Exodus, of the Temple of the Lord in Ezekiel 40:47, and of Heaven, as described in the Book of the Revelation. The term Foursquare Gospel was given in the inspiration of revival to the denomination's founder, Aimee Semple McPherson, during an evangelistic campaign in Oakland, California, in 1922. It represents that which is equally balanced on all sides, established and enduring. Such confidence in the power of the Gospel is also expressed by the verse, Hebrews 13:8, displayed in Foursquare churches proclaiming, "Jesus Christ the Same, Yesterday and Today and Forever."</p>
+        <p>The Foursquare symbols stand for <strong>Jesus Christ</strong> as:</p>
+        <h3>The Savior</h3>
+        <p>"But He was wounded for our transgressions, He was bruised for our iniquities; the chastisment for our peace was upon Him . . ." - Isaiah 53:5 (Titus 2:14, Is. 55:7, Heb. 7:25, Is. 1:18)</p>
+        <h3>The Baptizer with the Holy Spirit</h3>
+        <p>"For John truly baptized with water, but you shall be baptized with the Holy Spirit . . . you shall receive power when the Holy Spirit has come upon you; and you shall be witnesses to Me in Jerusalem, and in all Judea and Samaria, and to the ends of the earth." - Acts 1:5,8 (Jn. 14:16-17, Acts 2:4, Acts 8:17, Acts 10:44-46, 1 Cor. 3:16)</p>
+        <h3>The Healer</h3>
+        <p>"He Himself took our infirmities and bore our sicknesses. . ." - Matthew 8:17 (Mk. 16:17-18, Mt. 9:5-6, Acts 4:29-30)</p>
+        <h3>The Soon-Coming King</h3>
+        <p>"For the Lord Himself will descend from heaven with a shout . . . the dead in Christ will rise first. Then we who are alive and remain shall be caught up together with them in the clouds to meet the Lord in the air. And thus we shall always be with the Lord." - 1 Thessalonians 4:16-17 (Titus 2:12-13, Mt. 24:36-44, Heb. 9:28, Lk. 19:13, Lk. 12:35-37.)</p>
+      </div>
 
-<section class="band b-white" id="logo-symbol"><div class="section-heading"><p class="script">Logo and Symbols</p><h2>What the <em>Symbols Mean</em></h2></div><div class="grid"><article class="tile s"><h3>THE CROSS</h3><p>Represents Jesus Christ our Savior and His sacrifice for us.</p></article><article class="tile p"><h3>THE DOVE</h3><p>Represents the Holy Spirit and His abiding presence.</p></article><article class="tile b"><h3>THE CUP</h3><p>Represents healing and the ministry of Jesus as our Great Physician.</p></article><article class="tile p"><h3>THE CROWN</h3><p>Represents Jesus Christ as the Coming King.</p></article></div></section>
+      <div class="foursquare-modal-panel" data-panel="logo-symbol" hidden>
+        <p class="script">Logo and Symbols</p>
+        <h2>The <em>Foursquare Symbols</em></h2>
+        <h3>The Glowing Scarlet Cross</h3>
+        <p>The cross represents the death of our Lord and Savior, Jesus Christ, who died on the cross carrying our sins with Him as the perfect sacrifice "having made peace through the blood of his cross, by him to reconcile all things unto himself" (Colossians 1:20). Red represents the shed blood of Jesus that washes away our sins so we are able to stand before God clothed in robes of righteousness and declared redeemed and justified "being now justified by his blood" (Romans 5:9).</p>
+        <h3>The Glittering Gold Dove</h3>
+        <p>The dove, a symbol of the Holy Spirit as is seen at the Baptism of Jesus by John in the Jordan River, represents the abiding presence of the Holy Spirit. "And Jesus, when he was baptized, went up straightway out of the water: and, lo, the heavens were opened unto him, and he saw the Spirit of God descending like a dove, and lighting upon him" (Matthew 3:16). The gold again is a symbol of the fire of the Holy Spirit as was seen on the Day of Pentecost in the upper room.</p>
+        <h3>The Shimmering Blue Cup</h3>
+        <p>The cup represents the anointing oil as we are instructed, "Is any sick among you? Let him call for the elders of the church; and let them pray over him, anointing him with oil in the name of the Lord; and the prayer of faith shall save the sick, and the Lord shall raise him up" (James 5:14 &amp; 15).</p>
+        <h3>The Gleaming Purple Crown</h3>
+        <p>The crown represents the Coming King, with the purple showing the royalty of Jesus Christ who will return very soon to catch His bride away to be with Him forever "For the Lord himself shall descend from heaven with a shout, with the voice of the archangel, and with the trump of God; and the dead in Christ shall rise first: Then we which are alive and remain shall be caught up together with them in the clouds, to meet the Lord, and so shall we ever be with the Lord" (I Thessalonians 4:16 &amp; 17). "He hath on his vesture and on his thigh a name written, KING OF KINGS, AND LORD OF LORDS" (Revelation 19:16).</p>
+      </div>
 
-<section class="band b-navy" id="flag"><div class="section-heading light"><p class="script">Foursquare Flag</p><h2>The <em>Four Colors</em></h2><p>The Foursquare flag presents the four-fold ministry of Jesus Christ through four colors: scarlet for redemption and the blood of Christ, gold for the Holy Spirit, blue for divine healing, and purple for the royalty and coming reign of Jesus Christ.</p></div></section>
+      <div class="foursquare-modal-panel" data-panel="emblem" hidden>
+        <p class="script">Foursquare Emblem</p>
+        <h2>The <em>Foursquare Emblem</em></h2>
+        <p>The <strong>Foursquare Emblem</strong> shows the four faces from Ezekiel's vision surrounding a four in a square planted on the Word of God. The four faces, as described the "Visions of Ezekiel", represent the four phases of the Gospel of Jesus Christ. These faces forming the sides of a square encasing the Word of God, represent the "Foursquare Gospel" planted firmly on the Word of God.</p>
+        <ul>
+          <li>The face of the man represents the Man of Sorrows, One acquainted with grief dying on the tree, Jesus our Savior.</li>
+          <li>The face of the lion represents the mighty Baptizer with the Holy Ghost and fire, Jesus our Baptizer in the Holy Spirit.</li>
+          <li>The face of the ox represents the Great Burden-bearer, Who Himself took our infirmities and carried our sickness, Jesus our Healer or Great Physician.</li>
+          <li>The face of the eagle reflects the Coming King, our Bridegroom, Who would soon come to catch His beloved bride away, Jesus our Soon Coming King.</li>
+        </ul>
+      </div>
 
-<section class="band b-white" id="emblem"><div class="section-heading"><p class="script">Foursquare Emblem</p><h2>The <em>Four Faces</em></h2><p>The Foursquare Emblem places the four faces from Ezekiel’s vision around the Word of God. They point to the four-fold Gospel: the man representing Jesus our Savior, the lion representing Jesus our Baptizer in the Holy Spirit, the ox representing Jesus our Healer, and the eagle representing Jesus our Soon-Coming King.</p></div></section>
-
-<section class="band b-ivory foursquare-song" id="song"><div class="section-heading"><p class="script">Foursquare Song</p><h2><em>Foursquare</em> Song</h2></div><div class="lyrics-card">
-<p>Foursquare we stand for the living word<br>For the word of God<br>Telling to all the story of Jesus, stem of Jesse’s rod<br>Man of sorrow and of grief, dying on the tree<br>Mighty Redeemer, glorious Saviour<br>Jesus of Calvary</p>
-<p><strong>Chorus</strong><br><em>Preach the Foursquare Gospel</em><br><em>The Foursquare Gospel</em><br><em>Clear let the Foursquare message ring</em><br><em>(Let it ring)</em><br><em>Jesus only Saviour, Baptizer and Healer</em><br><em>Jesus the coming King</em></p>
-<p>Unfurl your banners and forward go<br>Oh ye ransomed host<br>Trusting in Jesus Mighty Baptizer<br>With the Holy Ghost<br>Lion of Judah, King of kings, Lord of lords is He<br>Clothing HIs church with power to witness<br>Leading to victory</p>
-<p>Catch up your shield oh ye living Church<br>Christ of Galilee<br>Bore all our sickness, carried our sorrows<br>Set the prisoners free<br>Lift the fallen, help the faith, dry the weeping eyes<br>Come bring your sickness<br>to thy physician, for He is passing by.</p>
-<p>Lift your eyes, then unto the hills<br>Lift your voice and sing<br>The cloud of heavens aflame with glory<br>greet the coming king<br>Swift as wings of eagle’s flight<br>shall He come again</p>
-</div></section>
+      <div class="foursquare-modal-panel foursquare-song" data-panel="song" hidden>
+        <p class="script">Foursquare Song</p>
+        <h2><em>Foursquare</em> Song</h2>
+        <div class="lyrics-card">
+          <p>Foursquare we stand for the living word<br>For the word of God<br>Telling to all the story of Jesus, stem of Jesse’s rod<br>Man of sorrow and of grief, dying on the tree<br>Mighty Redeemer, glorious Saviour<br>Jesus of Calvary</p>
+          <p><strong>Chorus</strong><br><em>Preach the Foursquare Gospel</em><br><em>The Foursquare Gospel</em><br><em>Clear let the Foursquare message ring</em><br><em>(Let it ring)</em><br><em>Jesus only Saviour, Baptizer and Healer</em><br><em>Jesus the coming King</em></p>
+          <p>Unfurl your banners and forward go<br>Oh ye ransomed host<br>Trusting in Jesus Mighty Baptizer<br>With the Holy Ghost<br>Lion of Judah, King of kings, Lord of lords is He<br>Clothing HIs church with power to witness<br>Leading to victory</p>
+          <p>Catch up your shield oh ye living Church<br>Christ of Galilee<br>Bore all our sickness, carried our sorrows<br>Set the prisoners free<br>Lift the fallen, help the faith, dry the weeping eyes<br>Come bring your sickness<br>to thy physician, for He is passing by.</p>
+          <p>Lift your eyes, then unto the hills<br>Lift your voice and sing<br>The cloud of heavens aflame with glory<br>greet the coming king<br>Swift as wings of eagle’s flight<br>shall He come again</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="band b-gold center"><a class="btn btn-dark" href="about.html">Back to About BCFC</a></section>
-</main><div id="site-footer"></div></body></html>
+</main><div id="site-footer"></div>
+<script>
+(function(){
+  const modal = document.getElementById('foursquareModal');
+  if (!modal) return;
+  const dialog = modal.querySelector('.foursquare-modal-dialog');
+  const panels = [...modal.querySelectorAll('[data-panel]')];
+  const openers = [...document.querySelectorAll('.foursquare-topic')];
+  let lastFocus = null;
+
+  function closeModal(){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('foursquare-modal-open');
+    if (lastFocus) lastFocus.focus();
+  }
+
+  function openModal(topic, opener){
+    lastFocus = opener || document.activeElement;
+    panels.forEach(panel => { panel.hidden = panel.dataset.panel !== topic; });
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('foursquare-modal-open');
+    dialog.scrollTop = 0;
+    requestAnimationFrame(() => dialog.focus());
+  }
+
+  openers.forEach(button => button.addEventListener('click', () => openModal(button.dataset.topic, button)));
+  modal.querySelectorAll('[data-close-foursquare]').forEach(button => button.addEventListener('click', closeModal));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+})();
+</script>
+</body></html>

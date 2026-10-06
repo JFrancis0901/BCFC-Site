@@ -397,3 +397,24 @@ body:not(:has(.bcfc-hero)) .hero-split {
 @media (max-width:700px){.foursquare-song .lyrics-card{padding:25px 20px;font-size:.97rem}}
 
 .foursquare-choice-grid .tile{min-height:180px;transition:transform .18s ease,box-shadow .18s ease}.foursquare-choice-grid .tile:hover,.foursquare-choice-grid .tile:focus-visible{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.18)}
+
+/* All About Foursquare: scrollable topic popups */
+.foursquare-modal-grid .foursquare-topic{appearance:none;-webkit-appearance:none;border:0;font:inherit;text-align:left;cursor:pointer;width:100%;color:inherit}
+.foursquare-modal-grid .foursquare-topic span{display:inline-block;margin-top:10px;font-weight:700}
+.foursquare-modal-grid .foursquare-topic:focus-visible{outline:3px solid currentColor;outline-offset:4px}
+.foursquare-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px}
+.foursquare-modal.is-open{display:flex}
+.foursquare-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.68)}
+.foursquare-modal-dialog{position:relative;z-index:1;width:min(900px,100%);max-height:86vh;overflow-y:auto;background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.35);padding:34px 38px 40px;outline:none}
+.foursquare-modal-close{position:sticky;top:0;float:right;z-index:2;width:42px;height:42px;border:0;border-radius:50%;background:#111;color:#fff;font-size:30px;line-height:1;cursor:pointer}
+.foursquare-modal-content{clear:both;padding-top:6px}
+.foursquare-modal-panel h2{margin-top:4px;margin-bottom:18px}
+.foursquare-modal-panel h3{margin-top:26px;margin-bottom:8px}
+.foursquare-modal-panel p,.foursquare-modal-panel li{line-height:1.75}
+.foursquare-modal-panel ul{padding-left:24px}
+body.foursquare-modal-open{overflow:hidden}
+@media (max-width:700px){
+  .foursquare-modal{padding:12px}
+  .foursquare-modal-dialog{max-height:92vh;padding:24px 20px 30px;border-radius:14px}
+  .foursquare-modal-close{width:38px;height:38px;font-size:26px}
+}
