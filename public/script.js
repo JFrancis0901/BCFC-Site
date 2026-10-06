@@ -11,7 +11,7 @@ if (__siteHeader) __siteHeader.setAttribute('aria-busy', 'true');
 // moreTitle + more = the small links in the right-hand panel
 const MENU = [
   { label: 'About Us', href: null, color: 'var(--purple)',
-    items: [['Our Mission', 'about-mission.html', 'Our Mission'], ['Our Vision', 'about-vision.html', 'Our Vision'], ['Our history', 'about-history.html', 'Our history'], ['Foursquare', 'about.html#foursquare', 'Foursquare'], ['Organizational Chart', 'about-organization.html', 'Organizational Chart'], ['Visit Us', 'find-church.html', 'Visit Us']],
+    items: [['Mission and Vision', 'about.html#mission-vision', 'Mission and Vision'], ['Our History', 'about-history.html', 'Our History'], ['All About Foursquare', 'about-foursquare.html', 'All About Foursquare'], ['Organizational Chart', 'about-organization.html', 'Organizational Chart'], ['Visit Us', 'about.html#visit', 'Visit Us']],
     moreTitle: 'More about BCFC', more: [['Contact us', 'contact.html']] },
   { label: 'Workers', href: 'workers.html', color: 'var(--blue)',
     items: [['Children’s Church', 'workers.html#childrens', 'Children’s Church'], ['UFY', 'workers.html#ufy', 'United Foursquare Youth'], ['UFW', 'workers.html#ufw', 'United Foursquare Women'], ['UFM', 'workers.html#ufm', 'United Foursquare Men'], ['Praise & Worship', 'workers.html#worship', 'Praise & Worship'], ['Production', 'workers.html#production', 'Production'], ['Creatives', 'workers.html#creatives', 'Creatives']],
@@ -32,7 +32,7 @@ const PAGES = [
   { title: 'About Us', url: 'about.html', desc: 'Who we are.', keys: 'about who we are' },
   { title: 'Mission and Vision', url: 'about.html#mission-vision', desc: 'Our mission and vision.', keys: 'mission vision purpose evangelism discipleship church planting leadership development social engagement transformation empowered missional healthy holistic harvesting churches' },
   { title: 'Our History', url: 'about-history.html', desc: 'The history of Baguio City Foursquare Church.', keys: 'history timeline story founded years BCFC' },
-  { title: 'Foursquare', url: 'about.html#foursquare', desc: 'The Foursquare song.', keys: 'foursquare song gospel living word Jesus Saviour Baptizer Healer coming King' },
+  { title: 'All About Foursquare', url: 'about-foursquare.html', desc: 'Our name, logo and symbols, flag, emblem, and song.', keys: 'foursquare name logo symbols flag emblem song gospel living word Jesus Saviour Baptizer Healer coming King' },
   { title: 'Organizational Chart', url: 'about-organization.html', desc: 'Current ministry structure.', keys: 'organization organizational chart hierarchy workers staff pastor ministry structure' },
   { title: 'Visit Us', url: 'about.html#visit', desc: 'Service times, address, and map to BCFC.', keys: 'visit address map directions pastor location service times' },
   { title: 'Workers', url: 'workers.html', desc: 'Explore BCFC ministry workers.', keys: 'workers ministries members leaders' },

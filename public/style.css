@@ -395,3 +395,5 @@ body:not(:has(.bcfc-hero)) .hero-split {
 .foursquare-song .lyrics-card p:last-child{margin-bottom:0}
 .foursquare-song .lyrics-card strong{font-weight:800}
 @media (max-width:700px){.foursquare-song .lyrics-card{padding:25px 20px;font-size:.97rem}}
+
+.foursquare-choice-grid .tile{min-height:180px;transition:transform .18s ease,box-shadow .18s ease}.foursquare-choice-grid .tile:hover,.foursquare-choice-grid .tile:focus-visible{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.18)}
