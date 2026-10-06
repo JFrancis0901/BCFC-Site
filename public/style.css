@@ -399,7 +399,7 @@ body:not(:has(.bcfc-hero)) .hero-split {
 .foursquare-choice-grid .tile{min-height:180px;transition:transform .18s ease,box-shadow .18s ease}.foursquare-choice-grid .tile:hover,.foursquare-choice-grid .tile:focus-visible{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.18)}
 
 /* All About Foursquare: scrollable topic popups */
-.foursquare-modal-grid .foursquare-topic{appearance:none;-webkit-appearance:none;border:0;font:inherit;text-align:left;cursor:pointer;width:100%;color:inherit}
+.foursquare-modal-grid .foursquare-topic{appearance:none;-webkit-appearance:none;border:0;font:inherit;text-align:left;cursor:pointer;width:100%;color:#fff}
 .foursquare-modal-grid .foursquare-topic span{display:inline-block;margin-top:10px;font-weight:700}
 .foursquare-modal-grid .foursquare-topic:focus-visible{outline:3px solid currentColor;outline-offset:4px}
 .foursquare-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px}

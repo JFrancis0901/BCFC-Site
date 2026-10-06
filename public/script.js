@@ -62,7 +62,6 @@ const SEARCH_BOX = `<form class="search" role="search" autocomplete="off">
 
 // Big dark panel on the left, colored panel with more links on the right
 const navHtml = MENU.map(m => {
-  if (m.label === 'About Us') return `<div class="dropdown about-nav"><span class="nav-category about-nav-label" aria-label="About Us">${m.label}</span><div class="about-links">${m.items.map(i => `<a href="${i[1]}">${i[2] || i[0]}</a>`).join('')}</div></div>`;
   return `<div class="dropdown"><span class="nav-category" aria-label="${m.label}">${m.label}</span>
     <div class="mega" style="--mc:${m.color}">
       <div class="mega-main"><p class="mega-label">${m.label}</p>` +
