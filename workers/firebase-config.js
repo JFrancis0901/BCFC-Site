@@ -1,17 +1,15 @@
 /* ==========================================================
    firebase-config.js = connects this site to YOUR Firebase project.
 
-   Auth persistence is intentionally TAB-BASED. This means each browser tab
-   keeps its own signed-in worker account. Logging a different worker into a
-   second tab will NOT replace the account in the first tab, and refreshing
-   either tab keeps that tab's account signed in.
+   Auth persistence is shared across tabs so Admin Panel, Live Display, and Monitor
+   can open in separate tabs without asking the same user to sign in again.
    ========================================================== */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getAuth,
   setPersistence,
-  browserSessionPersistence
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -28,13 +26,9 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// IMPORTANT: use session persistence instead of Firebase's default local
-// persistence. Firebase's local persistence is shared by tabs for the same
-// origin, so signing in another account in another tab can replace the first
-// account. Session persistence keeps each tab's account independent while
-// still surviving normal page refreshes in that tab.
-export const authPersistenceReady = setPersistence(auth, browserSessionPersistence)
+// Use local persistence so the signed-in account is available to new tabs.
+export const authPersistenceReady = setPersistence(auth, browserLocalPersistence)
   .catch(error => {
-    console.error("Could not configure tab-based auth persistence:", error);
+    console.error("Could not configure shared auth persistence:", error);
     throw error;
   });
