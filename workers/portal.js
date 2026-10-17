@@ -72,20 +72,30 @@ function isPublicWorshipDisplay(){
   return page==='worship' && (view==='live' || view==='monitor');
 }
 
-onAuthStateChanged(auth,async user=>{
-  await authPersistenceReady;
-  if(!user){
-    // Live Display and Monitor open in separate tabs. Auth is intentionally
-    // tab-based, so those read-only screens must not redirect to login.
-    if(isPublicWorshipDisplay()) { refresh(); return; }
-    leaveToLogin();return;
-  }
-  try{
-    const ref=doc(db,'users',user.uid); const snap=await getDoc(ref);
-    if(!snap.exists()){popup('Your worker profile could not be found. Please contact an administrator.','Account Error'); await signOut(auth); leaveToLogin(); return;}
-    applyUser(snap.data(),false);
-    onSnapshot(ref,docSnap=>{if(docSnap.exists()) applyUser(docSnap.data(),true);});
-  }catch(e){console.error(e); popup(`Could not load your worker profile (${e.code||e.message}).`,'Account Error');}
+// Wait until Firebase has restored the browser-local session BEFORE subscribing.
+// Registering the auth observer first can briefly report null in a newly opened tab
+// and incorrectly redirect a signed-in leader to login.
+authPersistenceReady.then(()=>{
+  onAuthStateChanged(auth,async user=>{
+    if(!user){
+      if(isPublicWorshipDisplay()) { refresh(); return; }
+      // A null event during a fresh tab restore should be uncommon now; wait a short
+      // second auth-state tick before treating the account as signed out.
+      setTimeout(()=>{
+        if(!auth.currentUser && !isPublicWorshipDisplay()) leaveToLogin();
+      },700);
+      return;
+    }
+    try{
+      const ref=doc(db,'users',user.uid); const snap=await getDoc(ref);
+      if(!snap.exists()){popup('Your worker profile could not be found. Please contact an administrator.','Account Error'); await signOut(auth); leaveToLogin(); return;}
+      applyUser(snap.data(),false);
+      onSnapshot(ref,docSnap=>{if(docSnap.exists()) applyUser(docSnap.data(),true);});
+    }catch(e){console.error(e); popup(`Could not load your worker profile (${e.code||e.message}).`,'Account Error');}
+  });
+}).catch(error=>{
+  console.error('Firebase auth persistence did not initialize:',error);
+  if(!isPublicWorshipDisplay()) leaveToLogin();
 });
 
 function currentPage(){
