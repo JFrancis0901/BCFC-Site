@@ -5,7 +5,7 @@ import { auth, db, authPersistenceReady } from "./firebase-config.js";
 const NAV=[
  ['Calendar','calendar.html','all'],['Announcements','announcements.html','admin,pastor,childrens-lead,ufy-lead,ufw-lead,ufm-lead,production-lead,creatives-lead'],
  ["Children's Church",'dept.html?m=childrens','admin,childrens-lead,childrens'],['UFY','dept.html?m=ufy','admin,ufy-lead,ufy'],['UFW','dept.html?m=ufw','admin,ufw-lead,ufw'],['UFM','dept.html?m=ufm','admin,ufm-lead,ufm'],
- ['Praise & Worship','worship.html','admin,pastor,preaching'],['Production','projects.html?m=production','admin,production-lead,production'],['Creatives','projects.html?m=creatives','admin,creatives-lead,creatives'],['Resources','resources.html','all'],['Members','members.html','admin'],['Chat','chat.html','all']
+ ['Praise & Worship','worship.html','all'],['Worship Admin','worship.html?view=admin','preaching'],['Production','projects.html?m=production','admin,production-lead,production'],['Creatives','projects.html?m=creatives','admin,creatives-lead,creatives'],['Resources','resources.html','all'],['Members','members.html','admin'],['Chat','chat.html','all']
 ];
 const NAMES={admin:'Admin',pastor:'Pastor',preaching:'Preaching Staff','childrens-lead':"Children's Church Lead",childrens:"Children's Church Worker",'ufy-lead':'UFY Lead',ufy:'UFY Worker','ufw-lead':'UFW Lead',ufw:'UFW Worker','ufm-lead':'UFM Lead',ufm:'UFM Worker','production-lead':'Production Lead',production:'Production Worker','creatives-lead':'Creatives Lead',creatives:'Creatives Worker'};
 let realRole=sessionStorage.getItem('bcfc-role')||'';
@@ -66,9 +66,20 @@ function applyUser(data, notify=false){
   if(notify && !window.viewingAs && roleStatus==='rejected') popup('Your requested role was not approved by the administrator. Please contact an administrator.','Role Request Update');
 }
 
+function isPublicWorshipDisplay(){
+  const page=(location.pathname.split('/').filter(Boolean).pop()||'').replace(/\.html$/i,'').toLowerCase();
+  const view=new URLSearchParams(location.search).get('view');
+  return page==='worship' && (view==='live' || view==='monitor');
+}
+
 onAuthStateChanged(auth,async user=>{
   await authPersistenceReady;
-  if(!user){leaveToLogin();return;}
+  if(!user){
+    // Live Display and Monitor open in separate tabs. Auth is intentionally
+    // tab-based, so those read-only screens must not redirect to login.
+    if(isPublicWorshipDisplay()) { refresh(); return; }
+    leaveToLogin();return;
+  }
   try{
     const ref=doc(db,'users',user.uid); const snap=await getDoc(ref);
     if(!snap.exists()){popup('Your worker profile could not be found. Please contact an administrator.','Account Error'); await signOut(auth); leaveToLogin(); return;}
@@ -123,6 +134,13 @@ function setViewAs(v){
 }
 
 function refresh(){
+  if(isPublicWorshipDisplay()){
+    window.realRole=''; window.currentRole=''; window.roleStatus='display';
+    window.isApproved=false; window.roleReady=true; window.viewingAs=false;
+    if(header){ const nav=header.querySelector('.portal-nav'); const user=header.querySelector('.portal-user'); if(nav) nav.style.display='none'; if(user) user.style.display='none'; }
+    window.dispatchEvent(new CustomEvent('rolechange'));
+    return;
+  }
   const e=effective();
   window.realRole=realRole; window.viewingAs=e.viewing;
   window.currentRole=window.roleReady ? e.role : '';

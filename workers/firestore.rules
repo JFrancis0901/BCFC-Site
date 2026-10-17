@@ -12,7 +12,7 @@ service cloud.firestore {
         || (approved() && role() == 'pastor' && mod in ['sunday','nurture','prayer','other'])
         || (approved() && isLead() && role() == mod + '-lead');
     }
-    function worship(){ return approved() && role() in ['admin','pastor','preaching']; }
+    function worship(){ return approved() && role() == 'preaching'; }
     function chanOk(channel){
       return isAdmin()
         || (approved() && channel == 'general')
@@ -56,7 +56,7 @@ service cloud.firestore {
     match /setlists/{id} { allow read: if signedIn(); allow create,update,delete: if worship(); }
     match /songs/{id} { allow read: if signedIn(); allow create,update,delete: if worship(); }
     // Shared live song state for Admin Panel, Live Display, and Monitor.
-    match /worshipState/{id} { allow read: if signedIn(); allow create,update,delete: if worship(); }
+    match /worshipState/{id} { allow read: if signedIn() || id == 'current'; allow create,update,delete: if worship(); }
     match /announcements/{id} { allow read: if approved() && (role() in ['admin','pastor'] || isLead()); allow create,update,delete: if approved() && role() in ['admin','pastor']; }
     match /messages/{id} {
       allow read: if approved() && chanOk(resource.data.channel);
