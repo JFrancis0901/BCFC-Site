@@ -1,22 +1,118 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Praise & Worship | BCFC Workers</title>
-<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css"></head>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Praise &amp; Worship | BCFC Workers</title>
+<link rel="stylesheet" href="portal.css"><link rel="stylesheet" href="board.css">
+<style>
+.worship-wrap{max-width:1200px;margin:1.4rem auto;padding:0 1.25rem 2rem}.worship-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}.worship-top h1{margin:0}.worship-tabs{display:flex;gap:.55rem;flex-wrap:wrap;margin:1rem 0}.worship-tabs a{display:inline-block;text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:.65rem 1rem;font-weight:700;color:var(--navy);background:#fff}.worship-tabs a.active,.worship-tabs a:hover{background:var(--navy);color:#fff}.worship-note{color:#6c6880;font-size:.9rem;margin:.35rem 0 1rem}.worship-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start}.worship-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:1rem;min-width:0}.worship-card h2{margin:.1rem 0 .8rem;font-size:1.15rem}.worship-card label{display:grid;gap:.3rem;font-size:.83rem;font-weight:700;margin:.65rem 0}.worship-card input,.worship-card select,.worship-card textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:6px;padding:.65rem;font:inherit;background:#fff;color:#201b2d}.worship-card textarea{min-height:120px;resize:vertical;white-space:pre-wrap}.worship-card button{border:0;border-radius:6px;padding:.65rem .9rem;background:var(--navy);color:#fff;font-weight:700;cursor:pointer}.worship-card button:disabled{opacity:.45;cursor:not-allowed}.worship-actions{display:flex;gap:.55rem;flex-wrap:wrap;margin-top:.8rem}.worship-status{min-height:1.3rem;font-size:.85rem;color:#28734a}.worship-list{list-style:none;padding:0;margin:.7rem 0 0;display:grid;gap:.5rem}.worship-list li{background:var(--ivory);border-left:4px solid var(--gold);border-radius:5px;padding:.65rem .75rem;display:flex;justify-content:space-between;align-items:center;gap:.7rem}.worship-list button{padding:.35rem .6rem}.song-display{min-height:55vh;background:#111827;color:#fff;border-radius:10px;padding:clamp(1rem,3vw,2.2rem);margin-top:1rem}.song-display h2{font-size:clamp(1.5rem,3vw,2.5rem);margin:0 0 .5rem}.song-meta{display:flex;gap:1rem;flex-wrap:wrap;color:#f5d98c;font-weight:700;margin-bottom:1.5rem}.song-display pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;line-height:1.75;margin:0}.song-columns{display:grid;grid-template-columns:1fr 1fr;gap:2rem}.song-columns h3{color:#f5d98c;margin:.5rem 0}.song-display.monitor pre{font-size:clamp(1.1rem,2.4vw,2rem)}.song-display.monitor .chords-col{display:none}.song-empty{opacity:.75;padding:2rem 0}.worship-hidden{display:none!important}@media(max-width:760px){.worship-grid,.song-columns{grid-template-columns:1fr}.song-display{min-height:65vh}}
+</style>
+</head>
 <body>
 <header class="portal-header" id="portal-header"></header>
-<main class="board-page"><h1 id="page-title">Praise & Worship</h1><p id="page-note" class="page-note"></p><div id="boards" class="boards"></div></main>
+<main class="worship-wrap">
+ <div class="worship-top"><h1 id="worship-heading">Praise &amp; Worship</h1></div>
+ <nav class="worship-tabs" aria-label="Praise and Worship views">
+  <a href="worship.html?view=admin" data-view="admin">Admin Panel</a>
+  <a href="worship.html?view=live" data-view="live" target="_blank" rel="noopener">Live Display</a>
+  <a href="worship.html?view=monitor" data-view="monitor" target="_blank" rel="noopener">Monitor</a>
+ </nav>
+ <p class="worship-note" id="worship-note">Service Song List is for the songs planned for a service. Song Library stores saved songs.</p>
+ <section id="admin-view">
+  <div class="worship-grid">
+   <section class="worship-card"><h2>Service Song List</h2>
+    <p class="worship-note">Choose a service and then select one of its songs in the Admin Panel below.</p>
+    <details id="service-add"><summary style="cursor:pointer;font-weight:700;color:var(--blue)">+ Add Service Song List</summary>
+     <form id="service-form">
+      <label>Service title<input name="title" required maxlength="120" placeholder="Sunday Service"></label>
+      <label>Date<input name="date" type="date" required></label>
+      <label>Songs (one per line; optionally include the key)<textarea name="songs" rows="4" placeholder="Song Title — Key"></textarea></label>
+      <button type="submit">Save Service List</button><p class="worship-status" id="service-status" aria-live="polite"></p>
+     </form>
+    </details>
+    <ul class="worship-list" id="service-list"><li>Loading service lists…</li></ul>
+   </section>
+   <section class="worship-card"><h2>Song Library</h2>
+    <p class="worship-note">Saved songs, including lyrics, chords, and the song's default key.</p>
+    <details id="song-add"><summary style="cursor:pointer;font-weight:700;color:var(--blue)">+ Add Song to Library</summary>
+     <form id="song-form">
+      <label>Song title<input name="title" required maxlength="160"></label>
+      <label>Artist / source<input name="artist" maxlength="160"></label>
+      <label>Default key<select name="key" class="key-options"></select></label>
+      <label>Lyrics<textarea name="lyrics" rows="5" placeholder="Enter lyrics and section labels"></textarea></label>
+      <label>Chords<textarea name="chords" rows="5" placeholder="Enter chords aligned to the song sections"></textarea></label>
+      <button type="submit">Save Song</button><p class="worship-status" id="song-status" aria-live="polite"></p>
+     </form>
+    </details>
+    <ul class="worship-list" id="library-list"><li>Loading songs…</li></ul>
+   </section>
+  </div>
+  <section class="worship-card" style="margin-top:1rem">
+   <h2>Admin Panel — Current Service Song</h2>
+   <label>Service Song List<select id="service-select"><option value="">Select a service list</option></select></label>
+   <label>Song from the selected Service Song List<select id="current-song-select"><option value="">Select a song</option></select></label>
+   <p class="worship-note" id="selected-song-note">Select a service list to load its songs.</p>
+   <form id="edit-song-form">
+    <input type="hidden" name="songId">
+    <div class="worship-grid">
+     <div>
+      <label>Title<input name="title" required maxlength="160"></label>
+      <label>Key<select name="key" class="key-options"></select></label>
+      <label>Current Section<select name="section" id="section-select"></select></label>
+      <label>Lyrics<textarea name="lyrics" rows="9"></textarea></label>
+     </div>
+     <div><label>Chords<textarea name="chords" rows="9"></textarea></label>
+      <div class="worship-actions"><button type="submit" id="save-song-changes">Save Song Changes</button><button type="button" id="set-current-song">Set as Current Song</button></div>
+      <p class="worship-status" id="edit-status" aria-live="polite"></p>
+     </div>
+    </div>
+   </form>
+  </section>
+ </section>
+ <section id="display-view" class="worship-hidden">
+  <p class="worship-note" id="display-note">This view updates live when the Admin Panel changes the current song, key, or section.</p>
+  <div class="song-display" id="song-display"><div class="song-empty">Waiting for the Admin Panel to select a song…</div></div>
+ </section>
+</main>
 <script type="module">
-import { board, esc } from './board.js';
-document.getElementById('page-note').textContent = 'Set the song list for each service and keep the song library with keys. Pastor and Preaching Staff can edit.';
-const canWrite = r => ['admin', 'pastor', 'preaching'].includes(r);
-const KEYS = ['C','C#/Db','D','Eb','E','F','F#/Gb','G','Ab','A','Bb','B'].flatMap(k => [k, k + ' minor']);
-const B = document.getElementById('boards');
-board(B, { title: 'Service Song List', col: 'setlists', canWrite, sort: (a, b) => (b.date || '').localeCompare(a.date || ''),
-  item: d => `<b>${esc(d.title)}</b><small>${esc(d.date)}</small><pre>${esc(d.songs)}</pre>`,
-  fields: [{ k: 'title', label: 'Service', req: 1 }, { k: 'date', label: 'Date', type: 'date', req: 1 },
-    { k: 'songs', label: 'Songs (one per line, with key)', type: 'textarea' }] });
-board(B, { title: 'Song Library', col: 'songs', canWrite, sort: (a, b) => (a.title || '').localeCompare(b.title || ''),
-  item: d => `<b>${esc(d.title)}</b><small>${esc(d.artist || '')} · Key: ${esc(d.key)}</small>${d.notes ? `<p>${esc(d.notes)}</p>` : ''}`,
-  fields: [{ k: 'title', label: 'Song title', req: 1 }, { k: 'artist', label: 'Artist / source' },
-    { k: 'key', label: 'Key', type: 'select', options: KEYS }, { k: 'notes', label: 'Notes', type: 'textarea' }] });
-</script></body></html>
+import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+import { auth, db } from './firebase-config.js';
+const KEYS=['C','C#/Db','D','Eb','E','F','F#/Gb','G','Ab','A','Bb','B','C minor','C# minor','D minor','Eb minor','E minor','F minor','F# minor','G minor','Ab minor','A minor','Bb minor','B minor'];
+const SECTIONS=['Intro','Verse 1','Verse 2','Verse 3','Pre-Chorus','Chorus','Bridge','Instrumental','Interlude','Refrain','Ending','Outro','Custom'];
+const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const roleCanEdit=()=>window.roleReady===true&&window.isApproved===true&&['admin','pastor','preaching'].includes(window.currentRole);
+const view=new URLSearchParams(location.search).get('view')||'admin';
+const admin=$('#admin-view'), display=$('#display-view');
+if(view==='live'||view==='monitor'){admin.classList.add('worship-hidden');display.classList.remove('worship-hidden');$('#worship-heading').textContent=view==='live'?'Praise & Worship — Live Display':'Praise & Worship — Monitor';$('#song-display').classList.toggle('monitor',view==='monitor');$('#display-note').textContent=view==='live'?'Live Display: title, lyrics, chords, key, and current section.':'Monitor: title, lyrics, key, and current section.';}
+else {$('#worship-heading').textContent='Praise & Worship — Admin Panel';}
+document.querySelectorAll('[data-view]').forEach(a=>{a.classList.toggle('active',a.dataset.view===view);if(a.dataset.view===view)a.setAttribute('aria-current','page')});
+document.querySelectorAll('.key-options').forEach(sel=>sel.innerHTML=KEYS.map(k=>`<option value="${esc(k)}">${esc(k)}</option>`).join(''));
+$('#section-select').innerHTML=SECTIONS.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+let services=[],songs=[],state={songId:'',title:'',lyrics:'',chords:'',key:'C',section:'Verse 1'},selectedServiceId='',selectedSongId='';
+const serviceList=$('#service-list'),libraryList=$('#library-list'),serviceSelect=$('#service-select'),songSelect=$('#current-song-select');
+function canEditUI(){const ok=roleCanEdit();document.querySelectorAll('#admin-view input,#admin-view select,#admin-view textarea,#admin-view button').forEach(el=>{if(!el.closest('.worship-tabs'))el.disabled=!ok});$('#service-add').style.display=ok?'':'none';$('#song-add').style.display=ok?'':'none';}
+window.addEventListener('rolechange',canEditUI);setTimeout(canEditUI,1000);
+function serviceSongLines(s){return String(s||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean)}
+function titleFromLine(line){return line.replace(/\s*[—–-]\s*(?:key\s*)?(?:C#?\/?Db?|D|Eb|E|F#?\/?Gb?|G|Ab|A|Bb|B)(?:\s+minor)?\s*$/i,'').replace(/\s*\((?:key\s*)?[^)]*\)\s*$/i,'').trim()||line}
+function renderServices(){serviceList.innerHTML=services.length?services.map(s=>`<li><span><b>${esc(s.title)}</b><br><small>${esc(s.date||'')}</small><br><small>${serviceSongLines(s.songs).length} song(s)</small></span><span>${roleCanEdit()?`<button type="button" data-delete-service="${esc(s.id)}">Delete</button>`:''}</span></li>`).join(''):'<li>No service lists saved yet.</li>';serviceSelect.innerHTML='<option value="">Select a service list</option>'+services.map(s=>`<option value="${esc(s.id)}">${esc(s.title)}${s.date?' — '+esc(s.date):''}</option>`).join('');if(selectedServiceId&&services.some(s=>s.id===selectedServiceId))serviceSelect.value=selectedServiceId;else if(services.length){selectedServiceId=services[0].id;serviceSelect.value=selectedServiceId;populateServiceSongs();}}
+function renderLibrary(){libraryList.innerHTML=songs.length?songs.map(s=>`<li><span><b>${esc(s.title)}</b><br><small>${esc(s.artist||'')} · Key: ${esc(s.key||'C')}</small></span><span>${roleCanEdit()?`<button type="button" data-use-song="${esc(s.id)}">Select</button> <button type="button" data-delete-song="${esc(s.id)}">Delete</button>`:''}</span></li>`).join(''):'<li>No songs saved yet.</li>';populateServiceSongs();}
+function matchSong(line){const wanted=titleFromLine(line).toLowerCase();return songs.find(s=>String(s.title||'').trim().toLowerCase()===wanted)||songs.find(s=>String(s.title||'').trim().toLowerCase()===line.trim().toLowerCase())}
+function populateServiceSongs(){const svc=services.find(s=>s.id===selectedServiceId);const lines=svc?serviceSongLines(svc.songs):[];const entries=lines.map((line,i)=>({line,song:matchSong(line),i}));songSelect.innerHTML='<option value="">Select a song</option>'+entries.map(e=>`<option value="${e.song?'song:'+e.song.id:'line:'+e.i}">${esc(e.song?.title||titleFromLine(e.line))}${e.song?'':' (not in Song Library)'}</option>`).join('');if(selectedSongId&&entries.some(e=>e.song?.id===selectedSongId))songSelect.value='song:'+selectedSongId;else if(entries.length){songSelect.selectedIndex=1;loadSelectedServiceSong();}else {selectedSongId='';$('#selected-song-note').textContent='This service list has no songs yet. Add song titles one per line above.';fillEditor(null);}}
+function fillEditor(s){const f=$('#edit-song-form');f.elements.songId.value=s?.id||'';f.elements.title.value=s?.title||'';f.elements.key.value=s?.key||'C';f.elements.lyrics.value=s?.lyrics||'';f.elements.chords.value=s?.chords||'';f.elements.section.value=state.section||'Verse 1';$('#selected-song-note').textContent=s?`Editing “${s.title}”. Save changes to update the Song Library.`:'This song is not in the Song Library yet. Add it to the library first, then select it here.';$('#save-song-changes').disabled=!s||!roleCanEdit();$('#set-current-song').disabled=!s||!roleCanEdit();}
+function loadSelectedServiceSong(){const val=songSelect.value;if(!val){fillEditor(null);return}if(val.startsWith('song:')){selectedSongId=val.slice(5);fillEditor(songs.find(s=>s.id===selectedSongId)||null)}else{selectedSongId='';const svc=services.find(s=>s.id===selectedServiceId);const line=serviceSongLines(svc?.songs)[Number(val.slice(5))]||'';fillEditor(null);$('#edit-song-form').elements.title.value=titleFromLine(line);}}
+serviceSelect.addEventListener('change',()=>{selectedServiceId=serviceSelect.value;selectedSongId='';populateServiceSongs()});songSelect.addEventListener('change',loadSelectedServiceSong);
+$('#service-form').addEventListener('submit',async e=>{e.preventDefault();if(!roleCanEdit())return;const f=e.currentTarget;try{await addDoc(collection(db,'setlists'),{title:f.elements.title.value.trim(),date:f.elements.date.value,songs:f.elements.songs.value.trim(),createdAt:serverTimestamp(),createdBy:auth.currentUser?.uid||''});f.reset();$('#service-status').textContent='Service Song List saved.'}catch(err){$('#service-status').textContent='Could not save: '+(err.code||err.message)}});
+$('#song-form').addEventListener('submit',async e=>{e.preventDefault();if(!roleCanEdit())return;const f=e.currentTarget;try{await addDoc(collection(db,'songs'),{title:f.elements.title.value.trim(),artist:f.elements.artist.value.trim(),key:f.elements.key.value,lyrics:f.elements.lyrics.value,chords:f.elements.chords.value,notes:'',createdAt:serverTimestamp(),createdBy:auth.currentUser?.uid||''});f.reset();f.elements.key.value='C';$('#song-status').textContent='Song saved to Song Library.'}catch(err){$('#song-status').textContent='Could not save: '+(err.code||err.message)}});
+$('#edit-song-form').addEventListener('submit',async e=>{e.preventDefault();if(!roleCanEdit())return;const f=e.currentTarget,id=f.elements.songId.value;if(!id){$('#edit-status').textContent='This title is not in the Song Library yet. Add it there first.';return}try{const data={title:f.elements.title.value.trim(),key:f.elements.key.value,lyrics:f.elements.lyrics.value,chords:f.elements.chords.value,updatedAt:serverTimestamp()};await updateDoc(doc(db,'songs',id),data);$('#edit-status').textContent='Song title, lyrics, chords, and key saved.'}catch(err){$('#edit-status').textContent='Could not save: '+(err.code||err.message)}});
+$('#set-current-song').addEventListener('click',async()=>{if(!roleCanEdit())return;const f=$('#edit-song-form'),id=f.elements.songId.value;if(!id)return;const s=songs.find(x=>x.id===id);if(!s)return;try{state={songId:id,title:f.elements.title.value.trim(),lyrics:f.elements.lyrics.value,chords:f.elements.chords.value,key:f.elements.key.value,section:f.elements.section.value,serviceId:selectedServiceId,updatedAt:serverTimestamp()};await setDoc(doc(db,'worshipState','current'),state);$('#edit-status').textContent='Current song is now live on Live Display and Monitor.'}catch(err){$('#edit-status').textContent='Could not set current song: '+(err.code||err.message)}});
+$('#edit-song-form').elements.section.addEventListener('change',async e=>{if(!roleCanEdit())return;state.section=e.target.value;try{await setDoc(doc(db,'worshipState','current'),{...state,section:e.target.value,updatedAt:serverTimestamp()},{merge:true})}catch(err){$('#edit-status').textContent='Could not update section: '+(err.code||err.message)}});
+$('#edit-song-form').elements.key.addEventListener('change',async e=>{if(!roleCanEdit())return;state.key=e.target.value;try{await setDoc(doc(db,'worshipState','current'),{key:e.target.value,updatedAt:serverTimestamp()},{merge:true})}catch(err){$('#edit-status').textContent='Could not update key: '+(err.code||err.message)}});
+serviceList.addEventListener('click',async e=>{const b=e.target.closest('[data-delete-service]');if(!b||!roleCanEdit())return;if(!confirm('Delete this Service Song List?'))return;try{await deleteDoc(doc(db,'setlists',b.dataset.deleteService))}catch(err){$('#service-status').textContent='Could not delete: '+(err.code||err.message)}});
+libraryList.addEventListener('click',async e=>{const use=e.target.closest('[data-use-song]'),del=e.target.closest('[data-delete-song]');if(use){const s=songs.find(x=>x.id===use.dataset.useSong);const match=services.flatMap(sv=>serviceSongLines(sv.songs).map(line=>({sv,line,song:matchSong(line)}))).find(x=>x.song?.id===s?.id);if(!match){$('#edit-status').textContent='To edit this song in Admin Panel, first add its title to a Service Song List.';return}selectedServiceId=match.sv.id;serviceSelect.value=selectedServiceId;populateServiceSongs();const opt=[...songSelect.options].find(o=>o.value==='song:'+s.id);if(opt){songSelect.value=opt.value;loadSelectedServiceSong()}$('#edit-status').textContent='Song selected in Admin Panel.';$('#edit-song-form').scrollIntoView({behavior:'smooth',block:'start'});return}if(del&&roleCanEdit()){if(!confirm('Delete this song from the Song Library?'))return;try{await deleteDoc(doc(db,'songs',del.dataset.deleteSong))}catch(err){$('#song-status').textContent='Could not delete: '+(err.code||err.message)}}});
+function renderDisplay(){const d=$('#song-display');const isMonitor=view==='monitor';if(!state.title){d.innerHTML='<div class="song-empty">Waiting for the Admin Panel to select a song…</div>';return}d.innerHTML=`<h2>${esc(state.title)}</h2><div class="song-meta"><span>Key: ${esc(state.key||'—')}</span><span>Section: ${esc(state.section||'—')}</span></div><div class="song-columns"><div class="lyrics-col"><h3>Lyrics</h3><pre>${esc(state.lyrics||'')}</pre></div>${isMonitor?'':`<div class="chords-col"><h3>Chords</h3><pre>${esc(state.chords||'')}</pre></div>`}</div>`}
+// Realtime Firestore listeners keep Admin Panel, Live Display, and Monitor in sync.
+onSnapshot(collection(db,'setlists'),snap=>{services=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.date||'').localeCompare(b.date||''));renderServices();},err=>{serviceList.innerHTML=`<li>Couldn't load service lists (${esc(err.code||err.message)}).</li>`});
+onSnapshot(collection(db,'songs'),snap=>{songs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.title||'').localeCompare(b.title||''));renderLibrary();if(selectedSongId)fillEditor(songs.find(s=>s.id===selectedSongId)||null)},err=>{libraryList.innerHTML=`<li>Couldn't load songs (${esc(err.code||err.message)}).</li>`});
+onSnapshot(doc(db,'worshipState','current'),snap=>{if(snap.exists()){state={...state,...snap.data()};if(view==='admin'&&state.songId){const s=songs.find(x=>x.id===state.songId);if(s&&selectedSongId===s.id){$('#edit-song-form').elements.section.value=state.section||'Verse 1'}}}renderDisplay();},err=>{console.warn('Live worship state unavailable',err.code||err.message)});
+</script>
+</body></html>
