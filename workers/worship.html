@@ -77,6 +77,7 @@
 <script type="module">
 import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 import { auth, db } from './firebase-config.js';
+import './portal.js';
 const KEYS=['C','C#/Db','D','Eb','E','F','F#/Gb','G','Ab','A','Bb','B','C minor','C# minor','D minor','Eb minor','E minor','F minor','F# minor','G minor','Ab minor','A minor','Bb minor','B minor'];
 const SECTIONS=['Intro','Verse 1','Verse 2','Verse 3','Pre-Chorus','Chorus','Bridge','Instrumental','Interlude','Refrain','Ending','Outro','Custom'];
 const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

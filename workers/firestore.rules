@@ -55,7 +55,7 @@ service cloud.firestore {
     match /inventory/{id} { allow read: if signedIn(); allow create,update,delete: if approved() && role() in ['admin','production','production-lead']; }
     match /setlists/{id} { allow read: if signedIn(); allow create,update,delete: if worship(); }
     match /songs/{id} { allow read: if signedIn(); allow create,update,delete: if worship(); }
-    // Shared live song state used by the Praise & Worship Admin, Live Display, and Monitor.
+    // Shared live song state for Admin Panel, Live Display, and Monitor.
     match /worshipState/{id} { allow read: if signedIn(); allow create,update,delete: if worship(); }
     match /announcements/{id} { allow read: if approved() && (role() in ['admin','pastor'] || isLead()); allow create,update,delete: if approved() && role() in ['admin','pastor']; }
     match /messages/{id} {
